@@ -1,0 +1,22 @@
+# The build part for Netlify with a Nuxt project
+[build]
+    base='/'
+    publish='dist'
+    command='nuxt generate'
+    environment = { NODE_VERSION = "18.20.2" }
+
+# We can put redirects
+[[redirects]]
+    from = "/devto"
+    to = "https://dev.to/thomasbnt"
+    status = 301
+
+# Also put headers
+[[headers]]
+    for = "/*"
+
+    [headers.values]
+        X-Frame-Options = "DENY"
+        X-XSS-Protection = "1; mode=block"
+        X-Content-Type-Options = "nosniff"
+        cache-control = "public, max-age=10000, must-revalidate"
