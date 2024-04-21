@@ -1,6 +1,6 @@
-# kftray Website
+# kftray website
 
-This repository contains the source code for the official website of the **kftray** project, which includes comprehensive documentation and a blog. The site is built using Nuxt 3 and Tailwind CSS, optimized for high performance and ease of use.
+This repository contains the source code for the official website of the [kftray](https://github.com/hcavarsan/kftray) project, which includes comprehensive documentation and a blog. The site is built using Nuxt 3 and Tailwind CSS, optimized for high performance and ease of use.
 
 ## Stack
 
