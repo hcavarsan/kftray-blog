@@ -17,10 +17,8 @@ This repository contains the source code for the official website of the **kftra
 
 ## Project Structure
 
-- `/assets` - Static assets like images and fonts.
 - `/components` - Vue components including custom layouts and UI elements.
 - `/layouts` - The layouts define the structure of the website.
-- `/pages` - The Nuxt pages representing the routes of the website.
 - `/content` - Markdown files that use Nuxt Content to manage the blog and documentation.
 
 ## Local Development
