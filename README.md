@@ -1,57 +1,68 @@
-# Docus Starter
+# kftray Website
 
-Starter template for [Docus](https://docus.dev).
+This repository contains the source code for the official website of the **kftray** project, which includes comprehensive documentation and a blog. The site is built using Nuxt 3 and Tailwind CSS, optimized for high performance and ease of use.
 
-## Clone
+## Stack
 
-Clone the repository (using `nuxi`):
+- **Framework**: [Nuxt 3](https://v3.nuxtjs.org/) - The Intuitive Vue Framework
+- **CSS Framework**: [Tailwind CSS](https://tailwindcss.com/) - Rapidly build modern websites without ever leaving your HTML.
+- **Content Management**: [@nuxt/content](https://content.nuxtjs.org/) - Writing in Markdown and using Vue components seamlessly.
+- **Deployment**: Vercel/Netlify (recommended for optimal prerendering)
+- **Icons and Fonts**:
+  - [@fortawesome/vue-fontawesome](https://github.com/FortAwesome/vue-fontawesome) - Font Awesome 5 Vue component
+  - [Google Fonts](https://fonts.google.com/) - Inter and Source Code Pro
+- **Additional Tools**:
+  - [Plausible Analytics](https://plausible.io/) - Simple and privacy-friendly alternative to Google Analytics
+  - [VueUse](https://vueuse.org/) - Collection of essential Vue Composition Utilities
 
-```bash
-npx nuxi init -t themes/docus
-```
+## Project Structure
 
-## Setup
+- `/assets` - Static assets like images and fonts.
+- `/components` - Vue components including custom layouts and UI elements.
+- `/layouts` - The layouts define the structure of the website.
+- `/pages` - The Nuxt pages representing the routes of the website.
+- `/content` - Markdown files that use Nuxt Content to manage the blog and documentation.
 
-Install dependencies:
+## Local Development
 
-```bash
-yarn install
-```
+To run this project locally, follow these steps:
 
-## Development
+1. **Clone the repository:**
 
-```bash
-yarn dev
-```
+   ```bash
+   git clone https://github.com/hcavarsan/kftray-blog.git
+   cd kftray-website
+   ```
 
-## Edge Side Rendering
+2. **Install dependencies:**
 
-Can be deployed to Vercel Functions, Netlify Functions, AWS, and most Node-compatible environments.
+   ```bash
+   pnpm install
+   ```
 
-Look at all the available presets [here](https://v3.nuxtjs.org/guide/deploy/presets).
+3. **Serve with hot reload at localhost:3000:**
 
-```bash
-yarn build
-```
+   ```bash
+   pnpm run dev
+   ```
 
-## Static Generation
+4. **Build for production and launch server:**
 
-Use the `generate` command to build your application.
+   ```bash
+   pnpm run build
+   pnpm run preview
+   ```
 
-The HTML files will be generated in the .output/public directory and ready to be deployed to any static compatible hosting.
+5. **Generate static project:**
 
-```bash
-yarn generate
-```
+   ```bash
+   pnpm run generate
+   ```
 
-## Preview build
+## Editing Content
 
-You might want to preview the result of your build locally, to do so, run the following command:
+Content for the blog and documentation is stored in the `/content` directory as Markdown files which can be edited directly. Changes will be reflected immediately in your local development environment.
 
-```bash
-yarn preview
-```
+## Support
 
----
-
-For a detailed explanation of how things work, check out [Docus](https://docus.dev).
+If you need assistance or have any questions, please file an issue and we will be happy to help.
