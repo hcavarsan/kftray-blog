@@ -111,7 +111,7 @@ In a few simple steps, you can configure your first port forward:
 Demonstration:
 
 ::card-grid
-  :video-player{src="https://youtu.be/nqEhmcKeCc4"}
+  :video-player{src="https://www.youtube.com/watch?v=nqEhmcKeCc4"}
 ::
 
 
