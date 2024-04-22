@@ -9,42 +9,47 @@
 
 <url>
   <loc>https://kftray.app/</loc>
-  <lastmod>2024-04-22T15:19:45+00:00</lastmod>
+  <lastmod>2024-04-22T16:32:25+00:00</lastmod>
   <priority>1.00</priority>
 </url>
 <url>
   <loc>https://kftray.app/docs/introduction/</loc>
-  <lastmod>2024-04-22T15:19:45+00:00</lastmod>
+  <lastmod>2024-04-22T16:32:25+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://kftray.app/blog/</loc>
-  <lastmod>2024-04-22T15:19:45+00:00</lastmod>
+  <lastmod>2024-04-22T16:32:25+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://kftray.app/docs/introduction/installation/</loc>
-  <lastmod>2024-04-22T15:19:45+00:00</lastmod>
+  <lastmod>2024-04-22T16:32:25+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://kftray.app/docs/introduction/usage/</loc>
-  <lastmod>2024-04-22T15:19:45+00:00</lastmod>
+  <lastmod>2024-04-22T16:32:25+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://kftray.app/docs/introduction/architecture/</loc>
+  <lastmod>2024-04-22T16:32:25+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://kftray.app/docs/introduction/known-issues/</loc>
-  <lastmod>2024-04-22T15:19:45+00:00</lastmod>
+  <lastmod>2024-04-22T16:32:25+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://kftray.app/blog/posts/3-kubernetes-debugging-handling/</loc>
-  <lastmod>2024-04-22T15:19:45+00:00</lastmod>
+  <lastmod>2024-04-22T16:32:25+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://kftray.app/blog/posts/2-kubectl-port-forward-explained/</loc>
-  <lastmod>2024-04-22T15:19:45+00:00</lastmod>
+  <lastmod>2024-04-22T16:32:25+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 

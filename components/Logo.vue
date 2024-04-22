@@ -4,5 +4,6 @@
     width="32"
 	priority
 	format="webp"
+	alt="Kftray Logo"
   />
 </template>
