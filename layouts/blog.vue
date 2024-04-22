@@ -8,6 +8,7 @@ const contentQuery = await queryContent('blog/posts').sort(
 
 <template>
   <div class="relative">
+  <Ellipsis right="0" width="85%" blur="150px" />
 <LandingBanner badge-text="Release v0.9.7" text="A new version of kftray has been released." link="https://github.com/hcavarsan/kftray/releases/tag/v0.9.7" link-text="Check it out →"  />
 </div>
   <div class="relative min-h-[89vh]">
@@ -26,6 +27,7 @@ const contentQuery = await queryContent('blog/posts').sort(
           </div>
         </div>
         <div class="grid gap-8 sm:grid-cols-2 xl:grid-cols-3 mx-4 pb-12">
+     <Ellipsis left="0" width="80rem" top="50rem" blur="150px" />
           <BlogCard v-for="post in contentQuery" :post="post" :key="post._id"/>
         </div>
       </div>

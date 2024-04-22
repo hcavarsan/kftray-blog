@@ -11,7 +11,6 @@ const { page } = useContent()
 </div>
   <div class="relative min-h-[91vh] overflow-hidden">
     <div class="absolute -top-[30vh] left-0 select-none">
-      <Ellipsis />
     </div>
     <div class="relative HeaderContainer">
       <NuxtLink href="/blog" class="flex items-center gap-1 my-6">
@@ -50,7 +49,9 @@ const { page } = useContent()
         </div>
       </header>
       <article class="pb-[70px]">
+	  <Ellipsis right="0" width="85%" blur="150px" />
         <slot />
+		<Ellipsis left="0px" width="60rem" top="60rem" blur="150px" />
 		<BlogComments />
       </article>
     </div>
