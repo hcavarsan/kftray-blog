@@ -15,7 +15,7 @@ published: true
 
 ## Introduction
 
-One of the changes in the latest Kubernetes version, 1.30 (Uwubnetes) is the migration from SPDY to websocket for some of the `kubectl` commands. Most of the updates get most of the attention, but this is no less important.
+One of the changes in the latest Kubernetes version, 1.30 (Uwubnetes) is the transition from SPDY to websocket for some of the `kubectl` commands. Most of the updates get most of the attention, but this is no less important.
 
 
 ## Understanding SPDY:
@@ -92,7 +92,7 @@ brew install bash
 brew install gnu-tar
 ```
 
-#### Building the kubernetes and kubectl 1.30 image
+### Building the kubernetes and kubectl 1.30 image
 
 To build the images and kubectl, we need to have Go 1.22 or later. Then, execute some commands:
 
@@ -110,7 +110,7 @@ make kubectl KUBE_BUILD_PLATFORMS=darwin/arm64
 chmod +x $GOPATH/kubernetes/_output/dockerized/bin/darwin/arm64/kubectl
 ```
 
-#### Kind Cluster Configs
+### Kind Cluster Configs
 
 First, set up the kind cluster with 1.30 images by creating a `config.yaml` file with featureGates `PortForwardWebsockets` enabled:
 
@@ -127,7 +127,7 @@ nodes:
 - role: worker
   image: kindest/node:latest
 ```
-#### Create the cluster
+### Create the cluster
 
 When you have your configuration file set up you can add the cluster with the following command:
 
@@ -147,7 +147,7 @@ cd kubernetes-sample-apps
 kubectl apply -k bookinfo-example/kustomize
 ```
 
-#### Forward the Port Using WebSockets
+### Forward the Port Using WebSockets
 
 Enable the WebSocket port forwarding :
 
@@ -194,7 +194,7 @@ I0422 17:29:21.519973    7561 tunneling_dialer.go:85] negotiated protocol: portf
 
 The logs show that the protocol upgrade to SPDY via WebSocket was successful in Kubernetes 1.30
 
-### KEP Roadmap Port Forward over Websockets
+## KEP Roadmap Port Forward over Websockets
 
 **Alpha Release (Kubernetes 1.30):**
 
@@ -213,7 +213,7 @@ User community feedback will be the basis in making the feature stable and usabl
 Ensure WebSocket support transitions from beta to stable with alpha feature flags removed and publish a deprecation notice to officially mark the transition away from SPDY-based port forwarding.
 
 
-### KEP Roadmap RemoteCommand over websockets (exec, cp, attach)
+## KEP Roadmap RemoteCommand over websockets (exec, cp, attach)
 
 **Beta release (Kubernetes 1.30):**
 
