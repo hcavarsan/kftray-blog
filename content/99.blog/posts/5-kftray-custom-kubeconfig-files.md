@@ -21,8 +21,7 @@ kftray is a cross-platform system tray app made with Tauri (Rust and TypeScript)
 We're pleased to share the release of KFTray v0.10.0. With this update, we've focused on making it easier for users to manage port-forward configurations across various kubeconfig files. We've also dedicated efforts to improve error handling for a more intuitive user experience.
 
 
-If you don't know about KFTray, we have an article that provides a good overview of the app:
-[Kubernetes Debugging - How to Handle Multiple kubectl port-forward from Your Tray](https://kftray.app/blog/posts/3-kubernetes-debugging-handling)
+
 
 ## What's New in Kftray v0.10.0?
 
@@ -34,12 +33,20 @@ If you don't know about KFTray, we have an article that provides a good overview
 - **Code Quality Enhancements**: Through new linting and formatting rules, as well as thoughtful refactoring of our backend code, we've made strides in improving our code's quality and organization.
 - **Updated Rust Version**: Keeping up with the latest developments, we've upgraded to Rust 1.78, ensuring our application benefits from the latest language improvements.
 
-We hope you find these updates helpful in your Kubernetes endeavors.
+[Check it out KFTray v0.10.0 Release](https://lnkd.in/d6QuFffQ)
 
-Check the Video Demo:
+
+### Check the Video Demo:
 
 ::card-grid
   :video-player{src="https://www.youtube.com/watch?v=H6UJCfUr8yE"}
 ::
 
-[Check it out KFTray v0.10.0 Release](https://lnkd.in/d6QuFffQ)
+
+### If you don't know about KFTray, we have an article that provides a good overview of the app
+
+[Kubernetes Debugging - How to Handle Multiple kubectl port-forward from Your Tray](https://kftray.app/blog/posts/3-kubernetes-debugging-handling)
+
+### Thats all
+
+I hope you find Kftray helpful. If you do, please consider giving us a star on GitHub at [Kftray](https://github.com/hcavarsan/kftray). It would be greatly appreciated. 🌟
