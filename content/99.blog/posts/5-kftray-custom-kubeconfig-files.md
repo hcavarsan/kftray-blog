@@ -35,14 +35,6 @@ We're pleased to share the release of KFTray v0.10.0. With this update, we've fo
 
 [Check it out KFTray v0.10.0 Release](https://lnkd.in/d6QuFffQ)
 
-
-### Check the Video Demo:
-
-::card-grid
-  :video-player{src="https://www.youtube.com/watch?v=H6UJCfUr8yE"}
-::
-
-
 ### If you don't know about KFTray, we have an article that provides a good overview of the app
 
 [Kubernetes Debugging - How to Handle Multiple kubectl port-forward from Your Tray](https://kftray.app/blog/posts/3-kubernetes-debugging-handling)
@@ -50,3 +42,10 @@ We're pleased to share the release of KFTray v0.10.0. With this update, we've fo
 ### Thats all
 
 I hope you find Kftray helpful. If you do, please consider giving us a star on GitHub at [Kftray](https://github.com/hcavarsan/kftray). It would be greatly appreciated. 🌟
+
+
+### Check the Kubeconfig feature Demo Here
+
+::card-grid
+  :video-player{src="https://www.youtube.com/watch?v=H6UJCfUr8yE"}
+::
