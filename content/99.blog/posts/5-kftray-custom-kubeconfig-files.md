@@ -33,7 +33,7 @@ We're pleased to share the release of KFTray v0.10.0. With this update, we've fo
 - **Code Quality Enhancements**: Through new linting and formatting rules, as well as thoughtful refactoring of our backend code, we've made strides in improving our code's quality and organization.
 - **Updated Rust Version**: Keeping up with the latest developments, we've upgraded to Rust 1.78, ensuring our application benefits from the latest language improvements.
 
-[Check it out KFTray v0.10.0 Release](https://lnkd.in/d6QuFffQ)
+[Check it out KFTray v0.10.0 Release](https://github.com/hcavarsan/kftray/releases/tag/v0.10.0)
 
 ### If you don't know about KFTray, we have an article that provides a good overview of the app
 
