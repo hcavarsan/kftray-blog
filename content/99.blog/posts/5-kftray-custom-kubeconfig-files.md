@@ -1,6 +1,6 @@
 ---
 layout: post
-title: KFTray v0.10.0 Released!
+title: KFtray now supports multiple kubeconfig files!
 description: We're pleased to share the release of KFTray v0.10.0. With this update, we've focused on making it easier for users to manage port-forward configurations across various kubeconfig files. We've also dedicated efforts to improve error handling for a more intuitive user experience.
 image: /img/cover.png
 timestamp: 1715044662
