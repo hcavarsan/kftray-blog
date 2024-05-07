@@ -15,6 +15,9 @@ published: true
 
 # Introducing KFTray v0.10.0 🚀
 
+kftray is a cross-platform system tray app made with Tauri (Rust and TypeScript) for Kubernetes users. It simplifies setting up multiple kubectl port forward configurations through a user-friendly interface. Easily store and manage all configurations from local files or GitHub repositories.
+
+
 We're pleased to share the release of KFTray v0.10.0. With this update, we've focused on making it easier for users to manage port-forward configurations across various kubeconfig files. We've also dedicated efforts to improve error handling for a more intuitive user experience.
 
 
