@@ -7,7 +7,7 @@ const { page } = useContent()
 
 <template>
   <div class="relative">
-<LandingBanner badge-text="Release v0.11.0" text="A new version of kftray has been released." link="https://github.com/hcavarsan/kftray/releases/tag/v0.11.0" link-text="Check it out →"  />
+<LandingBanner badge-text="Release v0.11.1" text="A new version of kftray has been released." link="https://github.com/hcavarsan/kftray/releases/tag/v0.11.1" link-text="Check it out →"  />
 </div>
   <div class="relative min-h-[91vh] overflow-hidden">
     <div class="absolute -top-[30vh] left-0 select-none">
