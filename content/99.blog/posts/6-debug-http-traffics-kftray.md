@@ -183,7 +183,6 @@ The new logging of HTTP traffic in KFtray v0.11.7 takes the work out of debuggin
 
 **Star us on [GitHub](https://github.com/hcavarsan/kftray) ⭐**
 
-KFtray Website: [https://kftray.app](https://kftray.app)
 
 ### Quick Demo
 
