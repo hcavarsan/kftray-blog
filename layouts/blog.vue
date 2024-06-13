@@ -9,7 +9,7 @@ const contentQuery = await queryContent('blog/posts').sort(
 <template>
   <div class="relative">
   <Ellipsis right="0" width="85%" blur="150px" />
-<LandingBanner badge-text="Release v0.11.1" text="A new version of kftray has been released." link="https://github.com/hcavarsan/kftray/releases/tag/v0.11.1" link-text="Check it out →"  />
+<LandingBanner badge-text="Release v0.11.7" text="A new version of kftray has been released." link="https://github.com/hcavarsan/kftray/releases/tag/v0.11.7" link-text="Check it out →"  />
 </div>
   <div class="relative min-h-[89vh]">
     <div class="absolute top-0 left-0 select-none">

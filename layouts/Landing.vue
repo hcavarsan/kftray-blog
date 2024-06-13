@@ -15,7 +15,7 @@ useHead({
 
   <div class="page-layout">
   <div class="relative">
-<LandingBanner badge-text="Release v0.11.1" text="A new version of kftray has been released." link="https://github.com/hcavarsan/kftray/releases/tag/v0.11.1" link-text="Check it out →"  />
+<LandingBanner badge-text="Release v0.11.7" text="A new version of kftray has been released." link="https://github.com/hcavarsan/kftray/releases/tag/v0.11.7" link-text="Check it out →"  />
 </div>
     <Container
       :fluid="config?.main?.fluid"
