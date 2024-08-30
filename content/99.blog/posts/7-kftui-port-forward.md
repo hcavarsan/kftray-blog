@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Introducing KFtui in KFtray v0.13.0
+title: Introducing KFtui - a new terminal-based user interface for managing your port forwarding configurations.
 description: the new terminal-based user interface for managing your port forwarding configurations.
 image: /img/ss-blog.png
 timestamp: 1723866843
