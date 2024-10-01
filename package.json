@@ -3,6 +3,7 @@
 	"version": "1.0.0",
 	"private": true,
 	"type": "module",
+	"packageManager": "pnpm@9.6.0",
 	"scripts": {
 		"build": "nuxi build",
 		"dev": "nuxi dev",
