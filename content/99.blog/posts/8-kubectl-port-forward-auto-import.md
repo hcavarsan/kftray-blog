@@ -3,7 +3,7 @@ layout: post
 title:  Local Kubernetes Cluster with Automatic kubectl port-forward configurations
 description: Learn how to dynamically create kubectl port forwarding configurations based on Kubernetes service annotations using Terraform and Kind.
 image:  https://cdn.hashnode.com/res/hashnode/image/upload/v1727747211110/30b8b4ff-38f5-4f56-a3e6-ef5df4766c7f.png?w=1600&h=840&fit=crop&crop=entropy&auto=compress,format&format=webp
-timestamp: 1723866843
+timestamp: 1727821428
 
 author: Henrique Cavarsan
 position: Maintainer
