@@ -1,7 +1,7 @@
 [build]
     base='/'
     publish='dist'
-    command='pnpm generate'
+    command='pnpm build'
     environment = { NODE_VERSION = "20.17.0" }
 
 [[headers]]
