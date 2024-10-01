@@ -25,6 +25,7 @@
 		"@nuxtjs/plausible": "^1.0.0",
 		"@nuxtjs/tailwindcss": "6.12.0",
 		"@types/node": "20.12.7",
-		"nuxt": "3.11.2"
+		"nuxt": "3.11.2",
+		"pinceau": "0.15.4"
 	}
 }

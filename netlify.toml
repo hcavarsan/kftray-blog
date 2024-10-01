@@ -1,8 +1,8 @@
 [build]
     base='/'
     publish='dist'
-    command='nuxt generate'
-    environment = { NODE_VERSION = "18.20.2" }
+    command='pnpm generate'
+    environment = { NODE_VERSION = "20.17.0" }
 
 [[headers]]
     for = "/*"
