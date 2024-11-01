@@ -29,17 +29,17 @@ Just like you might have different rules for sharing your Lego creations, open s
 - **Permissive licenses** Allow others to use, modify, and distribute your work with minimal restrictions.
 - **Copyleft licenses**  Ensures that all future versions remain free and open.
 
-
 ### Permissive Licenses - The "Do What You Want" and "No Warranty" Rule
 
 >Alex takes your Lego castle and transforms it into a futuristic fortress. He decides to display it at a local event without mentioning you. While you might wish he gave you credit, your "do what you want" rule means he's allowed to do that. Your castle idea has inspired new creations, even if you don't see the direct benefits.
 
-Suppose you tell Alex, `Here's my Lego castle. You can do whatever you like with it—even keep it, change it completely, or sell it at the school fair. But if anything goes wrong—like the blocks breaking—it's not my fault.`  This gives Alex complete freedom over what he does with your creation while also letting him know that you're not responsible for any problems.
+Suppose you tell Alex, `Here's my Lego castle. You can do whatever you like with it—even keep it, change it completely, or sell it at the school fair. But if anything goes wrong—like the blocks breaking—it's not my fault.` This gives Alex complete freedom over what he does with your creation while also letting him know that you're not responsible for any problems.
 
-This is like a permissive license, such as the [MIT License](https://opensource.org/licenses/MIT) or the [BSD License](https://opensource.org/licenses/BSD-3-Clause). People can use the code in any way they want, even in their own projects that they might sell or keep private. The "no warranty" part is a common clause in these licenses, stating that the software is provided "as is," without any guarantees.
+This is like a permissive license such as the [MIT License](https://opensource.org/licenses/MIT). People can use the code in any way they want, even in their own projects that they might sell or keep private. The "no warranty" part is a common clause in these licenses, stating that the software is provided "as is," without any guarantees.
 
-Some think that permissive licenses require giving credit to the original creator. While it's good manners to do so, not all permissive licenses require attribution. Always check the specific license terms to be sure.
+Another example of a permissive license is the [BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause). While it allows free use, modification, and distribution like the MIT License, it requires that credit be given to the original author.
 
+>**Edit Note**: I have misunderstood about BSD license, before I mentioned that BSD does not require attribution, but after this [reddit comment](https://www.reddit.com/r/programming/comments/1gh4i8t/comment/luv83dl/?context=3), I figured out that I was incorrect about BSD as the BSD license is permissive but [requires attribution](https://www.tldrlegal.com/license/bsd-3-clause-license-revised).
 
 
 ### Copyleft Licenses - The "Share Alike" Rule
