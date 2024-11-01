@@ -1,3 +1,4 @@
+---
 layout: post
 title: Open Source Licenses and Lego Blocks
 description:  A bit about OSS licenses using LEGO analogy
