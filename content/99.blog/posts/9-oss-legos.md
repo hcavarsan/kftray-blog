@@ -14,6 +14,11 @@ published: true
 
 <br>
 
+
+>**Note:** This article was inspired by a video called [What is Open Source explained in LEGO](https://www.youtube.com/watch?v=a8fHgx9mE5U) from 10 years ago. The video used LEGO to explain open source in a simple way. I wanted to build on that idea by using LEGO to explain the different types of open source licenses.
+
+<br>
+
 Imagine you have a giant box of Lego bricks. You love creating all sorts of things—spaceships, castles, robots—and you often invite your friends over to build together.
 Sometimes, you come up with an amazing creation and want others to enjoy it too. But you also want to make sure everyone plays fair and knows how they can use your designs. That's where open source licenses come into play.
 
