@@ -12,7 +12,10 @@ avatarLink: https://github.com/hcavarsan
 published: true
 ---
 
-Imagine you have a giant box of Lego bricks. You love creating all sorts of things—spaceships, castles, robots—and you often invite your friends over to build together. Sometimes, you come up with an amazing creation and want others to enjoy it too. But you also want to make sure everyone plays fair and knows how they can use your designs. That's where open source licenses come into play.
+<br>
+
+Imagine you have a giant box of Lego bricks. You love creating all sorts of things—spaceships, castles, robots—and you often invite your friends over to build together.
+Sometimes, you come up with an amazing creation and want others to enjoy it too. But you also want to make sure everyone plays fair and knows how they can use your designs. That's where open source licenses come into play.
 
 ### Permissive vs Copyleft Licenses
 
