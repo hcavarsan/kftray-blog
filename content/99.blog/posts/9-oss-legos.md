@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Open Source Licenses and Lego Blocks
-description:  OSS licenses are like Lego—some are free to use, others require sharing. Learn how these rules shape collaboration.
+description:  A bit about OSS licenses using LEGO analogy
 image: /img/lego-blog.png
 timestamp: 1730425701
 author: Henrique Cavarsan
@@ -15,11 +15,11 @@ published: true
 <br>
 
 
->**Note:** This article was inspired by a video called [What is Open Source explained in LEGO](https://www.youtube.com/watch?v=a8fHgx9mE5U) from 10 years ago. The video used LEGO to explain open source in a simple way. I wanted to build on that idea by using LEGO to explain the different types of open source licenses.
+>**Note:** This article was heavily inspired by a video called [What is Open Source explained in LEGO](https://www.youtube.com/watch?v=a8fHgx9mE5U) from 10 years ago which is very well explained. The video used LEGO to explain open source in a simple way. I wanted to build on that idea by using LEGO to explain the different types of open source licenses.
 
 <br>
 
-Imagine you have a giant box of Lego bricks. You love creating all sorts of things—spaceships, castles, robots—and you often invite your friends over to build together.
+So, imagine you have a giant box of Lego bricks. You love creating all sorts of things—spaceships, castles, robots—and you often invite your friends over to build together.
 Sometimes, you come up with an amazing creation and want others to enjoy it too. But you also want to make sure everyone plays fair and knows how they can use your designs. That's where open source licenses come into play.
 
 ### Permissive vs Copyleft Licenses
@@ -66,7 +66,7 @@ Some think the AGPL restricts the use of software in web applications. While it 
 
 ### Lesser Copyleft Licenses - Sharing Core Components
 
->Alex uses your Lego gears in a complex clock he builds. He doesn't have to share the design of his clock, but when he improves the gears to be more efficient, he shares those improvements with you. Everyone benefits from better gears, while Alex's clock design remains his own.
+>Alex uses your Lego gears in a complex clock he builds. He doesn't have to share the design of his clock, but when he improves the gears to be more efficient, he shares those improvements with you. Everyone benefits from better gears, while Liam's clock design remains his own.
 
 Suppose you build a special set of Lego gears and say,
 `You can use my gears in your creations, and if you improve the gears themselves, please share those improvements. But you don't have to share your entire creation.` This encourages others to use and enhance the gears while allowing them to keep their own designs private.
@@ -78,7 +78,7 @@ People sometimes think the LGPL allows them to ignore copyleft requirements enti
 
 ### Middle Ground Licenses - Balancing Sharing and Privacy
 
->Alex uses your Lego engine in her custom car model. he tweaks the engine for better performance and shares those improvements with you. However, he keeps  car design private. This way, the core engine gets better for everyone, while Alex's unique work remains hers.
+>Alex uses your Lego engine in her custom car model. She tweaks the engine for better performance and shares those improvements with you. However, she keeps her car design private. This way, the core engine gets better for everyone, while Emma's unique work remains hers.
 
 Consider if you say, `You can use my special Lego engine in your own creations, but if you change the engine itself, you need to share those changes with everyone. However, you can keep the rest of your creation to yourself.` This way, the core part stays open, but your friends can keep their own creations private.
 
@@ -89,7 +89,7 @@ Some think the MPL forces them to open source their entire project. In fact, onl
 
 ### Licenses Focusing on Collaboration and Protection
 
->Alex enhances your Lego robot with voice control. he shares improvements and includes a note about her changes. Because of your agreement, everyone feels safe using and modifying the robot without fear of legal issues, leading to more innovation.
+>Alex enhances your Lego robot with voice control. She shares her improvements and includes a note about her changes. Because of your agreement, everyone feels safe using and modifying the robot without fear of legal issues, leading to more innovation.
 
 Imagine you say, `You can use my Lego robot and change it if you like, but let's agree not to argue over who built which part. Also, please tell others about any big changes you make, and don't sue anyone over ideas used in this robot.` This helps prevent disagreements and encourages transparency and cooperation.
 
@@ -107,6 +107,10 @@ This is like the **Do What the Fuck You Want to Public License** ([WTFPL](http:/
 ### What Happens If You Switch Licenses Mid-Game
 
 Imagine you've been sharing your Lego creations under one set of rules, and partway through, you decide to change them. Perhaps you initially said, `Do whatever you want` but now you want everyone to share their improvements. After seeing amazing things your friends have done with your Lego creations without sharing back, you decide to change your rules to require sharing improvements. For future creations, everyone now knows they need to share changes. But for the creations already shared, the old rules still apply, and friends can keep their modifications private if they wish.
+
+I actually went through this experience with my open-source project, [KFTray](https://github.com/hcavarsan/kftray). When I first started building it, I was like someone who just wanted to share their Lego creation with friends—I chose the MIT license because it was simple and permissive. It was like saying, "Here's my Lego set, do whatever you want with it!"
+
+But as the project grew and I saw how others were using it, I realized I wanted to ensure that improvements would be shared back with the community. It's like noticing that while friends were making amazing modifications to your Lego creation, those improvements weren't being shared with everyone else who might benefit from them. So, I decided to switch to the GPL 3.0 license through [this pull request](https://github.com/hcavarsan/kftray/pull/322) — essentially changing the rules to say, "You can still play with and modify these Lego pieces, but now you need to share your improvements with everyone."
 
 In software, changing the license of your project is possible but can be complicated. If you're the sole owner of the code, you can relicense it as you wish. However, if others have contributed, you'll need their permission to change the license on their contributions.
 
