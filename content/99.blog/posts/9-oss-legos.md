@@ -66,7 +66,7 @@ Some think the AGPL restricts the use of software in web applications. While it 
 
 ### Lesser Copyleft Licenses - Sharing Core Components
 
->Alex uses your Lego gears in a complex clock he builds. He doesn't have to share the design of his clock, but when he improves the gears to be more efficient, he shares those improvements with you. Everyone benefits from better gears, while Liam's clock design remains his own.
+>Alex uses your Lego gears in a complex clock he builds. He doesn't have to share the design of his clock, but when he improves the gears to be more efficient, he shares those improvements with you. Everyone benefits from better gears, while Alex's clock design remains his own.
 
 Suppose you build a special set of Lego gears and say,
 `You can use my gears in your creations, and if you improve the gears themselves, please share those improvements. But you don't have to share your entire creation.` This encourages others to use and enhance the gears while allowing them to keep their own designs private.
@@ -78,7 +78,7 @@ People sometimes think the LGPL allows them to ignore copyleft requirements enti
 
 ### Middle Ground Licenses - Balancing Sharing and Privacy
 
->Alex uses your Lego engine in her custom car model. She tweaks the engine for better performance and shares those improvements with you. However, she keeps her car design private. This way, the core engine gets better for everyone, while Emma's unique work remains hers.
+>Alex uses your Lego engine in her custom car model. he tweaks the engine for better performance and shares those improvements with you. However, he keeps  car design private. This way, the core engine gets better for everyone, while Alex's unique work remains hers.
 
 Consider if you say, `You can use my special Lego engine in your own creations, but if you change the engine itself, you need to share those changes with everyone. However, you can keep the rest of your creation to yourself.` This way, the core part stays open, but your friends can keep their own creations private.
 
@@ -89,7 +89,7 @@ Some think the MPL forces them to open source their entire project. In fact, onl
 
 ### Licenses Focusing on Collaboration and Protection
 
->Alex enhances your Lego robot with voice control. She shares her improvements and includes a note about her changes. Because of your agreement, everyone feels safe using and modifying the robot without fear of legal issues, leading to more innovation.
+>Alex enhances your Lego robot with voice control. he shares improvements and includes a note about her changes. Because of your agreement, everyone feels safe using and modifying the robot without fear of legal issues, leading to more innovation.
 
 Imagine you say, `You can use my Lego robot and change it if you like, but let's agree not to argue over who built which part. Also, please tell others about any big changes you make, and don't sue anyone over ideas used in this robot.` This helps prevent disagreements and encourages transparency and cooperation.
 
