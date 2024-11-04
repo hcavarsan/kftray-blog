@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import type {PropType} from 'vue'
-import * as NuxtContent from '@nuxt/content/dist/runtime/types'
+import type PropType  from 'vue'
+import type  ParsedContent from '@nuxt/content'
 import FormatDate from "~/components/common/FormatDate.vue";
+
 
 defineProps({
   post: {
-    type: Object as PropType<ParsedContent>,
+    type: Object as PropType<typeof ParsedContent>,
     required: true
   },
 })
@@ -14,7 +15,7 @@ defineProps({
 <template>
 <NuxtLink v-if="post && post.published && post._path" :href="post._path" class="flex flex-col h-full group rounded-xl overflow-hidden shadow-lg dark:bg-gray-900/60 cursor-pointer">
     <div class="relative">
-      <img class="w-full" :src="post.image"/>
+      <img class="w-full" :src="post.image" :alt="post.title"/>
       <div
           class="group-hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 dark:bg-black/40"></div>
     </div>
