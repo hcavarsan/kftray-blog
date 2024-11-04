@@ -1,4 +1,3 @@
-title: Docs
-icon: heroicons-outline:code-bracket
-layout: default
-
+title: Documentation
+icon: heroicons-outline:book-open
+navigation: true
