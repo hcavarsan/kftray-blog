@@ -72,7 +72,7 @@ The Terraform code in this repository automates the following:
 
 Here's how the project is organized:
 
-```tree
+```
 kftray-k8s-tf-example
 ├── terraform
 │   ├── helm.tf

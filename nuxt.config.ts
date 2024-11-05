@@ -1,15 +1,13 @@
 import { defineNuxtConfig } from 'nuxt/config'
+import remarkGfm from 'remark-gfm'
+import remarkCleanChars from './utils/remark/clean-chars'
+
 
 export default defineNuxtConfig({
   extends: "@nuxt-themes/docus",
-  modules: ["@nuxtjs/tailwindcss", "@nuxtjs/plausible"],
+  modules: ["@nuxtjs/tailwindcss", "@nuxtjs/plausible", "@nuxt/content"],
   css: ["@fortawesome/fontawesome-svg-core/styles.css"],
 
-  mdc: {
-    highlight: {
-      langs: ["powershell", "json", "yaml", "bash", "toml", "hcl", "terraform"]
-    },
-  },
 
   runtimeConfig: {
     public: {
@@ -70,85 +68,50 @@ export default defineNuxtConfig({
     experimental: {
       asyncContext: true,
     },
+    compatibilityDate: '2024-04-03'
   },
 
   experimental: {
     payloadExtraction: true,
     renderJsonPayloads: true,
   },
+  mdc: {
+    headings: {
+      anchorLinks: {
+        h1: false,
+        h2: false,
+        h3: false,
+        h4: false,
+        h5: false,
+        h6: false
+      }
+    }
+  },
 
   content: {
+    documentDriven: true,
     highlight: {
       theme: 'github-dark',
-      preload: ['json', 'js', 'ts', 'bash', 'hcl', 'terraform'],
-      langs: [
-        {
-          name: 'tree',
-          scopeName: 'source.tree',
-          aliases: ['filesystem'],
-          patterns: [
-            {
-              match: '(├──|└──|│)',
-              name: 'punctuation.definition.tree'
-            },
-            {
-              match: '([\\w-]+/)(?=[^/])',
-              name: 'string.other.directory'
-            },
-            {
-              match: '(\\.\\w+|package\\.json|README\\.md)',
-              name: 'string.other.special-file'
-            },
-            {
-              match: '\\.[\\w-]+',
-              name: 'string.other.file'
-            },
-            {
-              match: '\\(.*?\\)',
-              name: 'constant.numeric.size'
-            },
-            {
-              match: '#.*$',
-              name: 'comment.line'
-            }
-          ],
-          repository: {
-            $self: {
-              patterns: [
-                { include: '#tree_structure' },
-                { include: '#directory' },
-                { include: '#file' },
-                { include: '#comment' }
-              ]
-            },
-            $base: {},
-            tree_structure: {
-              match: '(├──|└──|│)',
-              name: 'punctuation.definition.tree'
-            },
-            directory: {
-              match: '([\\w-]+/)(?=[^/])',
-              name: 'string.other.directory'
-            },
-            file: {
-              patterns: [
-                {
-                  match: '(\\.\\w+|package\\.json|README\\.md)',
-                  name: 'string.other.special-file'
-                },
-                {
-                  match: '\\.[\\w-]+',
-                  name: 'string.other.file'
-                }
-              ]
-            },
-            comment: {
-              match: '#.*$',
-              name: 'comment.line'
-            }
-          }
-        }
+      preload: [
+        'bash',
+        'json',
+        'yaml',
+        'powershell',
+        'toml',
+        'hcl',
+        'terraform',
       ]
+    },
+    markdown: {
+      toc: {
+        depth: 4,
+        searchDepth: 4
+      },
+      remarkPlugins: {
+        'remark-gfm': {
+          singleTilde: false
+        }
+      }
     }
-  }
-});
+  },
+})
