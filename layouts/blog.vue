@@ -11,9 +11,9 @@ const contentQuery = await queryContent('blog/posts').sort(
     <div class="relative">
       <Ellipsis right="0" width="85%" blur="150px" />
       <LandingBanner
-        badge-text="Release v0.13.0"
+        badge-text="Release v0.14.9"
         text="A new version of kftray has been released."
-        link="https://github.com/hcavarsan/kftray/releases/tag/v0.13.0"
+        link="https://github.com/hcavarsan/kftray/releases/tag/v0.14.9"
         link-text="Check it out →"
       />
     </div>
