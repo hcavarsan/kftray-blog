@@ -9,7 +9,7 @@ const contentQuery = await queryContent('blog/posts').sort(
 <template>
   <div class="relative min-h-screen bg-gray-50 dark:bg-pickled-bluewood-900">
     <div class="relative">
-      <Ellipsis right="0" width="85%" blur="150px" />
+		<Ellipsis right="0" width="85%" blur="150px" />
       <LandingBanner
         badge-text="Release v0.14.9"
         text="A new version of kftray has been released."
@@ -21,6 +21,8 @@ const contentQuery = await queryContent('blog/posts').sort(
     <div class="relative">
       <section class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
         <!-- Header -->
+
+
         <div class="text-center mb-12 sm:mb-16">
           <h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl lg:text-6xl">
             Blog
@@ -40,7 +42,7 @@ const contentQuery = await queryContent('blog/posts').sort(
         </div>
 
         <!-- Decorative elements -->
-        <Ellipsis left="0" width="80rem" top="50rem" blur="150px" />
+		<Ellipsis right="0" width="85%" blur="150px" />
       </section>
     </div>
   </div>

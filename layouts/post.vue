@@ -74,10 +74,12 @@ const formattedDate = computed(() => {
       <!-- Article Content -->
       <article class="relative z-10 bg-pickled-bluewood-900">
         <div class="max-w-3xl mx-auto px-6 py-16">
+
           <div class="prose dark:prose-invert lg:prose-lg custom-prose">
             <ContentRenderer v-if="page" :value="page">
               <template #empty>
                 <p>No content available.</p>
+
               </template>
               <template #default="{ value }">
                 <ContentRendererMarkdown :value="value" />
