@@ -72,7 +72,7 @@ The Terraform code in this repository automates the following:
 
 Here's how the project is organized:
 
-```plaintext
+```tree
 kftray-k8s-tf-example
 ├── terraform
 │   ├── helm.tf
@@ -97,7 +97,7 @@ kftray-k8s-tf-example
 
 This file specifies the Terraform providers we'll use:
 
-```plaintext
+```hcl
 terraform {
   required_version = ">= 1.0.0"
 
@@ -148,7 +148,7 @@ provider "helm" {
 
 Defines variables used in the Terraform configuration:
 
-```plaintext
+```hcl
 variable "cluster_name" {
   description = "Name of the Kind cluster"
   type        = string
@@ -197,7 +197,7 @@ variable "jaeger_chart_version" {
 
 Creates the Kind cluster:
 
-```plaintext
+```hcl
 resource "kind_cluster" "default" {
   name            = var.cluster_name
   node_image      = "kindest/node:${var.kubernetes_version}"
@@ -240,7 +240,7 @@ resource "kind_cluster" "default" {
 
 Defines local variables and service configurations:
 
-```plaintext
+```hcl
 locals {
   services = {
     argocd = {
@@ -279,7 +279,7 @@ locals {
 
 Deploys the services using Helm:
 
-```plaintext
+```hcl
 resource "helm_release" "services" {
   depends_on = [kind_cluster.default]
   for_each         = local.services
@@ -319,7 +319,7 @@ Contains Helm values templates for each service (e.g., `argocd-values.yaml.tpl`)
 
 Defines outputs for the Terraform run:
 
-```plaintext
+```hcl
 output "endpoint" {
   description = "API endpoint for the Kind cluster."
   value       = kind_cluster.default.endpoint
@@ -430,7 +430,7 @@ With port forwarding set up, you can access your services on your local machine:
 
 To customize how Kftray forwards ports, edit the `locals.tf` file:
 
-```plaintext
+```hcl
 locals {
   services = {
     argocd = {

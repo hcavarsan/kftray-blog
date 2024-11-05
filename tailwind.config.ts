@@ -32,6 +32,30 @@ export default <Config> {
           900: '#040708',
         },
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            'h1, h2, h3, h4': {
+              color: 'rgb(17 24 39)',
+            },
+            'p': {
+              color: 'rgb(55 65 81)',
+            },
+            'a': {
+              color: '#0FCF97',
+              '&:hover': {
+                color: '#07664B',
+              },
+            },
+            'code': {
+              color: '#0FCF97',
+            },
+          },
+        },
+      },
     },
   },
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
 }
