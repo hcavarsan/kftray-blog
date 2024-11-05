@@ -160,16 +160,6 @@ header.relative {
   margin-bottom: 10rem; /* Add space after the header */
 }
 
-/* Adjust the banner container */
-.relative h-[70vh] {
-  height: 60vh; /* Optionally reduce height if needed */
-}
-
-/* Ensure the post info is properly positioned */
-.absolute.top-1/2 {
-  top: 40%; /* Adjust this value to move the title block higher */
-  transform: translateY(-40%);
-}
 
 .custom-prose blockquote strong {
   color: rgba(255, 255, 255, 0.9) !important;
