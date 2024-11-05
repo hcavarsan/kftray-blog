@@ -1,5 +1,5 @@
 <template>
-  <AppLayout>
+  <AppLayout class="min-h-screen bg-white dark:bg-pickled-bluewood-900">
     <NuxtPage />
   </AppLayout>
 </template>
@@ -27,5 +27,13 @@ nav {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+body {
+  @apply bg-white dark:bg-pickled-bluewood-900;
+}
+
+:root {
+  color-scheme: light dark;
 }
 </style>

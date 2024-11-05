@@ -36,5 +36,20 @@
 		"pinceau": "0.18.9",
 		"unified": "^11.0.4",
 		"unist-util-visit": "^5.0.0"
+
+	},
+	"optionalDependencies": {
+		"fsevents": "^2.3.3"
+	  },
+
+	  "pnpm": {
+		"overrides": {
+		  "nitropack": "^2.10.2"
+		}
+	  },
+	  "resolutions": {
+		"nitropack": "^2.10.2",
+		"nuxt": "^3.12.0"
+	  }
 	}
-}
+

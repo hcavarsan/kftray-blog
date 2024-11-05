@@ -1,0 +1,35 @@
+.gradient-text {
+  background: linear-gradient(45deg, #81F6D4 10%, #12a87b 40%, #0FCF97 60%, #81F6D4 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% auto;
+  animation: gradient 4s linear infinite;
+}
+
+.feature-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.feature-list li {
+  background: rgba(137, 180, 250, 0.05);
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(137, 180, 250, 0.1);
+  transition: all 0.3s ease;
+}
+
+.feature-list li:hover {
+  transform: translateY(-2px);
+  background: rgba(137, 180, 250, 0.1);
+  border-color: rgba(137, 180, 250, 0.2);
+}
+
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}

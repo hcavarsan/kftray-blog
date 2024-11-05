@@ -31,6 +31,10 @@ export default <Config> {
           800: '#0F171C',
           900: '#040708',
         },
+        background: {
+          light: '#ffffff',
+          dark: '#2F4858'
+        }
       },
       typography: {
         DEFAULT: {
@@ -53,9 +57,20 @@ export default <Config> {
           },
         },
       },
+      animation: {
+        'gradient': 'gradient 4s linear infinite',
+      },
+      keyframes: {
+        gradient: {
+          '0%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' },
+        }
+      }
     },
   },
   plugins: [
     require('@tailwindcss/typography'),
   ],
+  darkMode: 'class',
 }
