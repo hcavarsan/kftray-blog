@@ -1,68 +1,112 @@
 <script setup lang="ts">
-import BlogComments from "~/components/blog/BlogComments.vue"
-import FormatDate from "~/components/common/FormatDate.vue"
-import { useContent } from '#imports'
+import BlogComments from "~/components/blog/BlogComments.vue";
+import FormatDate from "~/components/common/FormatDate.vue";
+import { useContent } from "#imports";
 
-const { page } = useContent()
+const { page } = useContent();
 
 // Format the timestamp
 const formattedDate = computed(() => {
-  if (!page.value?.timestamp) return null
-  return new Date(page.value.timestamp * 1000)
-})
+  if (!page.value?.timestamp) return null;
+  return new Date(page.value.timestamp * 1000);
+});
 </script>
 
 <template>
   <div>
     <div class="relative">
-      <LandingBanner badge-text="Release v0.14.9" text="A new version of kftray has been released."
-        link="https://github.com/hcavarsan/kftray/releases/tag/v0.14.9" link-text="Check it out →" />
+      <LandingBanner
+        badge-text="Release v0.14.9"
+        text="A new version of kftray has been released."
+        link="https://github.com/hcavarsan/kftray/releases/tag/v0.14.9"
+        link-text="Check it out →"
+      />
     </div>
 
     <div class="relative min-h-[91vh]">
-      <!-- Back button -->
-      <div class="absolute top-8 left-8 z-20">
-        <NuxtLink href="/blog"
-          class="group inline-flex items-center gap-2 px-4 py-2 text-sm text-white/80 hover:text-white transition-all duration-300 bg-pickled-bluewood-800/50 rounded-full backdrop-blur-sm">
-          <Icon name="heroicons-solid:arrow-left" />
-          Back to overview
-        </NuxtLink>
-      </div>
-
-      <!-- Header with Banner -->
+      <!-- Replace the existing header section (lines 32-72) with this: -->
       <header class="relative">
         <!-- Banner Image -->
-        <div class="relative h-[70vh] w-full overflow-hidden">
-          <img v-if="page?.image" :src="page.image" :alt="page.title" class="w-full h-full object-cover blur-[2px]" />
-          <div class="absolute inset-0 bg-gradient-to-b from-pickled-bluewood-900/80 via-pickled-bluewood-900/70 to-transparent">
-          </div>
-          <div class="absolute inset-0 bg-gradient-to-t from-pickled-bluewood-900 via-pickled-bluewood-900/90 to-transparent">
-          </div>
+        <div class="relative h-[50vh] lg:h-[70vh] w-full overflow-hidden">
+          <img
+            v-if="page?.image"
+            :src="page.image"
+            :alt="page.title"
+            class="w-full h-full object-cover blur-[2px]"
+          />
           <div
-            class="absolute inset-0 bg-gradient-to-r from-pickled-bluewood-900/50 via-transparent to-pickled-bluewood-900/50">
-          </div>
-          <div class="absolute inset-0 bg-pickled-bluewood-900/75 backdrop-blur-sm"></div>
+            class="absolute inset-0 bg-gradient-to-b from-pickled-bluewood-900/80 via-pickled-bluewood-900/70 to-transparent"
+          ></div>
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-pickled-bluewood-900 via-pickled-bluewood-900/90 to-transparent"
+          ></div>
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-pickled-bluewood-900/50 via-transparent to-pickled-bluewood-900/50"
+          ></div>
+          <div
+            class="absolute inset-0 bg-pickled-bluewood-900/75 backdrop-blur-sm"
+          ></div>
         </div>
 
         <!-- Post Info -->
         <div class="absolute top-1/2 inset-x-0 transform -translate-y-1/2">
-          <div class="max-w-3xl mx-auto px-6">
-            <p v-if="formattedDate" class="text-sm text-white/70 mb-4 relative z-10">
-              Published on <FormatDate :date="formattedDate" />
-            </p>
-            <h1 v-if="page?.title" class="text-4xl md:text-6xl font-light leading-tight mb-4 tracking-tight text-white relative z-10">
+          <div class="max-w-3xl mx-auto px-4 sm:px-6">
+            <!-- Navigation and Date -->
+            <div
+              class="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6"
+            >
+              <NuxtLink
+                href="/blog"
+                class="inline-flex items-center gap-2 px-4 py-2 text-sm bg-white/10 hover:bg-white/20 text-white/90 hover:text-white transition-all duration-300 rounded-full backdrop-blur-sm"
+              >
+                <Icon name="heroicons-solid:arrow-left" class="w-4 h-4" />
+                <span class="hidden sm:inline">Back to overview</span>
+                <span class="sm:hidden">Back</span>
+              </NuxtLink>
+
+              <div
+                v-if="formattedDate"
+                class="px-4 py-2 text-sm bg-white/10 rounded-full text-white/70 backdrop-blur-sm"
+              >
+                <time :datetime="formattedDate.toISOString()">
+                  <FormatDate :date="formattedDate" />
+                </time>
+              </div>
+            </div>
+
+            <!-- Title and Description -->
+            <h1
+              v-if="page?.title"
+              class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light leading-tight mb-4 tracking-tight text-white relative z-10"
+            >
               {{ page.title }}
             </h1>
-            <p v-if="page?.description" class="text-xl text-white/80 mb-8 font-light leading-relaxed relative z-10">
+            <p
+              v-if="page?.description"
+              class="text-lg sm:text-xl text-white/80 mb-8 font-light leading-relaxed relative z-10"
+            >
               {{ page.description }}
             </p>
-            <div v-if="page?.author" class="flex items-center gap-4 border-t border-white/10 pt-6 relative z-10">
+
+            <!-- Author Info -->
+            <div
+              v-if="page?.author"
+              class="flex items-center gap-4 border-t border-white/10 pt-6 relative z-10"
+            >
               <NuxtLink :href="page.avatarLink" target="_blank">
-                <img class="w-12 h-12 rounded-full ring-2 ring-white/10" :src="page.avatar" :alt="page.author">
+                <img
+                  class="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-white/10"
+                  :src="page.avatar"
+                  :alt="page.author"
+                />
               </NuxtLink>
               <div>
-                <NuxtLink :href="page.avatarLink" target="_blank" class="hover:text-white/90">
-                  <span class="block font-normal text-white/80">{{ page.author }}</span>
+                <NuxtLink
+                  :href="page.avatarLink"
+                  target="_blank"
+                  class="text-white/80 hover:text-white/90 transition-colors"
+                >
+                  <span class="block font-normal">{{ page.author }}</span>
                 </NuxtLink>
                 <p class="text-sm text-white/70">{{ page.position }}</p>
               </div>
@@ -74,12 +118,10 @@ const formattedDate = computed(() => {
       <!-- Article Content -->
       <article class="relative z-10 bg-pickled-bluewood-900">
         <div class="max-w-3xl mx-auto px-6 py-16">
-
           <div class="prose dark:prose-invert lg:prose-lg custom-prose">
             <ContentRenderer v-if="page" :value="page">
               <template #empty>
                 <p>No content available.</p>
-
               </template>
               <template #default="{ value }">
                 <ContentRendererMarkdown :value="value" />
@@ -162,7 +204,6 @@ header.relative {
   margin-bottom: 10rem; /* Add space after the header */
 }
 
-
 .custom-prose blockquote strong {
   color: rgba(255, 255, 255, 0.9) !important;
 }
@@ -184,7 +225,8 @@ header.relative {
   padding: 1.25rem !important;
   border-radius: 8px !important;
   overflow-x: auto !important;
-  font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Monaco, Consolas, monospace !important;
+  font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Monaco,
+    Consolas, monospace !important;
 }
 
 /* Syntax highlighting */
@@ -384,14 +426,13 @@ header.relative {
   quotes: none !important;
 }
 
-
 .bg-pickled-bluewood-900 {
   margin-top: -10rem;
   position: relative;
 }
 
 .bg-pickled-bluewood-900::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -20px;
   left: 0;
@@ -406,6 +447,4 @@ header.relative {
   );
   mask-image: linear-gradient(to bottom, transparent, black);
 }
-
-
 </style>
