@@ -16,9 +16,9 @@ const formattedDate = computed(() => {
   <div>
     <div class="relative">
       <LandingBanner
-        badge-text="Release v0.14.9"
+        badge-text="Release v0.15.0"
         text="A new version of kftray has been released."
-        link="https://github.com/hcavarsan/kftray/releases/tag/v0.14.9"
+        link="https://github.com/hcavarsan/kftray/releases/tag/v0.15.0"
         link-text="Check it out →"
       />
     </div>
