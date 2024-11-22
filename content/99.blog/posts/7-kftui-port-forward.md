@@ -13,7 +13,7 @@ avatarLink: https://github.com/hcavarsan
 published: true
 ---
 
-Hi all! This blog post announces the release of KFtray v0.15.0, and with it, the new tool KFtui. It's a terminal user interface This allows easy configuration of your port-forwarding settings. Let's dive in to see what's all about.
+Hi all! This blog post announces the release of KFtray v0.15.1, and with it, the new tool KFtui. It's a terminal user interface This allows easy configuration of your port-forwarding settings. Let's dive in to see what's all about.
 
 ![Complete Diagram](/img/ss-blog.png)
 
@@ -125,7 +125,7 @@ I'm actively working on these features and improvements. Your feedback is super 
 
 ## Conclusion
 
-KFtui in KFtray v0.15.0 offers a simple and efficient way to manage your port forwarding configurations. Whether you're working on a remote server or a local machine, KFtui aims to provide the tools you need. Give it a try and let me know what you think!
+KFtui in KFtray v0.15.1 offers a simple and efficient way to manage your port forwarding configurations. Whether you're working on a remote server or a local machine, KFtui aims to provide the tools you need. Give it a try and let me know what you think!
 
 ## Video Demo
 
@@ -142,7 +142,7 @@ And usage guide:
 [https://github.com/hcavarsan/kftray/blob/main/docs/kftui/USAGE.md](https://github.com/hcavarsan/kftray/blob/main/docs/kftui/USAGE.md)
 
 Also, check out the release:
-[https://github.com/hcavarsan/kftray/releases/tag/v0.15.0](https://github.com/hcavarsan/kftray/releases/tag/v0.15.0)
+[https://github.com/hcavarsan/kftray/releases/tag/v0.15.1](https://github.com/hcavarsan/kftray/releases/tag/v0.15.1)
 
 ---
 
