@@ -16,7 +16,7 @@ published: true
 <br/>
 
 <div style="text-align: center; margin-top: 20px">
-<img src="/img/github-post.png" alt="Kftray github" style="box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 15px 30px rgba(0, 0, 0, 0.8); border-radius: 10px " />
+<img src="/img/kftray-head.webp" alt="Kftray github" style="box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 15px 30px rgba(0, 0, 0, 0.8); border-radius: 10px " />
 </div>
 
 
