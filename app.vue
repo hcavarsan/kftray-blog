@@ -39,7 +39,7 @@ body {
 </style>
 
 <script setup>
-const title = '🦀 ⚡ kubectl port forward manager, with support for UDP and proxy connections through k8s clusters'
+const title = 'kftray - kubectl port-forward manager'
 const description = '🦀 ⚡ kubectl port forward manager, with support for UDP and proxy connections through k8s cluster'
 const image = 'https://repository-images.githubusercontent.com/723535263/f96a73f1-01f5-42bc-8239-dbc22dd3c4ef'
 
