@@ -59,8 +59,8 @@ useHead({
   link: [
     {
       rel: 'icon',
-      type: 'image/webp',
-      href: '/img/kftray-head.webp'
+      type: 'image/png',
+      href: '/img/logo.png'
     }
   ],
   meta: [
