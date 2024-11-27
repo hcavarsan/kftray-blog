@@ -96,7 +96,7 @@ Beyond the UI changes, we've made substantial improvements to how kftray handles
 
 ### Getting Started
 
-If you're interested in trying out kftray, you can find it on [GitHub](https://github.com/hcavarsan/kftray). The new features are available in the latest release [v0.15.1](https://github.com/hcavarsan/kftray/releases/tag/v0.15.1), and the documentation includes examples for different setup scenarios.
+If you're interested in trying out kftray, you can find it on [GitHub](https://github.com/hcavarsan/kftray). The new features are available in the latest release [v0.15.2](https://github.com/hcavarsan/kftray/releases/tag/v0.15.2), and the documentation includes examples for different setup scenarios.
 
 ### Community Feedback
 
