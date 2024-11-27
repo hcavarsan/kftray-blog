@@ -39,22 +39,35 @@ body {
 </style>
 
 <script setup>
+const title = '🦀 ⚡ kubectl port forward manager, with support for UDP and proxy connections through k8s clusters'
+const description = '🦀 ⚡ kubectl port forward manager, with support for UDP and proxy connections through k8s cluster'
+const image = 'https://repository-images.githubusercontent.com/723535263/f96a73f1-01f5-42bc-8239-dbc22dd3c4ef'
+
 useSeoMeta({
-  ogTitle: 'Manage and share multiple kubectl port-forward in the menu bar',
-  ogDescription: 'kubectl port-forward manager, with support for UDP and proxy connections through k8s clusters',
-  ogImage: '/img/kftray-head.webp',
+  title,
+  description,
+
+  // OpenGraph
+  ogTitle: title,
+  ogDescription: description,
+  ogImage: image,
   ogUrl: 'https://kftray.app',
   ogType: 'website',
   ogSiteName: 'Kftray',
+
+  // Twitter
+  twitterCard: 'summary_large_image',
   twitterSite: '@kftray',
-  twitterTitle: 'Manage and share multiple kubectl port-forward in the menu bar',
-  twitterDescription: 'kubectl port-forward manager, with support for UDP and proxy connections through k8s clusters',
-  twitterImage: '/img/kftray-head.webp',
-  twitterImageAlt: 'Kftray Image',
-  twitterCard: 'summary'
+  twitterTitle: title,
+  twitterDescription: description,
+  twitterImage: image,
+  twitterImageAlt: 'Kftray Preview Image',
+  twitterDomain: 'kftray.app',
+  twitterUrl: 'https://kftray.app',
 })
 
 useHead({
+  title,
   htmlAttrs: {
     lang: 'en'
   },
@@ -65,5 +78,11 @@ useHead({
       href: '/img/logo.png'
     }
   ],
+  meta: [
+    {
+      name: 'description',
+      content: description
+    }
+  ]
 })
 </script>
