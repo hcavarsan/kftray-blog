@@ -66,11 +66,11 @@ useHead({
   meta: [
     {
       name: 'title',
-      content: 'Kftray - Manage and share multiple kubectl port-forward in the menu bar'
+      content: 'Manage and share multiple kubectl port-forward in the menu bar'
     },
     {
       name: 'description',
-      content: 'Kftray is a kubectl port forward manager, with support for UDP and proxy connections through k8s clusters'
+      content: 'kubectl port-forward manager, with support for UDP and proxy connections through k8s clusters'
     }
   ]
 })
