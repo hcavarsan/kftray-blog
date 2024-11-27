@@ -46,10 +46,12 @@ useSeoMeta({
   ogUrl: 'https://kftray.app',
   ogType: 'website',
   ogSiteName: 'Kftray',
+  twitterSite: '@kftray',
   twitterTitle: 'Manage and share multiple kubectl port-forward in the menu bar',
   twitterDescription: 'kubectl port-forward manager, with support for UDP and proxy connections through k8s clusters',
   twitterImage: '/img/kftray-head.webp',
-  twitterCard: 'summary_large_image'
+  twitterImageAlt: 'Kftray Image',
+  twitterCard: 'summary'
 })
 
 useHead({
