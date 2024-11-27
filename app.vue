@@ -43,7 +43,7 @@ useSeoMeta({
   ogTitle: 'Kftray - Manage and share multiple kubectl port-forward in the menu bar',
   ogDescription: 'Kftray is a kubectl port forward manager, with support for UDP and proxy connections through k8s clusters ',
   ogImage: '/img/kftray-head.webp',
-  ogUrl: 'https://kftray.dev',
+  ogUrl: 'https://kftray.app',
   ogType: 'website',
   ogSiteName: 'Kftray',
   twitterTitle: 'Kftray - Manage and share multiple kubectl port-forward in the menu bar',
