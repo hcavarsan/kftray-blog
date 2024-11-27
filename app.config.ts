@@ -3,9 +3,6 @@ export default defineAppConfig({
   docus: {
     title: 'kftray',
     description: 'Manage and share multiple kubectl port-forward in the menu bar',
-    socials: {
-      github: 'hcavarsan/kftray',
-    },
     github: {
       dir: '.starters/default/content',
       branch: 'main',
