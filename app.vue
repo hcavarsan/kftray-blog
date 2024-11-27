@@ -65,15 +65,5 @@ useHead({
       href: '/img/logo.png'
     }
   ],
-  meta: [
-    {
-      name: 'title',
-      content: 'Manage and share multiple kubectl port-forward in the menu bar'
-    },
-    {
-      name: 'description',
-      content: 'kubectl port-forward manager, with support for UDP and proxy connections through k8s clusters'
-    }
-  ]
 })
 </script>
