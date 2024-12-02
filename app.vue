@@ -97,7 +97,7 @@ useHead({
     { name: 'twitter:image:width', content: '1200' },
     { name: 'twitter:image:height', content: '630' },
     { name: 'twitter:site', content: '@kftray' },
-    { name: 'twitter:creator', content: '@kftray' },s
+    { name: 'twitter:creator', content: '@kftray' },
     { name: 'twitter:image:alt', content: page.value?.imageAlt || page.value?.title || 'kftray' },
   ]
 })
