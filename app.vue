@@ -44,7 +44,7 @@ const route = useRoute()
 const { page } = useContent()
 
 // Get image path and ensure it's a full URL
-const imagePath = page.value?.image || '/img/kftray-head.webp'
+const imagePath = page.value?.image || '/img/kftray-head.png'
 const fullImageUrl = imagePath.startsWith('http')
   ? imagePath
   : `${baseUrl}${imagePath}`
