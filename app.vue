@@ -58,7 +58,7 @@ useHead({
     {
       rel: 'icon',
       type: 'image/png',
-      href: '/img/kftray.png'
+      href: '/img/logo.png'
     }
   ],
   meta: [
