@@ -56,8 +56,11 @@ const getImageType = (imagePath) => {
   }
 }
 
-// Get image path and type
+// Get image path and ensure it's a full URL
 const imagePath = page.value?.image || '/img/kftray-head.webp'
+const fullImageUrl = imagePath.startsWith('http')
+  ? imagePath
+  : `${baseUrl}${imagePath}`
 const imageType = getImageType(imagePath)
 
 // Configure head with template
@@ -85,7 +88,7 @@ useHead({
     // Open Graph
     { property: 'og:title', content: page.value?.title || 'kftray' },
     { property: 'og:description', content: page.value?.description || 'A modern Kubernetes port-forward UI manager' },
-    { property: 'og:image', content: `${baseUrl}${imagePath}` },
+    { property: 'og:image', content: fullImageUrl },
     { property: 'og:image:width', content: '1200' },
     { property: 'og:image:height', content: '630' },
     { property: 'og:image:type', content: imageType },
@@ -97,7 +100,7 @@ useHead({
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:title', content: page.value?.title || 'kftray' },
     { name: 'twitter:description', content: page.value?.description || 'A modern Kubernetes port-forward UI manager' },
-    { name: 'twitter:image', content: `${baseUrl}${imagePath}` },
+    { name: 'twitter:image', content: fullImageUrl },
     { name: 'twitter:site', content: '@kftray' },
     { name: 'twitter:creator', content: '@kftray' },
   ]
