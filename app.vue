@@ -43,6 +43,23 @@ const baseUrl = process.dev ? 'http://localhost:3000' : 'https://kftray.app'
 const route = useRoute()
 const { page } = useContent()
 
+// Helper function to get image type
+const getImageType = (imagePath) => {
+  if (!imagePath) return 'image/webp';
+  const ext = imagePath.split('.').pop().toLowerCase();
+  switch (ext) {
+    case 'webp': return 'image/webp';
+    case 'png': return 'image/png';
+    case 'jpg':
+    case 'jpeg': return 'image/jpeg';
+    default: return 'image/webp';
+  }
+}
+
+// Get image path and type
+const imagePath = page.value?.image || '/img/kftray-head.webp'
+const imageType = getImageType(imagePath)
+
 // Configure head with template
 useHead({
   htmlAttrs: {
@@ -68,7 +85,10 @@ useHead({
     // Open Graph
     { property: 'og:title', content: page.value?.title || 'kftray' },
     { property: 'og:description', content: page.value?.description || 'A modern Kubernetes port-forward UI manager' },
-    { property: 'og:image', content: `${baseUrl}${page.value?.image || '/img/kftray-head.webp'}` },
+    { property: 'og:image', content: `${baseUrl}${imagePath}` },
+    { property: 'og:image:width', content: '1200' },
+    { property: 'og:image:height', content: '630' },
+    { property: 'og:image:type', content: imageType },
     { property: 'og:url', content: `${baseUrl}${route.path}` },
     { property: 'og:type', content: route.path.includes('/blog/posts/') ? 'article' : 'website' },
     { property: 'og:site_name', content: 'kftray' },
@@ -77,7 +97,7 @@ useHead({
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:title', content: page.value?.title || 'kftray' },
     { name: 'twitter:description', content: page.value?.description || 'A modern Kubernetes port-forward UI manager' },
-    { name: 'twitter:image', content: `${baseUrl}${page.value?.image || '/img/kftray-head.webp'}` },
+    { name: 'twitter:image', content: `${baseUrl}${imagePath}` },
     { name: 'twitter:site', content: '@kftray' },
     { name: 'twitter:creator', content: '@kftray' },
   ]
