@@ -44,28 +44,77 @@ const baseUrl = process.dev ? 'http://localhost:3000' : metaBaseUrl
 const route = useRoute()
 const { page } = useContent()
 
-// Helper function to format image URL
+// Helper function to format image URL with forced absolute URLs
 const formatImageUrl = (imagePath) => {
-  if (!imagePath) return `${metaBaseUrl}/img/kftray-head.webp`
-  if (imagePath.startsWith('http')) return imagePath
+  // Always log the input
+  console.log('Formatting Image URL:', {
+    input: imagePath,
+    env: process.dev ? 'development' : 'production',
+    isSSR: process.server
+  })
+
+  if (!imagePath) {
+    const defaultUrl = `${metaBaseUrl}/img/kftray-head.webp`
+    console.log('Using default image:', defaultUrl)
+    return defaultUrl
+  }
+
+  if (imagePath.startsWith('http')) {
+    console.log('Already absolute URL:', imagePath)
+    return imagePath
+  }
 
   // Ensure the path starts with a slash
   const cleanPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`
 
-  // Add image processing parameters like Hashnode
-  const imageUrl = new URL(`${metaBaseUrl}${cleanPath}`)
-  imageUrl.searchParams.append('w', '1200')
-  imageUrl.searchParams.append('auto', 'compress,format')
+  // Always use metaBaseUrl for absolute URLs
+  const fullUrl = `${metaBaseUrl}${cleanPath}`
 
-  return imageUrl.toString()
+  try {
+    const imageUrl = new URL(fullUrl)
+
+    // Add parameters
+    imageUrl.searchParams.set('w', '1200')
+    imageUrl.searchParams.set('auto', 'compress,format')
+
+    // Add cache buster in development
+    if (process.dev) {
+      imageUrl.searchParams.set('_', Date.now().toString())
+    }
+
+    const finalUrl = imageUrl.toString()
+    console.log('Final formatted URL:', {
+      original: imagePath,
+      clean: cleanPath,
+      final: finalUrl,
+      isSSR: process.server
+    })
+
+    return finalUrl
+  } catch (error) {
+    console.error('URL formatting error:', error)
+    return fullUrl
+  }
 }
 
-// Get image paths
-const imagePath = page.value?.image || '/img/kftray-head.png'
-const fullImageUrl = formatImageUrl(imagePath)
-const thumbnailUrl = fullImageUrl
+// Get image paths - make it reactive
+const fullImageUrl = computed(() => {
+  const imagePath = page.value?.image || '/img/kftray-head.png'
+  return formatImageUrl(imagePath)
+})
 
+const thumbnailUrl = computed(() => fullImageUrl.value)
 
+// Environment logging
+console.log('Meta Configuration:', {
+  isDev: process.dev,
+  isSSR: process.server,
+  baseUrl,
+  metaBaseUrl,
+  currentUrl: url.toString(),
+  pageImage: page.value?.image,
+  formattedImage: fullImageUrl.value
+})
 
 useHead({
   htmlAttrs: {
@@ -83,7 +132,7 @@ useHead({
     },
     {
       rel: 'image_src',
-      href: thumbnailUrl
+      href: unref(thumbnailUrl)
     }
   ],
   meta: [
@@ -91,14 +140,14 @@ useHead({
     { name: 'description', content: page.value?.description || 'A modern Kubernetes port-forward UI manager' },
 
     // Reddit specific
-    { name: 'thumbnail', content: thumbnailUrl },
-    { property: 'reddit:image', content: thumbnailUrl },
-    { property: 'reddit:thumbnail', content: thumbnailUrl },
+    { name: 'thumbnail', content: unref(thumbnailUrl) },
+    { property: 'reddit:image', content: unref(thumbnailUrl) },
+    { property: 'reddit:thumbnail', content: unref(thumbnailUrl) },
 
     // Open Graph
     { property: 'og:title', content: page.value?.title || 'kftray' },
     { property: 'og:description', content: page.value?.description || 'A modern Kubernetes port-forward UI manager' },
-    { property: 'og:image', content: fullImageUrl },
+    { property: 'og:image', content: unref(fullImageUrl) },
     { property: 'og:image:width', content: '1200' },
     { property: 'og:image:height', content: '630' },
     { property: 'og:url', content: `${metaBaseUrl}${route.path}` },
@@ -110,7 +159,7 @@ useHead({
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:title', content: page.value?.title || 'kftray' },
     { name: 'twitter:description', content: page.value?.description || 'A modern Kubernetes port-forward UI manager' },
-    { name: 'twitter:image', content: fullImageUrl },
+    { name: 'twitter:image', content: unref(fullImageUrl) },
     { name: 'twitter:image:width', content: '1200' },
     { name: 'twitter:image:height', content: '630' },
     { name: 'twitter:site', content: '@kftray' },
