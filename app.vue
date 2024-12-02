@@ -148,7 +148,6 @@ useHead({
     { property: 'og:title', content: page.value?.title || 'kftray' },
     { property: 'og:description', content: page.value?.description || 'A modern Kubernetes port-forward UI manager' },
     { property: 'og:image', content: unref(fullImageUrl) },
-    { property: 'image', content: unref(fullImageUrl) },
     { property: 'og:image:width', content: '1200' },
     { property: 'og:image:height', content: '630' },
     { property: 'og:url', content: `${metaBaseUrl}${route.path}` },
@@ -165,6 +164,7 @@ useHead({
     { name: 'twitter:image:height', content: '630' },
     { name: 'twitter:site', content: '@kftray' },
     { name: 'twitter:creator', content: '@kftray' },
+    { name: 'image', content: unref(fullImageUrl) },
     { name: 'twitter:image:alt', content: page.value?.imageAlt || page.value?.title || 'kftray' },
   ]
 })
