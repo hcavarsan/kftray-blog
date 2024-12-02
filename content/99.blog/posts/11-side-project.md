@@ -2,7 +2,7 @@
 layout: post
 title: Side Projects - when solving your own problem leads to unexpected growth
 description: Thoughts on how building something to fix your own problems can grow your technical skills & perspective
-image: /img/side-project.webp
+image: /img/side-project.jpg
 timestamp: 1733153095
 author: Henrique Cavarsan
 position: Maintainer
