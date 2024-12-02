@@ -64,17 +64,21 @@ useSeoMeta(() => {
   const safeDescription = pageData.description || description;
   const safeImage = getImageUrl(pageData.image);
 
-  const meta = {
+  return {
+    // Basic meta tags
     title: safeTitle,
     description: safeDescription,
 
+    // Open Graph
     ogTitle: safeTitle,
     ogDescription: safeDescription,
     ogImage: safeImage,
     ogUrl: url?.href || baseUrl,
-    ogType: 'website',
+    ogType: pageData.type === 'post' ? 'article' : 'website',
     ogSiteName: 'Kftray',
+    ogLocale: 'en_US',
 
+    // Twitter
     twitterCard: 'summary_large_image',
     twitterTitle: safeTitle,
     twitterDescription: safeDescription,
@@ -83,23 +87,34 @@ useSeoMeta(() => {
     twitterCreator: '@kftray',
     twitterDomain: 'kftray.app',
 
+    // Additional meta
     author: pageData.author || 'Henrique Cavarsan',
     robots: 'index, follow',
     viewport: 'width=device-width, initial-scale=1',
     canonical: url?.href || baseUrl,
-  };
 
-  // Only add date if it exists and is valid
-  if (formattedDate?.value) {
-    meta.articlePublishedTime = formattedDate.value.toISOString();
+    // Article specific meta (only added if they exist)
+    ...(formattedDate?.value && {
+      articlePublishedTime: formattedDate.value.toISOString(),
+      ogArticlePublishedTime: formattedDate.value.toISOString(),
+      datePublished: formattedDate.value.toISOString()
+    }),
+    ...(pageData.updatedAt && {
+      articleModifiedTime: pageData.updatedAt,
+      ogArticleModifiedTime: pageData.updatedAt,
+      dateModified: pageData.updatedAt
+    }),
+    ...(pageData.author && {
+      articleAuthor: pageData.author,
+      ogArticleAuthor: pageData.author
+    }),
+    ...(pageData.category && {
+      articleSection: pageData.category
+    }),
+    ...(pageData.tags && {
+      articleTag: pageData.tags
+    })
   }
-
-  // Only add author if it exists
-  if (pageData.author) {
-    meta.articleAuthor = pageData.author;
-  }
-
-  return meta;
 });
 
 const getImageUrl = (pageImage) => {
