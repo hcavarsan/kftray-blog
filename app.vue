@@ -148,6 +148,7 @@ useHead({
     { property: 'og:title', content: page.value?.title || 'kftray' },
     { property: 'og:description', content: page.value?.description || 'A modern Kubernetes port-forward UI manager' },
     { property: 'og:image', content: unref(fullImageUrl) },
+    { property: 'image', content: unref(fullImageUrl) },
     { property: 'og:image:width', content: '1200' },
     { property: 'og:image:height', content: '630' },
     { property: 'og:url', content: `${metaBaseUrl}${route.path}` },
