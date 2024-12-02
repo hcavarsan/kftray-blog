@@ -63,6 +63,10 @@ useSeoMeta(() => {
   const safeTitle = pageData.title || title;
   const safeDescription = pageData.description || description;
   const safeImage = getImageUrl(pageData.image);
+  const safeUrl = url?.href || baseUrl;
+
+  // Get timestamp or fallback to current time
+  const timestamp = pageData.timestamp || Math.floor(Date.now() / 1000);
 
   return {
     // Basic meta tags
@@ -70,49 +74,47 @@ useSeoMeta(() => {
     description: safeDescription,
 
     // Open Graph
+    ogType: 'article', // Since this is for blog posts
     ogTitle: safeTitle,
     ogDescription: safeDescription,
+    ogUrl: safeUrl,
     ogImage: safeImage,
-    ogUrl: url?.href || baseUrl,
-    ogType: pageData.type === 'post' ? 'article' : 'website',
-    ogSiteName: 'Kftray',
+    ogImageAlt: safeTitle,
+    ogImageWidth: 1200,
+    ogImageHeight: 630,
     ogLocale: 'en_US',
+    ogSiteName: 'Kftray',
 
-    // Twitter
+    // Twitter Cards
     twitterCard: 'summary_large_image',
     twitterTitle: safeTitle,
     twitterDescription: safeDescription,
     twitterImage: safeImage,
+    twitterImageAlt: safeTitle,
     twitterSite: '@kftray',
     twitterCreator: '@kftray',
     twitterDomain: 'kftray.app',
 
-    // Additional meta
+    // Additional meta based on your blog format
     author: pageData.author || 'Henrique Cavarsan',
-    robots: 'index, follow',
+    robots: pageData.published ? 'index, follow' : 'noindex, nofollow',
     viewport: 'width=device-width, initial-scale=1',
-    canonical: url?.href || baseUrl,
+    canonical: safeUrl,
 
-    // Article specific meta (only added if they exist)
-    ...(formattedDate?.value && {
-      articlePublishedTime: formattedDate.value.toISOString(),
-      ogArticlePublishedTime: formattedDate.value.toISOString(),
-      datePublished: formattedDate.value.toISOString()
+    // Article specific meta
+    articlePublishedTime: new Date(timestamp * 1000).toISOString(),
+    ogArticlePublishedTime: new Date(timestamp * 1000).toISOString(),
+    datePublished: new Date(timestamp * 1000).toISOString(),
+
+    // Additional article metadata
+    ...(pageData.position && {
+      articleSection: pageData.position
     }),
-    ...(pageData.updatedAt && {
-      articleModifiedTime: pageData.updatedAt,
-      ogArticleModifiedTime: pageData.updatedAt,
-      dateModified: pageData.updatedAt
+    ...(pageData.avatar && {
+      authorImage: pageData.avatar
     }),
-    ...(pageData.author && {
-      articleAuthor: pageData.author,
-      ogArticleAuthor: pageData.author
-    }),
-    ...(pageData.category && {
-      articleSection: pageData.category
-    }),
-    ...(pageData.tags && {
-      articleTag: pageData.tags
+    ...(pageData.avatarLink && {
+      authorUrl: pageData.avatarLink
     })
   }
 });
