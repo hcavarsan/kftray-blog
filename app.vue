@@ -58,17 +58,25 @@ useHead({
     {
       rel: 'icon',
       type: 'image/png',
-      href: '/img/logo.png'
+      href: '/img/kftray.png'
     },
     // Apple touch icon
     {
       rel: 'apple-touch-icon',
-      href: '/img/logo.png'
+      href: '/img/kftray.png'
+    },
+    // Add thumbnail for Reddit
+    {
+      rel: 'image_src',
+      href: fullImageUrl
     }
   ],
   meta: [
     // Basic meta
     { name: 'description', content: page.value?.description || 'A modern Kubernetes port-forward UI manager' },
+
+    // Reddit specific
+    { name: 'thumbnail', content: fullImageUrl },
 
     // Open Graph
     { property: 'og:title', content: page.value?.title || 'kftray' },
@@ -88,9 +96,9 @@ useHead({
     { name: 'twitter:image', content: fullImageUrl },
     { name: 'twitter:image:width', content: '1200' },
     { name: 'twitter:image:height', content: '630' },
-    { name: 'twitter:image:alt', content: page.value?.imageAlt || page.value?.title || 'kftray' },
     { name: 'twitter:site', content: '@kftray' },
-    { name: 'twitter:creator', content: '@kftray' },
+    { name: 'twitter:creator', content: '@kftray' },s
+    { name: 'twitter:image:alt', content: page.value?.imageAlt || page.value?.title || 'kftray' },
   ]
 })
 </script>
