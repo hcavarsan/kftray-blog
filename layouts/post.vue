@@ -48,7 +48,10 @@ useHead(() => ({
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:title', content: page.value?.title },
     { name: 'twitter:description', content: page.value?.description },
-    { name: 'twitter:image', content: page.value?.image },
+    { name: 'twitter:image', content: page.value?.image?.startsWith('http')
+      ? page.value.image
+      : `${baseUrl}${page.value?.image}`
+    },
 
     // Article specific meta tags
     { property: 'article:published_time', content: formattedDate.value?.toISOString() },
