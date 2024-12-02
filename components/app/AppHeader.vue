@@ -6,39 +6,61 @@ const { hasDocSearch } = useDocSearch()
 
 const hasDialog = computed(() => navigation.value?.length > 1 || navigation.value?.[0]?.children?.length)
 
+const currentBanner = computed(() => {
+  const now = Date.now()
+  return {
+    badgeText: "Release v0.15.2",
+    text: "A new version of kftray has been released.",
+    link: "https://github.com/hcavarsan/kftray/releases/tag/v0.15.2",
+    linkText: "Check it out →"
+  }
+})
+
 defineProps({
   ...variants
 })
 </script>
 
 <template>
-  <header :class="{ 'has-dialog': hasDialog }">
-    <Container :fluid="config?.header?.fluid">
-      <div class="section left">
-        <AppHeaderDialog v-if="hasDialog" />
-        <AppHeaderLogo />
-      </div>
+  <div>
 
-      <div class="section center">
-        <AppHeaderLogo v-if="hasDialog" />
-        <AppHeaderNavigation />
-      </div>
-
-      <div class="section right">
-		<ThemeSelect />
-        <AppDocSearch v-if="hasDocSearch" />
-        <AppSearch
-          v-else
-          :fuse="config.fuse"
-        />
-		<GithubStars class="github-stars" />
-        <div class="social-icons">
-          <AppSocialIcons />
+    <header :class="{ 'has-dialog': hasDialog }">
+      <Container :fluid="config?.header?.fluid">
+        <div class="section left">
+          <AppHeaderDialog v-if="hasDialog" />
+          <AppHeaderLogo />
         </div>
 
-      </div>
-    </Container>
-  </header>
+        <div class="section center">
+          <AppHeaderLogo v-if="hasDialog" />
+          <AppHeaderNavigation />
+        </div>
+
+        <div class="section right">
+          <ThemeSelect />
+          <AppDocSearch v-if="hasDocSearch" />
+          <AppSearch
+            v-else
+            :fuse="config.fuse"
+          />
+          <GithubStars class="github-stars" />
+          <div class="social-icons">
+            <AppSocialIcons />
+          </div>
+        </div>
+		<div class="banner-container"></div>
+
+      </Container>
+
+    </header>
+	<LandingBanner
+      v-if="currentBanner"
+      :badge-text="currentBanner.badgeText"
+      :text="currentBanner.text"
+      :link="currentBanner.link"
+      :link-text="currentBanner.linkText"
+    />
+  </div>
 </template>
 
 <style scoped lang="ts">

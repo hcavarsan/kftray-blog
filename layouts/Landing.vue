@@ -2,8 +2,6 @@
 <template>
 	<div class="page-layout">
 	  <div class="relative overflow-hidden">
-		<LandingBanner badge-text="Release v0.15.2" text="A new version of kftray has been released."
-		  link="https://github.com/hcavarsan/kftray/releases/tag/v0.15.2" link-text="Check it out →" />
 		<Ellipsis right="0" width="85%" blur="150px"
 		  class="ellipsis-container transition-opacity duration-500"
 		  :class="{ 'opacity-100': isLoaded }" />

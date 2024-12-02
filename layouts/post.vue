@@ -14,14 +14,6 @@ const formattedDate = computed(() => {
 
 <template>
   <div>
-    <div class="relative">
-      <LandingBanner
-        badge-text="Release v0.15.2"
-        text="A new version of kftray has been released."
-        link="https://github.com/hcavarsan/kftray/releases/tag/v0.15.2"
-        link-text="Check it out →"
-      />
-    </div>
 
     <div class="relative min-h-[91vh]">
       <!-- Replace the existing header section (lines 32-72) with this: -->

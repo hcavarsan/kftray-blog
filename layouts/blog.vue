@@ -10,12 +10,6 @@ const contentQuery = await queryContent('blog/posts').sort(
   <div class="relative min-h-screen bg-gray-50 dark:bg-pickled-bluewood-900">
     <div class="relative">
 		<Ellipsis right="0" width="85%" blur="150px" />
-      <LandingBanner
-        badge-text="Release v0.15.2"
-        text="A new version of kftray has been released."
-        link="https://github.com/hcavarsan/kftray/releases/tag/v0.15.2"
-        link-text="Check it out →"
-      />
     </div>
 
     <div class="relative">
