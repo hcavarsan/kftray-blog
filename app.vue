@@ -62,20 +62,25 @@ useSeoMeta(() => {
   const pageData = page?.value || {};
   const safeTitle = pageData.title || title;
   const safeDescription = pageData.description || description;
-  const safeImage = getImageUrl(pageData.image);
   const safeUrl = url?.href || baseUrl;
 
-  const timestamp = pageData.timestamp || Math.floor(Date.now() / 1000);
+  // Helper function to ensure absolute URLs for images
+  const getAbsoluteImageUrl = (imagePath) => {
+    if (!imagePath) return `${baseUrl}/img/kftray-logo.webp`; // default image
+    if (imagePath.startsWith('http')) return imagePath;
+    return `${baseUrl}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
+  };
 
-  return {
+  const safeImage = getAbsoluteImageUrl(pageData.image);
+
+  // Base meta for all layouts
+  const baseMeta = {
     title: safeTitle,
     description: safeDescription,
-
-    // Open Graph
-    ogType: 'article',
-    ogTitle: safeTitle,
-    ogDescription: safeDescription,
     ogUrl: safeUrl,
+    canonical: safeUrl,
+
+    // Ensure absolute URLs for images
     ogImage: safeImage,
     ogImageAlt: safeTitle,
     ogImageWidth: 1200,
@@ -85,36 +90,40 @@ useSeoMeta(() => {
 
     // Twitter Cards
     twitterCard: 'summary_large_image',
+    twitterImage: safeImage, // Ensure absolute URL here too
+    twitterImageAlt: safeTitle,
     twitterTitle: safeTitle,
     twitterDescription: safeDescription,
-    twitterImage: safeImage,
-    twitterImageAlt: safeTitle,
     twitterSite: '@kftray',
     twitterCreator: '@kftray',
     twitterDomain: 'kftray.app',
 
-    // Additional meta based on your blog format
-    author: pageData.author || 'Henrique Cavarsan',
-    robots: pageData.published ? 'index, follow' : 'noindex, nofollow',
     viewport: 'width=device-width, initial-scale=1',
-    canonical: safeUrl,
+    robots: pageData.published === false ? 'noindex, nofollow' : 'index, follow'
+  };
 
-    // Article specific meta
-    articlePublishedTime: new Date(timestamp * 1000).toISOString(),
-    ogArticlePublishedTime: new Date(timestamp * 1000).toISOString(),
-    datePublished: new Date(timestamp * 1000).toISOString(),
+  const layout = pageData.layout || 'docs';
 
-    // Additional article metadata
-    ...(pageData.position && {
-      articleSection: pageData.position
-    }),
-    ...(pageData.avatar && {
-      authorImage: pageData.avatar
-    }),
-    ...(pageData.avatarLink && {
-      authorUrl: pageData.avatarLink
-    })
+  if (layout === 'post') {
+    return {
+      ...baseMeta,
+      ogType: 'article',
+      author: pageData.author || 'Henrique Cavarsan',
+      ...(pageData.timestamp && {
+        articlePublishedTime: new Date(pageData.timestamp * 1000).toISOString(),
+        ogArticlePublishedTime: new Date(pageData.timestamp * 1000).toISOString()
+      }),
+      ...(pageData.position && {
+        articleSection: pageData.position
+      })
+    };
   }
+
+  // For non-post layouts
+  return {
+    ...baseMeta,
+    ogType: 'website'
+  };
 });
 
 const getImageUrl = (pageImage) => {
