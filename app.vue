@@ -39,44 +39,50 @@ body {
 
 <script setup>
 const url = useRequestURL()
-const baseUrl = process.dev ? 'http://localhost:3000' : 'https://kftray.app'
+// Always use production URL for meta tags to ensure social media can access images
+const metaBaseUrl = 'https://kftray.app'
+const baseUrl = process.dev ? 'http://localhost:3000' : metaBaseUrl
 const route = useRoute()
 const { page } = useContent()
 
 // Get image path and ensure it's a full URL
-const imagePath = page.value?.image || '/img/kftray-head.png'
+const imagePath = page.value?.image || '/img/kftray-head.webp'
 const fullImageUrl = imagePath.startsWith('http')
   ? imagePath
-  : `${baseUrl}${imagePath}`
+  : `${metaBaseUrl}${imagePath}`  // Always use production URL for images
+
+// Create a smaller thumbnail URL for Reddit
+const thumbnailUrl = fullImageUrl
+
 
 useHead({
   htmlAttrs: {
     lang: 'en'
   },
   link: [
-    // Favicon
     {
       rel: 'icon',
       type: 'image/png',
       href: '/img/logo.png'
     },
-    // Apple touch icon
     {
       rel: 'apple-touch-icon',
       href: '/img/logo.png'
     },
-    // Add thumbnail for Reddit
+    // Reddit prefers image_src
     {
       rel: 'image_src',
-      href: fullImageUrl
+      href: thumbnailUrl
     }
   ],
   meta: [
     // Basic meta
     { name: 'description', content: page.value?.description || 'A modern Kubernetes port-forward UI manager' },
 
-    // Reddit specific
-    { name: 'thumbnail', content: fullImageUrl },
+    // Reddit specific (multiple formats to ensure compatibility)
+    { name: 'thumbnail', content: thumbnailUrl },
+    { property: 'reddit:image', content: thumbnailUrl },
+    { property: 'reddit:thumbnail', content: thumbnailUrl },
 
     // Open Graph
     { property: 'og:title', content: page.value?.title || 'kftray' },
