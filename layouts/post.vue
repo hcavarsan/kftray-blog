@@ -11,6 +11,8 @@ const formattedDate = computed(() => {
   return new Date(page.value.timestamp * 1000);
 });
 
+const baseUrl = process.client ? window.location.origin : 'https://kftray.app';
+
 // Add meta tags using useHead
 useHead(() => ({
   title: page.value?.title,
@@ -20,13 +22,27 @@ useHead(() => ({
 
     // OpenGraph meta tags
     { property: 'og:title', content: page.value?.title },
+    { name: 'title', content: page.value?.title },
     { property: 'og:description', content: page.value?.description },
-    { property: 'og:image', content: page.value?.image },
+    { property: 'og:image', content: page.value?.image?.startsWith('http')
+      ? page.value.image
+      : `${baseUrl}${page.value?.image}`
+    },
+    { name: 'image', content: page.value?.image?.startsWith('http')
+      ? page.value.image
+      : `${baseUrl}${page.value?.image}`
+    },
     { property: 'og:url', content: process.client ? window.location.href : undefined },
     { property: 'og:type', content: 'article' },
     { property: 'og:image:width', content: '1200' },
     { property: 'og:image:height', content: '630' },
     { property: 'og:image:alt', content: page.value?.title },
+
+    // Reddit-specific tags
+    { name: 'thumbnail', content: page.value?.image?.startsWith('http')
+      ? page.value.image
+      : `${baseUrl}${page.value?.image}`
+    },
 
     // Twitter Card meta tags
     { name: 'twitter:card', content: 'summary_large_image' },
