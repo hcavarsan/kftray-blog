@@ -42,78 +42,72 @@ body {
 const title =  '🦀 ⚡ kubectl port forward manager, with support for UDP and proxy connections through k8s cluster'
 const description = 'Manage and share multiple kubectl port-forward in the menu bar'
 const image = 'https://repository-images.githubusercontent.com/723535263/f96a73f1-01f5-42bc-8239-dbc22dd3c4ef'
-const baseUrl = process.client ? window.location.origin : 'https://kftray.app'
 
-useSeoMeta({
-  title,
-  description,
+const url = useRequestURL()
+const baseUrl = url.origin || 'https://kftray.app'
 
-  // OpenGraph
-  ogTitle: title,
-  ogDescription: description,
-  ogImage: image,
-  ogUrl: 'https://kftray.app',
-  ogType: 'website',
-  ogSiteName: 'Kftray',
-  ogImageWidth: '1200',
-  ogImageHeight: '630',
-  ogImageAlt: 'Kftray Preview Image',
+const page = useRoute()
 
-  // Twitter
-  twitterCard: 'summary_large_image',
-  twitterSite: '@kftray',
-  twitterTitle: title,
-  twitterDescription: description,
-  twitterImage: image,
-  twitterImageAlt: 'Kftray Preview Image',
-  twitterDomain: 'kftray.app',
-  twitterUrl: 'https://kftray.app',
+const formattedDate = computed(() => {
+  if (!page?.value?.date) return null;
+  try {
+    return new Date(page.value.date);
+  } catch {
+    return null;
+  }
+});
 
-  // Additional meta tags for better SEO
-  author: 'Henrique Cavarsan',
-  robots: 'index, follow',
-  viewport: 'width=device-width, initial-scale=1',
-  'format-detection': 'telephone=no',
-  canonical: 'https://kftray.app',
-})
+useSeoMeta(() => {
+  // Ensure we have valid data
+  const pageData = page?.value || {};
+  const safeTitle = pageData.title || title;
+  const safeDescription = pageData.description || description;
+  const safeImage = getImageUrl(pageData.image);
 
-useHead({
-  title,
-  htmlAttrs: {
-    lang: 'en'
-  },
-  link: [
-    {
-      rel: 'icon',
-      type: 'image/png',
-      href: '/img/logo.png'
-    },
-    {
-      rel: 'apple-touch-icon',
-      href: '/img/logo.png'
-    },
-    {
-      rel: 'canonical',
-      href: 'https://kftray.app'
-    }
-  ],
-  meta: [
-    {
-      name: 'description',
-      content: description
-    },
-    {
-      name: 'theme-color',
-      content: '#0FCF97'
-    },
-    {
-      name: 'apple-mobile-web-app-capable',
-      content: 'yes'
-    },
-    {
-      name: 'apple-mobile-web-app-status-bar-style',
-      content: 'black-translucent'
-    }
-  ]
-})
+  const meta = {
+    title: safeTitle,
+    description: safeDescription,
+
+    ogTitle: safeTitle,
+    ogDescription: safeDescription,
+    ogImage: safeImage,
+    ogUrl: url?.href || baseUrl,
+    ogType: 'website',
+    ogSiteName: 'Kftray',
+
+    twitterCard: 'summary_large_image',
+    twitterTitle: safeTitle,
+    twitterDescription: safeDescription,
+    twitterImage: safeImage,
+    twitterSite: '@kftray',
+    twitterCreator: '@kftray',
+    twitterDomain: 'kftray.app',
+
+    author: pageData.author || 'Henrique Cavarsan',
+    robots: 'index, follow',
+    viewport: 'width=device-width, initial-scale=1',
+    canonical: url?.href || baseUrl,
+  };
+
+  // Only add date if it exists and is valid
+  if (formattedDate?.value) {
+    meta.articlePublishedTime = formattedDate.value.toISOString();
+  }
+
+  // Only add author if it exists
+  if (pageData.author) {
+    meta.articleAuthor = pageData.author;
+  }
+
+  return meta;
+});
+
+const getImageUrl = (pageImage) => {
+  try {
+    if (!pageImage) return image;
+    return pageImage.startsWith('http') ? pageImage : `${baseUrl}${pageImage}`;
+  } catch {
+    return image;
+  }
+};
 </script>
