@@ -43,41 +43,26 @@ const baseUrl = process.dev ? 'http://localhost:3000' : 'https://kftray.app'
 const route = useRoute()
 const { page } = useContent()
 
-// Helper function to get image type
-const getImageType = (imagePath) => {
-  if (!imagePath) return 'image/webp';
-  const ext = imagePath.split('.').pop().toLowerCase();
-  switch (ext) {
-    case 'webp': return 'image/webp';
-    case 'png': return 'image/png';
-    case 'jpg':
-    case 'jpeg': return 'image/jpeg';
-    default: return 'image/webp';
-  }
-}
-
 // Get image path and ensure it's a full URL
 const imagePath = page.value?.image || '/img/kftray-head.webp'
 const fullImageUrl = imagePath.startsWith('http')
   ? imagePath
   : `${baseUrl}${imagePath}`
-const imageType = getImageType(imagePath)
 
-// Configure head with template
 useHead({
   htmlAttrs: {
-    lang: 'en',
-    'data-theme': 'dark'
-  },
-  titleTemplate: '%s · kftray',
-  templateParams: {
-    separator: '·',
-    siteName: 'kftray'
+    lang: 'en'
   },
   link: [
+    // Favicon
     {
       rel: 'icon',
       type: 'image/png',
+      href: '/img/logo.png'
+    },
+    // Apple touch icon
+    {
+      rel: 'apple-touch-icon',
       href: '/img/logo.png'
     }
   ],
@@ -91,16 +76,19 @@ useHead({
     { property: 'og:image', content: fullImageUrl },
     { property: 'og:image:width', content: '1200' },
     { property: 'og:image:height', content: '630' },
-    { property: 'og:image:type', content: imageType },
     { property: 'og:url', content: `${baseUrl}${route.path}` },
     { property: 'og:type', content: route.path.includes('/blog/posts/') ? 'article' : 'website' },
     { property: 'og:site_name', content: 'kftray' },
+    { property: 'og:image:alt', content: page.value?.imageAlt || page.value?.title || 'kftray' },
 
     // Twitter
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:title', content: page.value?.title || 'kftray' },
     { name: 'twitter:description', content: page.value?.description || 'A modern Kubernetes port-forward UI manager' },
     { name: 'twitter:image', content: fullImageUrl },
+    { name: 'twitter:image:width', content: '1200' },
+    { name: 'twitter:image:height', content: '630' },
+    { name: 'twitter:image:alt', content: page.value?.imageAlt || page.value?.title || 'kftray' },
     { name: 'twitter:site', content: '@kftray' },
     { name: 'twitter:creator', content: '@kftray' },
   ]
