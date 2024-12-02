@@ -58,12 +58,12 @@ useHead({
     {
       rel: 'icon',
       type: 'image/png',
-      href: '/img/kftray.png'
+      href: '/img/logo.png'
     },
     // Apple touch icon
     {
       rel: 'apple-touch-icon',
-      href: '/img/kftray.png'
+      href: '/img/logo.png'
     },
     // Add thumbnail for Reddit
     {
