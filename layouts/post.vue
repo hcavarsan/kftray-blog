@@ -11,6 +11,14 @@ const formattedDate = computed(() => {
   return new Date(page.value.timestamp * 1000);
 });
 
+// Get the image URL
+const bannerImage = computed(() => {
+  if (!page.value?.image) return null;
+  return page.value.image.startsWith('http')
+    ? page.value.image
+    : page.value.image;
+});
+
 </script>
 
 <template>
@@ -22,9 +30,9 @@ const formattedDate = computed(() => {
         <!-- Banner Image -->
         <div class="relative h-[50vh] lg:h-[70vh] w-full overflow-hidden">
           <img
-            v-if="page?.image"
-            :src="page.image"
-            :alt="page.title"
+            v-if="bannerImage"
+            :src="bannerImage"
+            :alt="page?.title"
             class="w-full h-full object-cover blur-[2px]"
           />
           <div
