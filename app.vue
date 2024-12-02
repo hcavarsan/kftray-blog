@@ -65,16 +65,14 @@ useSeoMeta(() => {
   const safeImage = getImageUrl(pageData.image);
   const safeUrl = url?.href || baseUrl;
 
-  // Get timestamp or fallback to current time
   const timestamp = pageData.timestamp || Math.floor(Date.now() / 1000);
 
   return {
-    // Basic meta tags
     title: safeTitle,
     description: safeDescription,
 
     // Open Graph
-    ogType: 'article', // Since this is for blog posts
+    ogType: 'article',
     ogTitle: safeTitle,
     ogDescription: safeDescription,
     ogUrl: safeUrl,
