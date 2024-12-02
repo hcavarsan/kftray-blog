@@ -45,6 +45,9 @@ importers:
       mermaid:
         specifier: ^11.4.0
         version: 11.4.0
+      nuxt-og-image:
+        specifier: ^4.0.0
+        version: 4.0.0(magicast@0.3.5)(rollup@3.29.5)(vite@5.4.10(@types/node@20.12.7)(terser@5.30.3))(vue@3.5.12(typescript@5.4.5))(webpack-sources@3.2.3)
       remark-gfm:
         specifier: ^4.0.0
         version: 4.0.0
@@ -6872,7 +6875,7 @@ snapshots:
       unified: 11.0.5
       unist-builder: 4.0.0
       unist-util-visit: 5.0.0
-      unwasm: 0.3.9(webpack-sources@3.2.3)
+      unwasm: 0.3.9
       vfile: 6.0.3
     transitivePeerDependencies:
       - magicast
@@ -10459,7 +10462,7 @@ snapshots:
       unimport: 3.13.2(rollup@4.24.4)(webpack-sources@3.2.3)
       unstorage: 1.13.1(ioredis@5.4.1)
       untyped: 1.5.1
-      unwasm: 0.3.9(webpack-sources@3.2.3)
+      unwasm: 0.3.9
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -10640,7 +10643,7 @@ snapshots:
       strip-literal: 2.1.1
       ufo: 1.5.4
       unplugin: 1.16.0
-      unwasm: 0.3.9(webpack-sources@3.2.3)
+      unwasm: 0.3.9
       yoga-wasm-web: 0.3.3
     transitivePeerDependencies:
       - magicast
@@ -12308,16 +12311,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  unwasm@0.3.9(webpack-sources@3.2.3):
+  unwasm@0.3.9:
     dependencies:
       knitwork: 1.1.0
-      magic-string: 0.30.12
+      magic-string: 0.30.14
       mlly: 1.7.3
       pathe: 1.1.2
       pkg-types: 1.2.1
-      unplugin: 1.15.0(webpack-sources@3.2.3)
-    transitivePeerDependencies:
-      - webpack-sources
+      unplugin: 1.16.0
 
   update-browserslist-db@1.0.13(browserslist@4.23.0):
     dependencies:

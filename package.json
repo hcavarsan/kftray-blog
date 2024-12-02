@@ -22,6 +22,7 @@
 		"@nuxtjs/seo": "^2.0.2",
 		"aos": "^2.3.4",
 		"mermaid": "^11.4.0",
+		"nuxt-og-image": "^4.0.0",
 		"remark-gfm": "^4.0.0",
 		"remark-parse": "^11.0.0"
 	},
