@@ -12,49 +12,41 @@ published: true
 ---
 
 
-# How Building a Side Project Transformed My Engineering Journey
+# Growing as an Engineer Through Side Projects
 
-I've been working as an SRE managing `kubernetes` environments for several years now. After spending a year building and maintaining my own open-source tool [kftray](https://github.com/hcavarsan/kftray), I wanted to share some reflections about how side projects can unexpectedly transform your growth as an engineer.
+I've been an SRE managing Kubernetes setups for a few years. After spending a year on my open-source tool, [kftray](https://github.com/hcavarsan/kftray), I want to share how side projects can really help you grow as an engineer.
 
-## From Frustration to Creation
+## How It Started
 
-It started with a common frustration - managing multiple `kubectl port-forward` commands across different terminal windows was becoming a daily headache. Instead of just dealing with it, I decided to build something to make my life easier. What began as a simple tool to handle port forwarding evolved into an *unexpected journey of technical discovery and professional growth*.
+I started with a common issue. managing multiple `kubectl port-forward` commands across different terminal windows was a daily pain. Instead of just putting up with it, I decided to create something that would simplify things. What was meant to be a small tool turned into a big learning experience.
 
 Watching others struggle with the same problem made me realize this wasn't just a personal annoyance. Every SRE on our team had their own hacky solutions - scripts, aliases, terminal multiplexers. None of them quite solved the core issue.
 
-## Into the Technical Rabbit Hole
+## Going Deep
 
-I chose to build with **Rust** and **TypeScript** - technologies I rarely touched at work. This decision pushed me far outside my comfort zone. Debugging memory leaks, understanding ownership patterns, dealing with cross-platform issues - *these challenges taught me more about systems programming than years of production work*.
+I chose Rust and TypeScript for the stack, not because they were the obvious choice, but because they would push me to learn. Cross-platform development showed me how many assumptions I was making about how computers work. Every bug became a lesson in systems design, every crash a deeper look into how computers handle resources.
 
-The learning curve was steep. The first couple of months felt like pushing through mud. `Rust`'s ownership model made me question everything I knew about memory management. Cross-platform development exposed me to system-level differences I never had to think about before.
+## The Learning Curve
 
-> Networking became fascinating in a way I never expected. I spent countless nights with tcpdump running and analyzing packets, really understanding how Kubernetes port-forwarding works under the hood.
+The funny thing about writing questionable code is how much it teaches you. My first attempt at network handling was interesting. But debugging at 2 AM has a way of teaching you things. Each refactor made me cringe at what I wrote before. Still does.
 
-I discovered patterns in protocol behavior that now help me spot similar issues in production environments. The knowledge gained from building something from scratch gave me insights that wouldn't come from just using existing tools.
+## Daily Impact
 
-## From Theory to Practice: Real-world Impact
+All those mistakes started paying off at work. Spotting bugs got easier because I'd probably made similar ones in my project. Design discussions became more interesting because I had real battle scars. Code reviews? Well, let's say I know what bad error handling looks like firsthand.
 
-What surprised me most was how this learning looped back into my daily work:
+## Dev Solo
 
-- **Debugging production issues** became more intuitive. When someone reports a networking problem, I now understand the underlying protocols better.
-- **Architecture discussions** got deeper. Making solo decisions about system design taught me to ask better questions during team reviews.
-- **Code quality** improved naturally. Dealing with cross-platform edge cases and user feedback made me more thoughtful about error handling and user experience.
+Building while working full-time is hard. The commit history tells a story of late-night coding sessions. Some parts of the code still make me cringe when I open them.
 
-## Building in Public: Lessons Beyond Code
-
-Building in public brought unexpected challenges and growth:
-
-> Documentation became an ~boring~ but required skill (im really bad at it but still trying to get better). Explaining technical concepts clearly isn't just about being thorough - it's about understanding your users' context and needs.
-
-Feedback handling evolved. Every `GitHub` issue, every feature request taught me something about listening and prioritizing. I learned to balance user needs with technical constraints, a skill that's invaluable in my day job.
-
-*Community interaction changed everything*. Seeing how others use your code, watching them find edge cases you never considered - it's humbling and educational. The **Kubernetes** community especially showed me how collaborative problem-solving leads to better solutions.
-
-## The Reality of Building Solo
-
-Maintaining an open-source project while working full-time isn't easy. There were weeks where I barely touched the code, followed by weekend coding marathons when inspiration hit. *I learned to be okay with this irregular rhythm*.
+The hardest part? Knowing people can see your learning process. Every merged PR is a snapshot of "well, this is the best I could do at the time."
 
 > The impostor syndrome hits different when you're building solo. Every architectural decision feels heavy when you know others will judge your code.
+
+But the upside is that you get to learn things you might not have otherwise.
+
+## Growing Pains
+
+Each new feature reveals how much the old ones need work. The more I learn, the more I realize how much of the codebase needs rewriting. Users find new ways to break things weekly. Documentation? Still working on making it less confusing.
 
 ## Unexpected Technical Discoveries
 
@@ -64,22 +56,20 @@ Maintaining an open-source project while working full-time isn't easy. There wer
 - **Error handling** got real with meaningful messages and graceful failure modes
 - **Cross-platform testing** taught patience and deep OS understanding
 
-
 ## The Community Aspect
 
 The most unexpected benefit was connecting with other developers facing similar challenges. Every issue filed, every feature request, every pull request review became a learning opportunity and a chance to grow.
 
 ## Moving Forward
 
-A year later, I'm still learning. Every new feature request shows me something I hadn't considered. Every bug report teaches me about an edge case I missed. *The project keeps evolving, and with it, my understanding grows*.
+If you're thinking about building something: start simple, embrace the mess, and don't be afraid to share code you're not proud of. My first version was basically held together with print statements and hope.
+Your early code will probably be terrible. Mine still is in places. But that's exactly how you learn.
 
-If you're thinking about starting a side project, remember:
+This is what I'd recommend:
 - Pick a problem you **actually** face
 - Don't worry about whether it's been done before
 - Be ready to learn things you didn't expect to learn
-- Share your journey, it's a great way to keep motivated.
+- Share your journey, it's a great way to keep motivated
 - Embrace the journey, including the mistakes
-
-> The real value isn't in the end product - it's in who you become while building it. Every line of code, every bug fixed, every user interaction shapes you into a better engineer.
 
 *Your side project might not change the world, but it will definitely change you. And sometimes, that's enough.*
