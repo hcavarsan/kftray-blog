@@ -92,24 +92,24 @@ const bannerImage = computed(() => {
             <!-- Author Info -->
             <div
               v-if="page?.author"
-              class="flex items-center gap-4 border-t border-white/10 pt-6 relative z-10"
+              class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 border-t border-white/10 pt-4 sm:pt-6 relative z-10"
             >
-              <NuxtLink :href="page.avatarLink" target="_blank">
+              <NuxtLink :href="page.avatarLink" target="_blank" class="flex-shrink-0">
                 <img
                   class="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-white/10"
                   :src="page.avatar"
                   :alt="page.author"
                 />
               </NuxtLink>
-              <div>
+              <div class="flex-grow min-w-0">
                 <NuxtLink
                   :href="page.avatarLink"
                   target="_blank"
-                  class="text-white/80 hover:text-white/90 transition-colors"
+                  class="text-white/80 hover:text-white/90 transition-colors block truncate"
                 >
                   <span class="block font-normal">{{ page.author }}</span>
                 </NuxtLink>
-                <p class="text-sm text-white/70">{{ page.position }}</p>
+                <p class="text-sm text-white/70 truncate">{{ page.position }}</p>
               </div>
             </div>
           </div>
