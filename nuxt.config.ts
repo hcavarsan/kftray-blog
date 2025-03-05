@@ -6,6 +6,12 @@ export default defineNuxtConfig({
 
 				app: {
 						head: {
+								meta: [
+										{
+												'http-equiv': 'Content-Security-Policy',
+												content: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline';"
+										}
+								],
 								htmlAttrs: {
 										class: 'loading'
 								}
@@ -127,6 +133,9 @@ export default defineNuxtConfig({
 										'remark-gfm': {
 												singleTilde: false
 										}
+								},
+								tags: {
+										mermaid: 'Mermaid'
 								}
 						}
 				},
