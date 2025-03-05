@@ -3,7 +3,7 @@ layout: post
 title: Debugging Kubernetes Services with KFtray's HTTP Logs and VS Code REST Client Extension
 description: Learn how to debug Kubernetes services using KFtray's HTTP logging with VS Code's REST Client extension to capture and replay requests.
 image: img/blog-http-logs-vscode.png
-timestamp:
+timestamp: 1741196172
 author: Henrique Cavarsan
 position: Maintainer
 avatar: https://media.dev.to/cdn-cgi/image/width=320,height=320,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1243406%2F70a23663-0e74-428f-9f28-9e83c6178188.jpeg
