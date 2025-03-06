@@ -103,7 +103,7 @@ css({
       gridTemplateColumns: 'repeat(12, minmax(0, 1fr))',
       gap: '{space.2}'
     },
-
+    
     '.section': {
       display: 'flex',
       alignItems: 'center',

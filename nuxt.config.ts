@@ -1,8 +1,8 @@
 export default defineNuxtConfig({
 	            site: {  url: 'https://kftray.app',  name: 'kftray'  },
 				extends: "@nuxt-themes/docus",
-				modules: ["@nuxtjs/tailwindcss", "@nuxtjs/plausible", "@nuxt/content", '@nuxtjs/robots', 'nuxt-og-image'],
-				css: ["@fortawesome/fontawesome-svg-core/styles.css", "~/assets/css/global.css"],
+				modules: ["@nuxtjs/tailwindcss", "@nuxtjs/plausible", "@nuxt/content", '@nuxtjs/robots', 'nuxt-og-image', 'nuxt-icon'],
+				css: ["@fortawesome/fontawesome-svg-core/styles.css", "~/assets/css/global.css", "~/assets/css/custom.css"],
 
 				app: {
 						head: {

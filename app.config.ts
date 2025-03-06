@@ -23,6 +23,9 @@ export default defineAppConfig({
       showLinkIcon: true,
       exclude: [],
       fluid: true
+    },
+    icons: {
+      size: "18px"
     }
   }
 })

@@ -36,5 +36,17 @@ body.dark {
 
   /* Ensure proper color scheme handling */
 
+/* Icon styles */
+.icon, 
+svg.icon, 
+.icon svg, 
+i.icon {
+  display: inline-block !important;
+  width: 1.2em !important;
+  height: 1.2em !important;
+  vertical-align: -0.2em !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
 
 

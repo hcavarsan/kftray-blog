@@ -33,3 +33,42 @@
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
+
+/* Custom styles for header navigation icons */
+header nav .icon,
+header nav ul li a.link svg,
+header nav ul li a svg,
+header nav ul li a i,
+header .icon {
+  display: inline-block !important;
+  width: 18px !important;
+  height: 18px !important;
+  margin-right: 6px !important;
+  vertical-align: -0.125em !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Ensure the icon in the Downloads link is visible */
+header nav ul li a[href="/downloads"] .icon {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: inline-block !important;
+}
+
+/* CSS download icon class that can be added in the html */
+.dl-icon {
+  position: relative;
+  padding-left: 20px;
+}
+
+.dl-icon:before {
+  content: "↓";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: bold;
+  width: 16px;
+  text-align: center;
+}
