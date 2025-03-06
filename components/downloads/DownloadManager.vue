@@ -1,4 +1,4 @@
-<template>
+\<template>
   <div class="download-manager">
     <!-- Detected System Section -->
     <div class="detected-os bg-white border border-pickled-bluewood-100 p-8 rounded-lg mb-12 dark:bg-pickled-bluewood-800 dark:border-pickled-bluewood-700">
@@ -66,7 +66,7 @@
 
         <div class="flex flex-col space-y-6">
           <!-- macOS Homebrew -->
-          <div class="install-option relative overflow-hidden">
+          <div class="install-option">
             <div class="os-header flex items-center justify-center bg-pickled-bluewood-50 dark:bg-pickled-bluewood-900 p-3 rounded-t-lg border-b border-pickled-bluewood-100 dark:border-pickled-bluewood-700">
               <h4 class="text-lg font-medium text-pickled-bluewood-800 dark:text-white">
                 <font-awesome-icon icon="fa-brands fa-apple" class="mr-2" />
@@ -80,11 +80,7 @@
               <div class="grid md:grid-cols-2 gap-6">
                 <!-- Homebrew Column -->
                 <div class="w-full">
-                  <div class="section-label mb-3 flex items-center w-full">
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                    <div class="px-4 font-medium text-sm text-pickled-bluewood-500 dark:text-pickled-bluewood-300 whitespace-nowrap">Via Homebrew</div>
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                  </div>
+                  <h5 class="text-center text-sm font-medium mb-3 text-pickled-bluewood-500 dark:text-pickled-bluewood-300">Via Homebrew</h5>
 
                   <div class="code-block bg-pickled-bluewood-900 text-white p-3 rounded-md font-mono text-sm overflow-x-auto w-full">
                     <div>brew tap hcavarsan/kftray</div>
@@ -94,11 +90,7 @@
 
                 <!-- Direct Download Column -->
                 <div class="w-full">
-                  <div class="section-label mb-3 flex items-center w-full">
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                    <div class="px-4 font-medium text-sm text-pickled-bluewood-500 dark:text-pickled-bluewood-300 whitespace-nowrap">Direct Download</div>
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                  </div>
+                  <h5 class="text-center text-sm font-medium mb-3 text-pickled-bluewood-500 dark:text-pickled-bluewood-300">Direct Download</h5>
 
                   <div class="flex justify-center">
                     <downloads-download-button app="kftray" os="darwin" arch="amd64" :version="latestVersion" />
@@ -109,7 +101,7 @@
           </div>
 
           <!-- Linux Homebrew -->
-          <div class="install-option relative overflow-hidden">
+          <div class="install-option">
             <div class="os-header flex items-center justify-center bg-pickled-bluewood-50 dark:bg-pickled-bluewood-900 p-3 rounded-t-lg border-b border-pickled-bluewood-100 dark:border-pickled-bluewood-700">
               <h4 class="text-lg font-medium text-pickled-bluewood-800 dark:text-white">
                 <font-awesome-icon icon="fa-brands fa-linux" class="mr-2" />
@@ -123,11 +115,7 @@
               <div class="grid md:grid-cols-2 gap-6">
                 <!-- Homebrew Column -->
                 <div class="w-full">
-                  <div class="section-label mb-3 flex items-center w-full">
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                    <div class="px-4 font-medium text-sm text-pickled-bluewood-500 dark:text-pickled-bluewood-300 whitespace-nowrap">Via Homebrew</div>
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                  </div>
+                  <h5 class="text-center text-sm font-medium mb-3 text-pickled-bluewood-500 dark:text-pickled-bluewood-300">Via Homebrew</h5>
 
                   <div class="code-block bg-pickled-bluewood-900 text-white p-3 rounded-md font-mono text-sm overflow-x-auto w-full">
                     <div>brew tap hcavarsan/kftray</div>
@@ -137,11 +125,7 @@
 
                 <!-- Direct Download Column -->
                 <div class="w-full">
-                  <div class="section-label mb-3 flex items-center w-full">
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                    <div class="px-4 font-medium text-sm text-pickled-bluewood-500 dark:text-pickled-bluewood-300 whitespace-nowrap">Direct Download</div>
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                  </div>
+                  <h5 class="text-center text-sm font-medium mb-3 text-pickled-bluewood-500 dark:text-pickled-bluewood-300">Direct Download</h5>
 
                   <div class="flex flex-col items-center space-y-4">
                     <downloads-download-button app="kftray" os="linux" arch="amd64" :version="latestVersion" appImage />
@@ -153,7 +137,7 @@
           </div>
 
           <!-- Windows -->
-          <div class="install-option relative overflow-hidden">
+          <div class="install-option">
             <div class="os-header flex items-center justify-center bg-pickled-bluewood-50 dark:bg-pickled-bluewood-900 p-3 rounded-t-lg border-b border-pickled-bluewood-100 dark:border-pickled-bluewood-700">
               <h4 class="text-lg font-medium text-pickled-bluewood-800 dark:text-white">
                 <font-awesome-icon icon="fa-brands fa-windows" class="mr-2" />
@@ -163,11 +147,7 @@
 
             <!-- Content section with centered layout -->
             <div class="p-4 bg-white dark:bg-pickled-bluewood-800">
-              <div class="section-label mb-3 flex items-center w-full">
-                <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                <div class="px-4 font-medium text-sm text-pickled-bluewood-500 dark:text-pickled-bluewood-300 whitespace-nowrap">Direct Download</div>
-                <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-              </div>
+              <h5 class="text-center text-sm font-medium mb-3 text-pickled-bluewood-500 dark:text-pickled-bluewood-300">Direct Download</h5>
 
               <div class="flex flex-col items-center space-y-4">
                 <downloads-download-button app="kftray" os="windows" arch="amd64" :version="latestVersion" />
@@ -183,7 +163,7 @@
 
         <div class="flex flex-col space-y-6">
           <!-- macOS -->
-          <div class="install-option relative overflow-hidden">
+          <div class="install-option">
             <div class="os-header flex items-center justify-center bg-pickled-bluewood-50 dark:bg-pickled-bluewood-900 p-3 rounded-t-lg border-b border-pickled-bluewood-100 dark:border-pickled-bluewood-700">
               <h4 class="text-lg font-medium text-pickled-bluewood-800 dark:text-white">
                 <font-awesome-icon icon="fa-brands fa-apple" class="mr-2" />
@@ -197,11 +177,7 @@
               <div class="grid md:grid-cols-2 gap-6">
                 <!-- Script Installation Column -->
                 <div class="w-full">
-                  <div class="section-label mb-3 flex items-center w-full">
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                    <div class="px-4 font-medium text-sm text-pickled-bluewood-500 dark:text-pickled-bluewood-300 whitespace-nowrap">Script Installation</div>
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                  </div>
+                  <h5 class="text-center text-sm font-medium mb-3 text-pickled-bluewood-500 dark:text-pickled-bluewood-300">Script Installation</h5>
 
                   <div class="code-block bg-pickled-bluewood-900 text-white p-3 rounded-md font-mono text-sm overflow-x-auto w-full">
                     <div>bash &lt;(curl -s https://raw.githubusercontent.com/hcavarsan/kftray/main/hacks/kftui_installer.sh)</div>
@@ -210,11 +186,7 @@
 
                 <!-- Direct Download Column -->
                 <div class="w-full">
-                  <div class="section-label mb-3 flex items-center w-full">
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                    <div class="px-4 font-medium text-sm text-pickled-bluewood-500 dark:text-pickled-bluewood-300 whitespace-nowrap">Direct Download</div>
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                  </div>
+                  <h5 class="text-center text-sm font-medium mb-3 text-pickled-bluewood-500 dark:text-pickled-bluewood-300">Direct Download</h5>
 
                   <div class="flex justify-center">
                     <downloads-download-button app="kftui" os="darwin" arch="amd64" :version="latestVersion" />
@@ -225,7 +197,7 @@
           </div>
 
           <!-- Linux -->
-          <div class="install-option relative overflow-hidden">
+          <div class="install-option">
             <div class="os-header flex items-center justify-center bg-pickled-bluewood-50 dark:bg-pickled-bluewood-900 p-3 rounded-t-lg border-b border-pickled-bluewood-100 dark:border-pickled-bluewood-700">
               <h4 class="text-lg font-medium text-pickled-bluewood-800 dark:text-white">
                 <font-awesome-icon icon="fa-brands fa-linux" class="mr-2" />
@@ -239,11 +211,7 @@
               <div class="grid md:grid-cols-2 gap-6">
                 <!-- Script Installation Column -->
                 <div class="w-full">
-                  <div class="section-label mb-3 flex items-center w-full">
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                    <div class="px-4 font-medium text-sm text-pickled-bluewood-500 dark:text-pickled-bluewood-300 whitespace-nowrap">Script Installation</div>
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                  </div>
+                  <h5 class="text-center text-sm font-medium mb-3 text-pickled-bluewood-500 dark:text-pickled-bluewood-300">Script Installation</h5>
 
                   <div class="code-block bg-pickled-bluewood-900 text-white p-3 rounded-md font-mono text-sm overflow-x-auto w-full">
                     <div>bash &lt;(curl -s https://raw.githubusercontent.com/hcavarsan/kftray/main/hacks/kftui_installer.sh)</div>
@@ -254,11 +222,7 @@
 
                 <!-- Direct Download Column -->
                 <div class="w-full">
-                  <div class="section-label mb-3 flex items-center w-full">
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                    <div class="px-4 font-medium text-sm text-pickled-bluewood-500 dark:text-pickled-bluewood-300 whitespace-nowrap">Direct Download</div>
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                  </div>
+                  <h5 class="text-center text-sm font-medium mb-3 text-pickled-bluewood-500 dark:text-pickled-bluewood-300">Direct Download</h5>
 
                   <div class="flex flex-col items-center space-y-4">
                     <downloads-download-button app="kftui" os="linux" arch="amd64" :version="latestVersion" />
@@ -270,7 +234,7 @@
           </div>
 
           <!-- Windows -->
-          <div class="install-option relative overflow-hidden">
+          <div class="install-option">
             <div class="os-header flex items-center justify-center bg-pickled-bluewood-50 dark:bg-pickled-bluewood-900 p-3 rounded-t-lg border-b border-pickled-bluewood-100 dark:border-pickled-bluewood-700">
               <h4 class="text-lg font-medium text-pickled-bluewood-800 dark:text-white">
                 <font-awesome-icon icon="fa-brands fa-windows" class="mr-2" />
@@ -284,11 +248,7 @@
               <div class="grid md:grid-cols-2 gap-6">
                 <!-- Script Installation Column -->
                 <div class="w-full">
-                  <div class="section-label mb-3 flex items-center w-full">
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                    <div class="px-4 font-medium text-sm text-pickled-bluewood-500 dark:text-pickled-bluewood-300 whitespace-nowrap">PowerShell Script</div>
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                  </div>
+                  <h5 class="text-center text-sm font-medium mb-3 text-pickled-bluewood-500 dark:text-pickled-bluewood-300">PowerShell Script</h5>
 
                   <div class="code-block bg-pickled-bluewood-900 text-white p-3 rounded-md font-mono text-sm overflow-x-auto w-full">
                     <div>Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/hcavarsan/kftray/main/hacks/kftui_installer.ps1'))</div>
@@ -297,11 +257,7 @@
 
                 <!-- Direct Download Column -->
                 <div class="w-full">
-                  <div class="section-label mb-3 flex items-center w-full">
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                    <div class="px-4 font-medium text-sm text-pickled-bluewood-500 dark:text-pickled-bluewood-300 whitespace-nowrap">Direct Download</div>
-                    <div class="h-px bg-pickled-bluewood-100 dark:bg-pickled-bluewood-700 flex-grow"></div>
-                  </div>
+                  <h5 class="text-center text-sm font-medium mb-3 text-pickled-bluewood-500 dark:text-pickled-bluewood-300">Direct Download</h5>
 
                   <div class="flex flex-col items-center space-y-4">
                     <downloads-download-button app="kftui" os="windows" arch="amd64" :version="latestVersion" />
@@ -313,7 +269,7 @@
           </div>
 
           <!-- Verification -->
-          <div class="install-option relative overflow-hidden mt-6">
+          <div class="install-option mt-6">
             <div class="os-header flex items-center justify-center bg-pickled-bluewood-50 dark:bg-pickled-bluewood-900 p-3 rounded-t-lg border-b border-pickled-bluewood-100 dark:border-pickled-bluewood-700">
               <h4 class="text-lg font-medium text-pickled-bluewood-800 dark:text-white">
                 Post-Installation
@@ -376,30 +332,67 @@ const activeTab = ref('kftray')
 
 /* Code block styling */
 .code-block {
-  @apply bg-pickled-bluewood-900 text-white p-3 rounded-md font-mono text-sm;
+  position: relative;
+  background-color: var(--tw-color-pickled-bluewood-900, #1a202c);
+  color: white;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  width: 100%;
+  overflow-x: auto;
 }
 
 /* Installation options */
 .install-option {
-  @apply overflow-hidden rounded-lg shadow-sm border border-pickled-bluewood-100 dark:border-pickled-bluewood-700;
+  position: relative;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid;
+  border-color: var(--tw-color-pickled-bluewood-100, #e2e8f0);
+  overflow: visible;
+}
+
+.dark .install-option {
+  border-color: var(--tw-color-pickled-bluewood-700, #2d3748);
 }
 
 .os-header {
-  @apply bg-pickled-bluewood-50 dark:bg-pickled-bluewood-900;
+  position: relative;
+  background-color: var(--tw-color-pickled-bluewood-50, #f7fafc);
 }
 
-/* Section labels with lines */
-.section-label {
-  @apply flex items-center;
+.dark .os-header {
+  background-color: var(--tw-color-pickled-bluewood-900, #1a202c);
+}
+
+/* Code blocks */
+.code-block {
+  position: relative;
+  width: 100%;
 }
 
 /* Tabs */
 .tab-content {
-  @apply transition-opacity duration-300;
+  transition-property: opacity;
+  transition-duration: 300ms;
 }
 
 /* Dark mode styles */
 .dark .code-block {
-  @apply bg-pickled-bluewood-800 border border-pickled-bluewood-700;
+  background-color: var(--tw-color-pickled-bluewood-800, #2d3748);
+  border: 1px solid var(--tw-color-pickled-bluewood-700, #4a5568);
+}
+
+/* Grid fixes for production */
+.grid {
+  display: grid;
+}
+
+@media (min-width: 768px) {
+  .md\\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 </style>
