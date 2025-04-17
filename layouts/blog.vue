@@ -1,9 +1,42 @@
 <script setup>
 import BlogCard from "~/components/blog/BlogCard.vue";
+import { ref, watch, computed } from 'vue';
 
-const contentQuery = await queryContent('blog/posts').sort(
-    { timestamp: -1, }
-).find()
+// Get current language from URL parameter
+const route = useRoute();
+const lang = ref(route.query.lang ? String(route.query.lang) : 'en');
+
+// Update lang when route query changes
+watch(() => route.query.lang, (newLang) => {
+  if (newLang && ['en', 'es', 'pt'].includes(String(newLang))) {
+    lang.value = String(newLang);
+  } else if (!newLang) {
+    lang.value = 'en';
+  }
+});
+
+// Get all blog posts
+const { data: allPosts } = await useAsyncData('blog-posts', () => 
+  queryContent('blog/posts')
+    .sort({ timestamp: -1 })
+    .find()
+);
+
+// Filter posts based on language
+const contentQuery = computed(() => {
+  if (!allPosts.value) return [];
+  
+  if (lang.value === 'en') {
+    return allPosts.value.filter(post => !post._path.includes('/es/') && !post._path.includes('/pt/'));
+  } else if (lang.value === 'es') {
+    return allPosts.value.filter(post => post._path.includes('/es/'));
+  } else if (lang.value === 'pt') {
+    return allPosts.value.filter(post => post._path.includes('/pt/'));
+  }
+  
+  // Default to English
+  return allPosts.value.filter(post => !post._path.includes('/es/') && !post._path.includes('/pt/'));
+});
 </script>
 
 <template>
@@ -24,6 +57,31 @@ const contentQuery = await queryContent('blog/posts').sort(
           <p class="mx-auto mt-4 max-w-2xl text-lg text-gray-600 dark:text-gray-300">
             News about kftray and related topics
           </p>
+          
+          <!-- Simple language selector -->
+          <div class="flex items-center justify-center mt-6 gap-2">
+            <button 
+              @click="lang = 'en'; $router.push({path: '/blog', query: {lang: 'en'}})" 
+              class="px-3 py-1 text-xs uppercase rounded-full"
+              :class="lang === 'en' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'"
+            >
+              EN
+            </button>
+            <button 
+              @click="lang = 'es'; $router.push({path: '/blog', query: {lang: 'es'}})" 
+              class="px-3 py-1 text-xs uppercase rounded-full"
+              :class="lang === 'es' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'"
+            >
+              ES
+            </button>
+            <button 
+              @click="lang = 'pt'; $router.push({path: '/blog', query: {lang: 'pt'}})" 
+              class="px-3 py-1 text-xs uppercase rounded-full"
+              :class="lang === 'pt' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'"
+            >
+              PT
+            </button>
+          </div>
         </div>
 
         <!-- Blog Grid -->

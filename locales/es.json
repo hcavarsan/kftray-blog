@@ -1,0 +1,13 @@
+{
+  "common": {
+    "language": "Español",
+    "languageSwitch": "Idioma",
+    "readMore": "Leer más",
+    "goBack": "Volver"
+  },
+  "blog": {
+    "title": "Blog",
+    "latestPosts": "Últimas Publicaciones",
+    "publishedOn": "Publicado el"
+  }
+}

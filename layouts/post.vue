@@ -2,8 +2,26 @@
 import BlogComments from "~/components/blog/BlogComments.vue";
 import FormatDate from "~/components/common/FormatDate.vue";
 import { useContent } from "#imports";
+import { watch, ref, computed, onMounted } from 'vue';
 
 const { page } = useContent();
+const route = useRoute();
+// Get language from query parameter first, then fallback to path detection
+const currentLang = computed(() => {
+  // First check query parameter
+  if (route.query.lang && ['en', 'es', 'pt'].includes(String(route.query.lang))) {
+    return String(route.query.lang);
+  }
+  
+  // If no query parameter, check path for language directory
+  const pathParts = route.path.split('/');
+  if (pathParts.length >= 4 && ['en', 'es', 'pt'].includes(pathParts[3])) {
+    return pathParts[3];
+  }
+  
+  // Default to English
+  return 'en';
+});
 
 // Format the timestamp
 const formattedDate = computed(() => {
@@ -17,6 +35,171 @@ const bannerImage = computed(() => {
   return page.value.image.startsWith('http')
     ? page.value.image
     : page.value.image;
+});
+
+// Get URL with language query parameter
+const getLanguageUrl = (langCode) => {
+  // Get the current path and check if it's in a language directory
+  const pathParts = route.path.split('/');
+  let basePath = route.path;
+  
+  // If we're in a language directory, use the original URL without language
+  if (pathParts.length >= 4 && ['en', 'es', 'pt'].includes(pathParts[3])) {
+    // Extract the basename
+    const filename = pathParts[pathParts.length - 1];
+    basePath = `/blog/posts/${filename}`;
+  }
+  
+  // Return the path with the language query parameter
+  return {
+    path: basePath,
+    query: { 
+      ...route.query,
+      lang: langCode 
+    }
+  };
+};
+
+// Available languages
+const availableLanguages = [
+  { code: 'en', name: 'English' },
+  { code: 'es', name: 'Español' },
+  { code: 'pt', name: 'Português' }
+];
+
+// Current post languages (initially just the current language)
+const currentPostLanguages = ref([]);
+
+// Get the translated content, if available
+const translatedContent = ref(null);
+
+// Function to check if translations exist and load translated content
+const findTranslations = async () => {
+  try {
+    // Extract the post basename from the path
+    const pathParts = page.value._path.split('/');
+    const basename = pathParts[pathParts.length - 1];
+    
+    // Reset the languages list
+    currentPostLanguages.value = [];
+    translatedContent.value = null;
+    
+    // First, check if the post is in a language directory
+    let inLanguageDir = false;
+    let baseLanguage = 'en';
+    
+    if (pathParts.length >= 4 && ['en', 'es', 'pt'].includes(pathParts[3])) {
+      inLanguageDir = true;
+      baseLanguage = pathParts[3];
+    }
+    
+    // Always add English (the default) first
+    const hasEnglish = await checkTranslation('en', basename);
+    
+    // Then check other languages
+    await checkTranslation('es', basename);
+    await checkTranslation('pt', basename);
+    
+    // If we're in a non-English language directory, but no English version was found,
+    // we need to check for the "original" URL without language directory
+    if (inLanguageDir && baseLanguage !== 'en' && !hasEnglish) {
+      // Try to find the post directly in /blog/posts/ (the legacy format)
+      try {
+        const directPath = `/blog/posts/${basename}`;
+        const content = await queryContent(directPath).find();
+        
+        if (content.length > 0) {
+          // Add English to available languages
+          if (!currentPostLanguages.value.some(l => l.code === 'en')) {
+            currentPostLanguages.value.push({ code: 'en', name: 'English' });
+          }
+          
+          // If the selected language is English, store this content as the "translated" (original) content
+          if (currentLang.value === 'en') {
+            translatedContent.value = content[0];
+          }
+        }
+      } catch (e) {
+        // No direct version found
+      }
+    }
+    
+    // If we're not in a language directory, we're on a legacy URL
+    // Check if there are translations in language directories
+    if (!inLanguageDir) {
+      // The current post is already in English
+      if (!currentPostLanguages.value.some(l => l.code === 'en')) {
+        currentPostLanguages.value.push({ code: 'en', name: 'English' });
+      }
+      
+      // If the selected language is something other than English,
+      // look for that translation in the appropriate language directory
+      if (currentLang.value !== 'en') {
+        try {
+          const langPath = `/blog/posts/${currentLang.value}/${basename}`;
+          const content = await queryContent(langPath).find();
+          
+          if (content.length > 0) {
+            // Show the translated content
+            translatedContent.value = content[0];
+          }
+        } catch (e) {
+          // No translation found
+        }
+      }
+    }
+    
+    // If no languages found, add English as fallback
+    if (currentPostLanguages.value.length === 0) {
+      currentPostLanguages.value = [{ code: 'en', name: 'English' }];
+    }
+  } catch (e) {
+    console.error("Error checking post translations:", e);
+  }
+};
+
+// Helper function to check if a translation exists
+const checkTranslation = async (langCode, basename) => {
+  try {
+    const path = `/blog/posts/${langCode}/${basename}`;
+    const content = await queryContent(path).find();
+    
+    if (content.length > 0) {
+      // Add to available languages
+      if (!currentPostLanguages.value.some(l => l.code === langCode)) {
+        currentPostLanguages.value.push(availableLanguages.find(l => l.code === langCode));
+      }
+      
+      // If this is the selected language and not English, store the translated content
+      if (langCode === currentLang.value && langCode !== 'en') {
+        translatedContent.value = content[0];
+      }
+      
+      return true;
+    }
+  } catch (e) {
+    // This language version doesn't exist
+  }
+  
+  return false;
+};
+
+// Check for post translations when component mounts
+onMounted(findTranslations);
+
+// Watch for route changes to handle direct URL navigation
+watch(() => route.path, () => {
+  // If the path changes, we're on a new post, so find translations
+  findTranslations();
+});
+
+// Handle query parameter changes
+watch(() => route.query.lang, (newLang) => {
+  if (newLang && ['en', 'es', 'pt'].includes(newLang.toString())) {
+    // We got a language change via query parameter
+    // No redirect needed, we'll display the original post with translated content shown via CSS
+    findTranslations(); // Re-check available translations
+  }
 });
 
 </script>
@@ -64,6 +247,23 @@ const bannerImage = computed(() => {
                 <span class="hidden sm:inline">Back to overview</span>
                 <span class="sm:hidden">Back</span>
               </NuxtLink>
+              
+              <!-- Language links for Post -->
+              <div v-if="currentPostLanguages.length > 1" class="inline-flex items-center gap-2">
+                <button 
+                  v-for="langItem in currentPostLanguages" 
+                  :key="langItem.code"
+                  @click="$router.push(getLanguageUrl(langItem.code))"
+                  class="px-3 py-1 text-xs uppercase rounded-full"
+                  :class="[
+                    langItem.code === currentLang 
+                      ? 'bg-white/20 text-white' 
+                      : 'bg-white/10 text-white/70 hover:bg-white/15 hover:text-white/90'
+                  ]"
+                >
+                  {{ langItem.code }}
+                </button>
+              </div>
 
               <div
                 v-if="formattedDate"
@@ -77,16 +277,26 @@ const bannerImage = computed(() => {
 
             <!-- Title and Description -->
             <h1
-              v-if="page?.title"
               class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light leading-tight mb-4 tracking-tight text-white relative z-10"
             >
-              {{ page.title }}
+              <!-- Show translated title if available -->
+              <template v-if="translatedContent?.title">
+                {{ translatedContent.title }}
+              </template>
+              <template v-else-if="page?.title">
+                {{ page.title }}
+              </template>
             </h1>
             <p
-              v-if="page?.description"
               class="text-lg sm:text-xl text-white/80 mb-8 font-light leading-relaxed relative z-10"
             >
-              {{ page.description }}
+              <!-- Show translated description if available -->
+              <template v-if="translatedContent?.description">
+                {{ translatedContent.description }}
+              </template>
+              <template v-else-if="page?.description">
+                {{ page.description }}
+              </template>
             </p>
 
             <!-- Author Info -->
@@ -120,7 +330,18 @@ const bannerImage = computed(() => {
       <article class="relative z-10 bg-pickled-bluewood-900">
         <div class="max-w-4xl mx-auto px-6 py-16">
           <div class="prose dark:prose-invert lg:prose-lg custom-prose">
-            <ContentRenderer v-if="page" :value="page">
+            <!-- Show translated content if available -->
+            <ContentRenderer v-if="translatedContent" :value="translatedContent">
+              <template #empty>
+                <p>No translated content available.</p>
+              </template>
+              <template #default="{ value }">
+                <ContentRendererMarkdown :value="value" />
+              </template>
+            </ContentRenderer>
+            
+            <!-- Show original content if no translation is available -->
+            <ContentRenderer v-else-if="page" :value="page">
               <template #empty>
                 <p>No content available.</p>
               </template>

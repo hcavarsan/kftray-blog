@@ -91,6 +91,10 @@ export default defineNuxtConfig({
 						renderJsonPayloads: true
 				},
 
+				// We're not using the i18n module for UI translations anymore
+				// just using it for content organization with URL parameters
+				i18n: false,
+
 				mdc: {
 						highlight: {
 							langs: [
