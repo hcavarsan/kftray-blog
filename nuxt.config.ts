@@ -92,6 +92,29 @@ export default defineNuxtConfig({
 				},
 
 				mdc: {
+						highlight: {
+							langs: [
+								'bash',
+								'json',
+								'yaml',
+								'powershell',
+								'toml',
+								'hcl',
+								'terraform',
+								'mermaid',
+							],
+							theme: 'github-dark',
+							preload: [
+								'bash',
+								'json',
+								'yaml',
+								'powershell',
+								'toml',
+								'hcl',
+								'terraform',
+								'mermaid',
+							]
+						},
 						headings: {
 								anchorLinks: {
 										h1: false,

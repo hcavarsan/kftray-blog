@@ -6,7 +6,7 @@ image: https://kftray.app/img/side-project.jpg
 timestamp: 1733153095
 author: Henrique Cavarsan
 position: Maintainer
-avatar: https://media.dev.to/cdn-cgi/image/width=320,height=320,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1243406%2F70a23663-0e74-428f-9f28-9e83c6178188.jpeg
+avatar: https://avatars.githubusercontent.com/u/30353685?v=4
 avatarLink: https://github.com/hcavarsan
 published: true
 ---

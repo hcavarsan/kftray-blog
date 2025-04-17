@@ -33,11 +33,11 @@
 		"@nuxtjs/robots": "^5.0.0",
 		"@nuxtjs/tailwindcss": "6.12.0",
 		"@tailwindcss/typography": "^0.5.15",
-		"@types/mdast": "^4.0.3",
+		"@types/mdast": "^4.0.4",
 		"@types/node": "20.12.7",
-		"nuxt": "3.12.0",
+		"nuxt": "^3.12.0",
 		"pinceau": "0.18.9",
-		"unified": "^11.0.4",
+		"unified": "^11.0.5",
 		"unist-util-visit": "^5.0.0"
 	},
 	"optionalDependencies": {

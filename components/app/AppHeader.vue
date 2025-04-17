@@ -9,9 +9,9 @@ const hasDialog = computed(() => navigation.value?.length > 1 || navigation.valu
 const currentBanner = computed(() => {
   const now = Date.now()
   return {
-    badgeText: "Release v0.16.1",
+    badgeText: "Release v0.18.1",
     text: "A new version of kftray has been released.",
-    link: "https://github.com/hcavarsan/kftray/releases/tag/v0.16.1",
+    link: "https://github.com/hcavarsan/kftray/releases/tag/v0.18.1",
     linkText: "Check it out →"
   }
 })
@@ -103,7 +103,7 @@ css({
       gridTemplateColumns: 'repeat(12, minmax(0, 1fr))',
       gap: '{space.2}'
     },
-    
+
     '.section': {
       display: 'flex',
       alignItems: 'center',

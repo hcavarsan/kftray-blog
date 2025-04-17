@@ -51,7 +51,7 @@ const bannerImage = computed(() => {
 
         <!-- Post Info -->
         <div class="absolute top-1/2 inset-x-0 transform -translate-y-1/2">
-          <div class="max-w-3xl mx-auto px-4 sm:px-6">
+          <div class="max-w-4xl mx-auto px-4 sm:px-6">
             <!-- Navigation and Date -->
             <div
               class="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6"
@@ -118,7 +118,7 @@ const bannerImage = computed(() => {
 
       <!-- Article Content -->
       <article class="relative z-10 bg-pickled-bluewood-900">
-        <div class="max-w-3xl mx-auto px-6 py-16">
+        <div class="max-w-4xl mx-auto px-6 py-16">
           <div class="prose dark:prose-invert lg:prose-lg custom-prose">
             <ContentRenderer v-if="page" :value="page">
               <template #empty>

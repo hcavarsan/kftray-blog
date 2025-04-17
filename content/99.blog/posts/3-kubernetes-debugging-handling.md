@@ -1,13 +1,13 @@
 ---
 layout: post
-title: Kubernetes Debugging - How to Handle Multiple kubectl port-forward from Your Tray
+title: Kubernetes Debugging - How to Handle Multiple kubectl port-forward from Your Menu Bar
 description: KFTray is an open-source system tray application designed to simplify Kubernetes debugging by centralizing port forwards in an intuitive interface, improving developer productivity and workflow efficiency.
 image: https://dev-to-uploads.s3.amazonaws.com/uploads/articles/z0ukb3ufk23w8ik0k3xk.png
 timestamp: 1713727759
 
 author: Henrique Cavarsan
 position: Maintainer
-avatar: https://media.dev.to/cdn-cgi/image/width=320,height=320,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1243406%2F70a23663-0e74-428f-9f28-9e83c6178188.jpeg
+avatar: https://avatars.githubusercontent.com/u/30353685?v=4
 avatarLink: https://github.com/hcavarsan
 
 published: true
