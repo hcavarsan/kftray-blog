@@ -6,6 +6,7 @@ import { watch, ref, computed, onMounted } from 'vue';
 
 const { page } = useContent();
 const route = useRoute();
+
 // Get language from query parameter first, then fallback to path detection
 const currentLang = computed(() => {
   // First check query parameter
@@ -22,6 +23,31 @@ const currentLang = computed(() => {
   // Default to English
   return 'en';
 });
+
+// Set meta tags based on translated content
+const updateMetaTags = () => {
+  const content = translatedContent.value || page.value;
+  if (!content) return;
+  
+  // Set SEO meta tags
+  useHead({
+    title: content.title,
+    meta: [
+      { name: 'description', content: content.description },
+      { property: 'og:title', content: content.title },
+      { property: 'og:description', content: content.description },
+      { property: 'og:image', content: content.image },
+      { name: 'twitter:title', content: content.title },
+      { name: 'twitter:description', content: content.description },
+      { name: 'twitter:image', content: content.image }
+    ],
+    link: [
+      { rel: 'alternate', hreflang: 'en', href: `${route.path}` },
+      { rel: 'alternate', hreflang: 'es', href: `${route.path}?lang=es` },
+      { rel: 'alternate', hreflang: 'pt', href: `${route.path}?lang=pt` }
+    ]
+  });
+};
 
 // Format the timestamp
 const formattedDate = computed(() => {
@@ -153,8 +179,11 @@ const findTranslations = async () => {
     if (currentPostLanguages.value.length === 0) {
       currentPostLanguages.value = [{ code: 'en', name: 'English' }];
     }
+    
+    return true; // Return a value to make this a proper Promise
   } catch (e) {
     console.error("Error checking post translations:", e);
+    return false;
   }
 };
 
@@ -184,13 +213,13 @@ const checkTranslation = async (langCode, basename) => {
   return false;
 };
 
-// Check for post translations when component mounts
-onMounted(findTranslations);
-
 // Watch for route changes to handle direct URL navigation
 watch(() => route.path, () => {
   // If the path changes, we're on a new post, so find translations
-  findTranslations();
+  findTranslations().then(() => {
+    // After finding translations, update meta tags
+    updateMetaTags();
+  });
 });
 
 // Handle query parameter changes
@@ -198,8 +227,18 @@ watch(() => route.query.lang, (newLang) => {
   if (newLang && ['en', 'es', 'pt'].includes(newLang.toString())) {
     // We got a language change via query parameter
     // No redirect needed, we'll display the original post with translated content shown via CSS
-    findTranslations(); // Re-check available translations
+    findTranslations().then(() => {
+      // After finding translations, update meta tags
+      updateMetaTags();
+    });
   }
+});
+
+// Update meta tags when component is mounted
+onMounted(() => {
+  findTranslations().then(() => {
+    updateMetaTags();
+  });
 });
 
 </script>
