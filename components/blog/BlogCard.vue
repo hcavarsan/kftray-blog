@@ -3,6 +3,7 @@ import type PropType from 'vue'
 import type ParsedContent from '@nuxt/content'
 import FormatDate from "~/components/common/FormatDate.vue";
 import { useRoute } from '#imports';
+import { computed } from 'vue';
 
 defineProps({
   post: {
@@ -11,40 +12,16 @@ defineProps({
   },
 })
 
-// Route to get current language
+// Get route to access query params
 const route = useRoute();
-const currentLang = route.query.lang || '';
 
-// Function to get the correct post URL without language directory
-const getPostUrl = (post) => {
-  const pathParts = post._path.split('/');
-  
-  // If we're in a language directory, remove it from the path
-  if (pathParts.length >= 4 && ['en', 'es', 'pt'].includes(pathParts[3])) {
-    // Extract the basename
-    const filename = pathParts[pathParts.length - 1];
-    const basePath = `/blog/posts/${filename}`;
-    
-    // Add language query parameter if needed
-    if (currentLang) {
-      return { path: basePath, query: { lang: currentLang } };
-    }
-    
-    return basePath;
-  }
-  
-  // If not in a language directory, use the original path
-  if (currentLang) {
-    return { path: post._path, query: { lang: currentLang } };
-  }
-  
-  return post._path;
-}
+// Get the current language from the URL if available
+const currentLang = computed(() => route.query.lang as string || '');
 </script>
 
 <template>
   <NuxtLink v-if="post && post.published && post._path" 
-    :to="getPostUrl(post)"
+    :to="currentLang ? { path: post._path, query: { lang: currentLang } } : post._path"
     class="flex flex-col h-full overflow-hidden rounded-xl transition-all duration-300 hover:transform hover:scale-[1.02] bg-white dark:bg-pickled-bluewood-700/50 border border-gray-200 dark:border-pickled-bluewood-600">
     <div class="relative aspect-[16/9] overflow-hidden">
       <img

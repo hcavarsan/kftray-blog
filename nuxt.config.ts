@@ -9,7 +9,10 @@ export default defineNuxtConfig({
 								htmlAttrs: {
 										class: 'loading'
 								}
-						}
+						},
+
+						// Handle multilingual meta tags
+						pageTransition: { name: 'page', mode: 'out-in' }
 				},
 
 				vite: {
@@ -90,10 +93,6 @@ export default defineNuxtConfig({
 						payloadExtraction: true,
 						renderJsonPayloads: true
 				},
-
-				// We're not using the i18n module for UI translations anymore
-				// just using it for content organization with URL parameters
-				i18n: false,
 
 				mdc: {
 						highlight: {

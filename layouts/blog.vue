@@ -15,6 +15,19 @@ watch(() => route.query.lang, (newLang) => {
   }
 });
 
+// Get router for navigation
+const router = useRouter();
+
+// Function to switch language without full page reload
+const switchLanguage = (newLang) => {
+  // Update the language state
+  lang.value = newLang;
+  
+  // Update the URL query parameter without reloading the page
+  const query = { ...route.query, lang: newLang };
+  router.replace({ query });
+};
+
 // Get all blog posts
 const { data: allPosts } = await useAsyncData('blog-posts', () => 
   queryContent('blog/posts')
@@ -61,21 +74,21 @@ const contentQuery = computed(() => {
           <!-- Simple language selector -->
           <div class="flex items-center justify-center mt-6 gap-2">
             <button 
-              @click="lang = 'en'; $router.push({path: '/blog', query: {lang: 'en'}})" 
+              @click="switchLanguage('en')" 
               class="px-3 py-1 text-xs uppercase rounded-full"
               :class="lang === 'en' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'"
             >
               EN
             </button>
             <button 
-              @click="lang = 'es'; $router.push({path: '/blog', query: {lang: 'es'}})" 
+              @click="switchLanguage('es')" 
               class="px-3 py-1 text-xs uppercase rounded-full"
               :class="lang === 'es' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'"
             >
               ES
             </button>
             <button 
-              @click="lang = 'pt'; $router.push({path: '/blog', query: {lang: 'pt'}})" 
+              @click="switchLanguage('pt')" 
               class="px-3 py-1 text-xs uppercase rounded-full"
               :class="lang === 'pt' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'"
             >
