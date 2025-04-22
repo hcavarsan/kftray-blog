@@ -3,6 +3,7 @@ export default defineNuxtConfig({
 				extends: "@nuxt-themes/docus",
 				modules: ["@nuxtjs/tailwindcss", "@nuxtjs/plausible", "@nuxt/content", '@nuxtjs/robots', 'nuxt-og-image', 'nuxt-icon'],
 				css: ["@fortawesome/fontawesome-svg-core/styles.css", "~/assets/css/global.css", "~/assets/css/custom.css"],
+	plugins: ["~/plugins/umami.client.js"],
 
 				app: {
 						head: {
