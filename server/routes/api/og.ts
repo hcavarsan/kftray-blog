@@ -1,9 +1,11 @@
 // Server API route to handle OG images with language support
 export default defineEventHandler(async (event) => {
-  // Get the URL and query parameters
+  // Get the URL and path information
   const url = getRequestURL(event);
-  const query = getQuery(event);
-  const langQuery = query.lang;
+  
+  // Extract language from path for language-specific URLs
+  const langMatch = url.pathname.match(/^\/blog\/posts\/(es|pt)\//);
+  const langFromPath = langMatch ? langMatch[1] : null;
   
   // Only handle blog post URLs
   if (!url.pathname.startsWith('/blog/posts/')) {
@@ -15,17 +17,17 @@ export default defineEventHandler(async (event) => {
   const slug = pathParts[pathParts.length - 1];
   let translatedContent = null;
   
-  // Try to find the post in the requested language
-  if (langQuery && ['es', 'pt'].includes(langQuery.toString())) {
+  // Try to find the post in the language from the path
+  if (langFromPath) {
     try {
-      const lang = langQuery.toString();
-      const langPath = `/blog/posts/${lang}/${slug}`;
-      const storage = useStorage();
-      const exists = await storage.hasItem(`content:${langPath}.md`);
+      // Use the correct content path structure
+      const contentPath = `99.blog/posts/${langFromPath}/${slug}`;
+      const storage = useStorage('content');
+      const exists = await storage.hasItem(`${contentPath}.md`);
       
       if (exists) {
         // Load the translated content
-        translatedContent = await queryContent(langPath).findOne();
+        translatedContent = await queryContent(contentPath).findOne();
       }
     } catch (e) {
       console.error('Error loading translated content for OG tags:', e);

@@ -1,26 +1,48 @@
-// Middleware to handle multilingual post URLs
+// Middleware to maintain clean URLs for language-specific paths
 export default defineEventHandler(async (event) => {
   const url = getRequestURL(event);
   const path = url.pathname;
+  const query = getQuery(event);
   
-  // If we're on a language-specific post URL, redirect to the base URL with query param
-  if (path.match(/^\/blog\/posts\/(en|es|pt)\/.+/)) {
+  // Handle query parameter for language if it reaches this middleware (fallback)
+  if (path.startsWith('/blog/posts/') && query.lang) {
+    const lang = query.lang as string;
+    
+    // Only handle known languages
+    if (!['en', 'es', 'pt'].includes(lang)) {
+      return;
+    }
+    
+    // Skip if already in language path
+    if (path.match(/^\/blog\/posts\/(en|es|pt)\//)) {
+      return;
+    }
+    
+    // Extract filename
     const pathParts = path.split('/');
-    const lang = pathParts[3]; // 'en', 'es', or 'pt'
-    const filename = pathParts[4];
+    const filename = pathParts[pathParts.length - 1];
     
-    // Remove the language segment from the path
-    const newPath = `/blog/posts/${filename}`;
+    // Create target path with language prefix
+    const targetPath = `/blog/posts/${lang}/${filename}`;
     
-    // Add the language as a query param
-    const query = { ...getQuery(event), lang };
+    // Create new query object without lang parameter
+    const newQuery = { ...query };
+    delete newQuery.lang;
     
-    // Create the target URL
+    // Create clean URL
     const targetUrl = new URL(url);
-    targetUrl.pathname = newPath;
-    targetUrl.search = new URLSearchParams(query).toString();
+    targetUrl.pathname = targetPath;
     
-    // Redirect to the new URL
-    return sendRedirect(event, targetUrl.toString());
+    // Only add search parameters if there are any left
+    if (Object.keys(newQuery).length > 0) {
+      targetUrl.search = new URLSearchParams(newQuery).toString();
+    } else {
+      targetUrl.search = '';
+    }
+    
+    console.log(`[post-redirect] Redirecting to: ${targetUrl.toString()}`);
+    
+    // Always redirect to clean URL
+    return sendRedirect(event, targetUrl.toString(), 302);
   }
 })

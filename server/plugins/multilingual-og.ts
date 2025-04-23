@@ -1,5 +1,5 @@
 // Server plugin to handle multilingual OG tags for initial page load
-import { createError, defineEventHandler, getQuery } from 'h3'
+import { createError, defineEventHandler } from 'h3'
 
 export default defineNitroPlugin((nitroApp) => {
   // Add a hook to intercept the page rendering
@@ -7,25 +7,24 @@ export default defineNitroPlugin((nitroApp) => {
     if (!event) return
     
     const url = event.path || ''
-    const query = getQuery(event)
-    const langParam = query.lang
     
-    // Only handle blog post URLs with a language parameter
-    if (!url.startsWith('/blog/posts/') || !langParam || !['es', 'pt'].includes(String(langParam))) {
+    // Only handle language-specific blog post URLs
+    const langMatch = url.match(/^\/blog\/posts\/(es|pt)\//)
+    if (!langMatch) {
       return
     }
     
     // Get the storage instance to access content files
     const storage = useStorage()
     
-    // Extract the post basename from the URL
+    // Extract the language code and post basename from the URL
     const pathParts = url.split('/')
+    const langDir = pathParts[3] // 'es' or 'pt'
     const basename = pathParts[pathParts.length - 1].split('?')[0] // Remove any query params
     
     try {
-      // Try to load the translated content file
-      const langDir = String(langParam)
-      const contentPath = `content:blog/posts/${langDir}/${basename}.md`
+      // Try to load the translated content file using the correct content path
+      const contentPath = `content:99.blog/posts/${langDir}/${basename}.md`
       
       // Check if the translated content exists
       const exists = await storage.hasItem(contentPath)

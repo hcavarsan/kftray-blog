@@ -3,45 +3,101 @@ export default defineEventHandler(async (event) => {
   const path = url.pathname;
   const query = getQuery(event);
   
-  // If we have a language query on a post page, redirect to the language-specific post
-  if (path.startsWith('/blog/posts/') && query.lang) {
+  // If we have a language query, redirect to the language-prefixed path
+  if (query.lang) {
     const lang = query.lang as string;
     
     // Only handle known languages
     if (!['en', 'es', 'pt'].includes(lang)) {
       return;
     }
+
+    // Skip if already in language path
+    if (path.startsWith(`/${lang}/`)) {
+      return;
+    }
     
-    // Only handle if the post is not already in the requested language folder
-    const pathParts = path.split('/');
-    
-    // /blog/posts/en/some-post -> en is at index 3
-    if (pathParts.length >= 4) {
-      const currentLang = pathParts[3];
-      
-      // If the language in the URL matches the requested language, no redirect needed
-      if (currentLang === lang) {
-        return;
-      }
-      
-      // Get the post filename (last part of the path)
+    // For blog posts, handle specially
+    if (path.startsWith('/blog/posts/')) {
+      const pathParts = path.split('/');
       const filename = pathParts[pathParts.length - 1];
       
-      // Create the target path
-      const targetPath = `/blog/posts/${lang}/${filename}`;
+      // Create target path with language prefix for the post
+      let targetPath = `/blog/posts/${lang}/${filename}`;
       
-      // Check if the target exists before redirecting
+      // Check if the post exists in the language folder in content structure
       try {
-        const storage = useStorage();
-        const exists = await storage.hasItem(`content:${targetPath}.md`);
+        // Debug: log what we're checking
+        console.log(`Checking for translated file at path: 99.blog/posts/${lang}/${filename}.md`);
+        
+        // The actual content is in content/99.blog/posts/pt/filename.md
+        const contentPath = `99.blog/posts/${lang}/${filename}.md`;
+        const storage = useStorage('content');
+        
+        // First check direct path
+        let exists = await storage.hasItem(contentPath);
+        
+        if (!exists) {
+          // Log what we're checking next
+          console.log(`File not found, trying alternate path checking...`);
+          
+          // Try listing all files in the language directory
+          const files = await storage.getKeys(`99.blog/posts/${lang}`);
+          console.log(`Available files in ${lang} directory:`, files);
+          
+          // See if any match our filename (fuzzy match)
+          exists = files.some(file => file.endsWith(`/${filename}.md`));
+        }
         
         if (exists) {
-          return sendRedirect(event, targetPath);
+          // Create new query object without the lang parameter
+          const newQuery = { ...query };
+          delete newQuery.lang;
+          
+          // Create target URL without lang parameter
+          const targetUrl = new URL(url);
+          targetUrl.pathname = targetPath;
+          
+          // Only add search parameters if there are any left
+          if (Object.keys(newQuery).length > 0) {
+            targetUrl.search = new URLSearchParams(newQuery).toString();
+          } else {
+            targetUrl.search = '';
+          }
+          
+          console.log(`Redirecting to: ${targetUrl.toString()}`);
+          
+          // Use temporary redirect to avoid caching (302) since we're still developing
+          return sendRedirect(event, targetUrl.toString(), 302);
+        } else {
+          console.log(`No translation found for ${filename} in ${lang}`);
         }
       } catch (e) {
-        // If we can't check if the file exists, don't redirect
         console.error('Error checking if file exists:', e);
       }
+    } else {
+      // For other pages, simply prefix with language
+      let targetPath = `/${lang}${path}`;
+      
+      // Create new query object without the lang parameter
+      const newQuery = { ...query };
+      delete newQuery.lang;
+      
+      // Create target URL without lang parameter
+      const targetUrl = new URL(url);
+      targetUrl.pathname = targetPath;
+      
+      // Only add search parameters if there are any left
+      if (Object.keys(newQuery).length > 0) {
+        targetUrl.search = new URLSearchParams(newQuery).toString();
+      } else {
+        targetUrl.search = '';
+      }
+      
+      console.log(`Redirecting to: ${targetUrl.toString()}`);
+      
+      // Use temporary redirect to avoid caching (302) since we're still developing
+      return sendRedirect(event, targetUrl.toString(), 302);
     }
   }
 });
