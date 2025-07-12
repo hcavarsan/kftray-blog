@@ -9,9 +9,9 @@ const hasDialog = computed(() => navigation.value?.length > 1 || navigation.valu
 const currentBanner = computed(() => {
   const now = Date.now()
   return {
-    badgeText: "Release v0.19.0",
+    badgeText: "Release v0.20.0",
     text: "A new version of kftray has been released.",
-    link: "https://github.com/hcavarsan/kftray/releases/tag/v0.19.0",
+    link: "https://github.com/hcavarsan/kftray/releases/tag/v0.20.0",
     linkText: "Check it out →"
   }
 })
