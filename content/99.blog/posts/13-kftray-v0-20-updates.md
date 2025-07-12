@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Kftray and Kftui 0.20.0 - network monitoring improvements and easier config imports
+title: Auto-disconnect port-forward global timeouts and handle network interruptions in kftray v0.20.0
 description: Network monitoring now works the same across both interfaces, context field is optional for imports, and reconnections work better after network issues
 image: /img/v020post.png
 timestamp: 1752360927
