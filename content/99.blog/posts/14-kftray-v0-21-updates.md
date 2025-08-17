@@ -3,7 +3,7 @@ layout: post
 title: Event-driven port forwarding with Kubernetes watchers in kftray v0.21.0
 description: Port forwards now survive pod restarts, react instantly to changes, and actually know when they're dead
 image: /img/v021post.png
-timestamp: 1753000000
+timestamp: 1755470376
 author: Henrique Cavarsan
 position: Maintainer
 avatar: https://avatars.githubusercontent.com/u/30353685?v=4
