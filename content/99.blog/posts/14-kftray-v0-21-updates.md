@@ -11,15 +11,18 @@ avatarLink: https://github.com/hcavarsan
 published: true
 ---
 
+![kftray-v021](/img/v021post.png)
 
-Yeah, using the controller pattern for port forwarding is probably overkill. But why not?
 
 
 Just released kftray 0.21.0 with a complete rewrite of the port forwarding engine. This one's mostly about making port forwards more reliable - they now handle pod restarts without dying and actually know their real state.
 
-![kftray-021](/img/v021post.png)
+Yeah, using the controller pattern for port forwarding is probably overkill. But why not?
+
 
 ## Port forwarding engine rewrite
+
+![kftray-mermaid](/img/mermaid.svg)
 
 So the old version would check pods every 5 seconds to see if anything changed. Pretty straightforward, but it meant you could wait up to 5 seconds for things to happen, and it was constantly hitting the Kubernetes API even when nothing was happening.
 
