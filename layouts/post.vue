@@ -249,7 +249,7 @@ onMounted(findTranslations);
         </div>
 
         <!-- Post Info -->
-        <div class="absolute top-1/2 inset-x-0 transform -translate-y-1/2">
+        <div class="absolute top-[5%] lg:top-1/2 inset-x-0 transform translate-y-0 lg:-translate-y-1/2 z-50">
           <div class="max-w-4xl mx-auto px-4 sm:px-6">
             <!-- Navigation and Date -->
             <div
@@ -257,7 +257,7 @@ onMounted(findTranslations);
             >
               <NuxtLink
                 href="/blog"
-                class="inline-flex items-center gap-2 px-4 py-2 text-sm bg-white/10 hover:bg-white/20 text-white/90 hover:text-white transition-all duration-300 rounded-full backdrop-blur-sm"
+                class="inline-flex items-center gap-2 px-4 py-2 text-sm bg-white/10 hover:bg-white/20 text-white/90 hover:text-white transition-all duration-300 rounded-full backdrop-blur-sm relative z-50"
               >
                 <Icon name="heroicons-solid:arrow-left" class="w-4 h-4" />
                 <span class="hidden sm:inline">Back to overview</span>
@@ -662,5 +662,65 @@ header.relative {
     rgba(137, 180, 250, 0.1) 20px
   );
   mask-image: linear-gradient(to bottom, transparent, black);
+}
+
+/* Mobile-specific header positioning */
+@media (max-width: 1023px) {
+  header .absolute.inset-x-0 {
+    z-index: 60 !important;
+  }
+  
+  /* Adjust header height on mobile */
+  header .relative.h-\[50vh\] {
+    height: 55vh !important;
+  }
+  
+  /* More compact spacing for mobile content */
+  header .absolute.top-1\/2 .max-w-4xl {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+  
+  /* Compact navigation section */
+  header .flex.flex-col.sm\:flex-row {
+    gap: 0.75rem !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  /* Reduce title size and spacing on mobile */
+  header h1 {
+    font-size: 1.875rem !important;
+    line-height: 1.1 !important;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  /* Reduce description size and spacing on mobile */
+  header p.text-lg {
+    font-size: 0.9375rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 1.25rem !important;
+  }
+  
+  /* Compact author section */
+  header .border-t.border-white\/10 {
+    padding-top: 1rem !important;
+    gap: 0.5rem !important;
+  }
+  
+  /* Smaller avatar on mobile */
+  header .w-10.h-10 {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+  
+  /* Compact author text */
+  header .flex-grow.min-w-0 span {
+    font-size: 0.875rem !important;
+  }
+  
+  header .flex-grow.min-w-0 p {
+    font-size: 0.75rem !important;
+    margin-top: 0.125rem !important;
+  }
 }
 </style>

@@ -53,19 +53,28 @@ defineProps({
 @media (max-width: 1023px) {
   .banner-container {
     flex-direction: column;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
+    gap: 0.25rem;
+    padding: 0.5rem 1rem;
     text-align: center;
+    font-size: 0.75rem;
   }
   
   .badge {
     margin-right: 0;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0;
+    padding: 0.125rem 0.5rem;
+    font-size: 0.625rem;
   }
   
   .banner-text {
     margin-right: 0;
     font-size: 0.75rem;
+    line-height: 1.3;
+  }
+  
+  .banner-link {
+    font-size: 0.75rem;
+    margin-top: 0.125rem;
   }
 }
 

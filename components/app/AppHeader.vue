@@ -99,7 +99,7 @@ defineProps({
 }
 
 .has-dialog .section.left :deep(.navbar-logo) {
-  display: none;
+  display: block;
 }
 
 @media (min-width: 1024px) {
@@ -109,7 +109,7 @@ defineProps({
 }
 
 .section.center :deep(.navbar-logo) {
-  display: block;
+  display: none;
 }
 
 @media (min-width: 1024px) {
@@ -187,7 +187,13 @@ header .section {
 }
 
 header .section.left {
-  grid-column: span 4 / span 4;
+  grid-column: span 3 / span 3;
+}
+
+@media (min-width: 768px) {
+  header .section.left {
+    grid-column: span 4 / span 4;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -197,20 +203,33 @@ header .section.left {
 }
 
 header .section.center {
-  grid-column: span 4 / span 4;
-  justify-content: center;
+  grid-column: span 6 / span 6;
+  justify-content: flex-start;
   flex: 1;
   z-index: 1;
+}
+
+@media (min-width: 768px) {
+  header .section.center {
+    grid-column: span 4 / span 4;
+    justify-content: center;
+  }
 }
 
 header .section.right {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  grid-column: span 4 / span 4;
+  grid-column: span 3 / span 3;
   justify-content: flex-end;
   flex: none;
   margin-right: calc(0px - 0.5rem);
+}
+
+@media (min-width: 768px) {
+  header .section.right {
+    grid-column: span 4 / span 4;
+  }
 }
 
 @media (min-width: 768px) {
@@ -226,11 +245,12 @@ header .section.right .social-icons {
 }
 
 @media (max-width: 767px) {
-  header .section.right .social-icons :deep(.icon) {
-    width: 1.75rem;
-    height: 1.75rem;
-    min-width: 1.75rem;
-    min-height: 1.75rem;
+  header .section.right .social-icons {
+    display: none;
+  }
+  
+  header .section.right .github-stars {
+    order: 0;
   }
 }
 
