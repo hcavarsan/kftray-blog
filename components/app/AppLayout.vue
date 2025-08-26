@@ -21,12 +21,14 @@ watch(
   </div>
 </template>
 
-<style lang="ts" scoped>
-css({
-  '.app-layout': {
-    main: {
-      minHeight: 'calc(100vh - {docus.header.height} - {docus.footer.height})',
-    }
+<style scoped>
+.app-layout main {
+  min-height: calc(100vh - 48px - var(--footer-height, 60px));
+}
+
+@media (min-width: 768px) {
+  .app-layout main {
+    min-height: calc(100vh - 52px - var(--footer-height, 60px));
   }
-})
+}
 </style>

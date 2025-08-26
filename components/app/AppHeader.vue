@@ -6,13 +6,42 @@ const { hasDocSearch } = useDocSearch()
 
 const hasDialog = computed(() => navigation.value?.length > 1 || navigation.value?.[0]?.children?.length)
 
+// Fallback release info
+const fallbackRelease = {
+  badgeText: "Release v0.21.0",
+  text: "A new version of kftray has been released.",
+  link: "https://github.com/hcavarsan/kftray/releases/tag/v0.21.0",
+  linkText: "Check it out →"
+}
+
+const latestRelease = ref(null)
+const isLoading = ref(true)
+
 const currentBanner = computed(() => {
-  const now = Date.now()
+  if (isLoading.value || !latestRelease.value) {
+    return fallbackRelease
+  }
+  
   return {
-    badgeText: "Release v0.21.0",
-    text: "A new version of kftray has been released.",
-    link: "https://github.com/hcavarsan/kftray/releases/tag/v0.21.0",
+    badgeText: `Release ${latestRelease.value.tag_name}`,
+    text: `${latestRelease.value.name || 'A new version of kftray'} has been released.`,
+    link: latestRelease.value.html_url,
     linkText: "Check it out →"
+  }
+})
+
+// Fetch latest release on mount
+onMounted(async () => {
+  try {
+    const response = await fetch('https://api.github.com/repos/hcavarsan/kftray/releases/latest')
+    if (response.ok) {
+      const release = await response.json()
+      latestRelease.value = release
+    }
+  } catch (error) {
+    // Silently fall back to hardcoded release
+  } finally {
+    isLoading.value = false
   }
 })
 
@@ -63,86 +92,141 @@ defineProps({
   </div>
 </template>
 
-<style scoped lang="ts">
-css({
-  ':deep(.icon)': {
-    width: '{space.4}',
-    height: '{space.4}'
-  },
+<style scoped>
+/* Logo visibility logic */
+.section.left :deep(.navbar-logo) {
+  display: block;
+}
 
-  '.navbar-logo': {
-    '.left &': {
-      '.has-dialog &': {
-        display: 'none',
-        '@lg': {
-          display: 'block'
-        }
-      },
-    },
-    '.center &': {
-      display: 'block',
-      '@lg': {
-        display: 'none'
-      }
-    }
-  },
+.has-dialog .section.left :deep(.navbar-logo) {
+  display: none;
+}
 
-  header: {
-    backdropFilter: '{elements.backdrop.filter}',
-    position: 'sticky',
-    top: 0,
-    zIndex: 10,
-    width: '100%',
-    borderBottom: '1px solid {elements.border.primary.static}',
-    backgroundColor: '{elements.backdrop.background}',
-    height: '{docus.header.height}',
-
-    '.container': {
-      display: 'grid',
-      height: '100%',
-      gridTemplateColumns: 'repeat(12, minmax(0, 1fr))',
-      gap: '{space.2}'
-    },
-
-    '.section': {
-      display: 'flex',
-      alignItems: 'center',
-      flex: 'none',
-      '&.left': {
-        gridColumn: 'span 4 / span 4',
-        '@lg': {
-          marginLeft: 0
-        },
-      },
-      '&.center': {
-        gridColumn: 'span 4 / span 4',
-        justifyContent: 'center',
-        flex: '1',
-        zIndex: '1'
-      },
-      '&.right': {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '{space.1}',
-        gridColumn: 'span 4 / span 4',
-        justifyContent: 'flex-end',
-        flex: 'none',
-        marginRight: 'calc(0px - {space.4})',
-        '.social-icons': {
-          display: 'none',
-          '@md': {
-            display: 'flex',
-            alignItems: 'center',
-          }
-        },
-        '.github-stars': {
-          order: -1,
-          '@md': {
-            order: 0
-          }
-        }
-      }
-    }
+@media (min-width: 1024px) {
+  .has-dialog .section.left :deep(.navbar-logo) {
+    display: block;
   }
-})
+}
+
+.section.center :deep(.navbar-logo) {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .section.center :deep(.navbar-logo) {
+    display: none;
+  }
+}
+
+:deep(.icon) {
+  width: 1rem;
+  height: 1rem;
+}
+
+header {
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  width: 100%;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+  background-color: rgba(255, 255, 255, 0.85);
+  height: 48px;
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  header {
+    height: 52px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  header {
+    border-bottom-color: rgba(24, 24, 24, 0.7);
+    background-color: rgba(12, 12, 12, 0.96);
+  }
+}
+
+:global(.dark) header {
+  border-bottom-color: rgba(24, 24, 24, 0.7);
+  background-color: rgba(12, 12, 12, 0.96);
+}
+
+header .container {
+  display: grid;
+  height: 100%;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 0.375rem;
+  padding: 0.25rem 0;
+}
+
+@media (min-width: 768px) {
+  header .container {
+    gap: 0.5rem;
+    padding: 0.375rem 0;
+  }
+}
+
+header .section {
+  display: flex;
+  align-items: center;
+  flex: none;
+  min-height: 0;
+}
+
+header .section.left {
+  grid-column: span 4 / span 4;
+}
+
+@media (min-width: 1024px) {
+  header .section.left {
+    margin-left: 0;
+  }
+}
+
+header .section.center {
+  grid-column: span 4 / span 4;
+  justify-content: center;
+  flex: 1;
+  z-index: 1;
+}
+
+header .section.right {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  grid-column: span 4 / span 4;
+  justify-content: flex-end;
+  flex: none;
+  margin-right: calc(0px - 0.75rem);
+}
+
+@media (min-width: 768px) {
+  header .section.right {
+    gap: 0.375rem;
+    margin-right: calc(0px - 1rem);
+  }
+}
+
+header .section.right .social-icons {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  header .section.right .social-icons {
+    display: flex;
+    align-items: center;
+  }
+}
+
+header .section.right .github-stars {
+  order: -1;
+}
+
+@media (min-width: 768px) {
+  header .section.right .github-stars {
+    order: 0;
+  }
+}
 </style>
