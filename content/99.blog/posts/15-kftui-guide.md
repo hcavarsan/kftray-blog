@@ -297,13 +297,6 @@ kftui handles pretty much everything the kftray GUI does, just through terminal 
 
 If you work mostly in terminals or need to manage port-forwards over SSH, kftui covers everything without needing a desktop environment.
 
-## Demo Video
-
-In this quick demo video, I've tested both tools with the same setup - port forwarding to a service while running curl in a loop. Then deleted all pods with kubectl delete pods --all --force to see how each handles recovery.
-
-- kubectl port forward: When pods get deleted, the port forward just dies even though it's forwarding to a service. All requests fail and you have to manually restart it.
-
-- kftray: Loses maybe one request when pods get deleted. The watcher detects changes immediately and reconnects to new pods as they come up. The curl loop keeps going like nothing happened.
 
 ## Demo Video
 

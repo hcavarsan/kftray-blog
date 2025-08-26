@@ -52,7 +52,20 @@ defineProps({
 
 @media (max-width: 1023px) {
   .banner-container {
-    display: none;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    text-align: center;
+  }
+  
+  .badge {
+    margin-right: 0;
+    margin-bottom: 0.25rem;
+  }
+  
+  .banner-text {
+    margin-right: 0;
+    font-size: 0.75rem;
   }
 }
 

@@ -119,8 +119,19 @@ defineProps({
 }
 
 :deep(.icon) {
-  width: 1rem;
-  height: 1rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  min-height: 1.25rem;
+}
+
+@media (max-width: 767px) {
+  :deep(.icon) {
+    width: 1.5rem;
+    height: 1.5rem;
+    min-width: 1.5rem;
+    min-height: 1.5rem;
+  }
 }
 
 header {
@@ -131,13 +142,13 @@ header {
   width: 100%;
   border-bottom: 1px solid rgba(229, 231, 235, 0.8);
   background-color: rgba(255, 255, 255, 0.85);
-  height: 48px;
+  height: 56px;
   transition: all 0.3s ease;
 }
 
 @media (min-width: 768px) {
   header {
-    height: 52px;
+    height: 60px;
   }
 }
 
@@ -157,14 +168,14 @@ header .container {
   display: grid;
   height: 100%;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 0.375rem;
-  padding: 0.25rem 0;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
 }
 
 @media (min-width: 768px) {
   header .container {
-    gap: 0.5rem;
-    padding: 0.375rem 0;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
   }
 }
 
@@ -195,28 +206,31 @@ header .section.center {
 header .section.right {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.5rem;
   grid-column: span 4 / span 4;
   justify-content: flex-end;
   flex: none;
-  margin-right: calc(0px - 0.75rem);
+  margin-right: calc(0px - 0.5rem);
 }
 
 @media (min-width: 768px) {
   header .section.right {
-    gap: 0.375rem;
+    gap: 0.75rem;
     margin-right: calc(0px - 1rem);
   }
 }
 
 header .section.right .social-icons {
-  display: none;
+  display: flex;
+  align-items: center;
 }
 
-@media (min-width: 768px) {
-  header .section.right .social-icons {
-    display: flex;
-    align-items: center;
+@media (max-width: 767px) {
+  header .section.right .social-icons :deep(.icon) {
+    width: 1.75rem;
+    height: 1.75rem;
+    min-width: 1.75rem;
+    min-height: 1.75rem;
   }
 }
 
