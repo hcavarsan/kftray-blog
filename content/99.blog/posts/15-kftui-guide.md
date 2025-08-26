@@ -1,7 +1,7 @@
 ---
 layout: post
 title: kftui - A better way to manage kubectl port-forwards
-description: Nothing fancy, just easier port-forward management
+description: Nothing fancy, just simpler port-forward management with a TUI and CLI mode.
 image: /img/kftui2025.png
 timestamp: 1756149754
 author: Henrique Cavarsan
@@ -11,11 +11,15 @@ avatarLink: https://github.com/hcavarsan
 published: true
 ---
 
-> First of all - kftray and kftui are independent, cross-platform applications. They help you set up and manage multiple port-forwarding settings easily. Both apps are basically the same tool with different interfaces. kftray is the GUI version with windows and buttons. kftui is the terminal version that runs in your command line. They share the same database and configs. Set up a port-forward in kftray's GUI, and you'll see it in kftui too. Save something in kftui, and it shows up in kftray. You can use whichever one you prefer or switch between them.
-
 So... the kftray/kftui docs are pretty messy right now, and I figured writing this blog post would be easier than fixing everything properly. I'll organize the docs later, but this should cover what kftui does and how to use it.
 
 kftui has most of the same stuff as kftray, but this guide is just about the terminal version.
+
+> First of all - kftray and kftui are independent, cross-platform applications. They help you set up and manage multiple port-forwarding settings easily. Both apps are basically the same tool with different interfaces. kftray is the GUI version with windows and buttons. kftui is the terminal version that runs in your command line. They share the same database and configs. Set up a port-forward in kftray's GUI, and you'll see it in kftui too. Save something in kftui, and it shows up in kftray. You can use whichever one you prefer or switch between them.
+
+Oh, and the whole thing is open source, so you can check out the code on [github.com/hcavarsan/kftray](https://github.com/hcavarsan/kftray) if you want to contribute or report bugs, or if you just want to use it, get the downloads from [kftray.app/downloads](https://kftray.app/downloads) - there's more install options in the next section too
+
+
 
 ![Complete Diagram](https://raw.githubusercontent.com/hcavarsan/kftray-blog/refs/heads/main/public/img/kftui2025.png)
 
@@ -25,7 +29,7 @@ I built kftui to address some practical limitations of GUI applications. Termina
 
 From a development perspective, maintaining one codebase in Rust is simpler than managing separate frontend and backend projects. This approach reduces complexity and keeps the tool focused on core functionality.
 
-If you've worked with multiple `kubectl port-forward` processes in different terminal windows, you know how quickly it becomes difficult to manage. kftui provides a centralized way to handle these connections.
+If you've worked with multiple `kubectl port-forward` processes in different terminal windows, you know how quickly it becomes difficult to manage. kftui provides a centralized way to handle these connections. with some additional features...
 
 ## Installation
 
