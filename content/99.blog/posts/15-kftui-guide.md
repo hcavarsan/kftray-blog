@@ -11,6 +11,9 @@ avatarLink: https://github.com/hcavarsan
 published: true
 ---
 
+![Complete Diagram](https://raw.githubusercontent.com/hcavarsan/kftray-blog/refs/heads/main/public/img/kftui2025.png)
+
+
 So... the kftray/kftui docs are pretty messy right now, and I figured writing this blog post would be easier than fixing everything properly. I'll organize the docs later, but this should cover what kftui does and how to use it.
 
 kftui has most of the same stuff as kftray, but this guide is just about the terminal version.
@@ -21,7 +24,6 @@ Oh, and the whole thing is open source, so you can check out the code on [github
 
 
 
-![Complete Diagram](https://raw.githubusercontent.com/hcavarsan/kftray-blog/refs/heads/main/public/img/kftui2025.png)
 
 ## Why Build a Terminal Interface?
 
@@ -31,7 +33,22 @@ From a development perspective, maintaining one codebase in Rust is simpler than
 
 If you've worked with multiple `kubectl port-forward` processes in different terminal windows, you know how quickly it becomes difficult to manage. kftui provides a centralized way to handle these connections. with some additional features...
 
-## Installation
+## kftray vs kubectl resilience
+
+In this quick demo video, I've tested both tools (kftray and kubectl port-forward) with the same setup - port forwarding to a service while running curl in a loop. Then deleted all pods with kubectl delete pods --all --force to see how each handles recovery.
+
+- kubectl port forward: When pods get deleted, the port forward just dies even though it's forwarding to a service. All requests fail and you have to manually restart it.
+
+- kftray: Loses maybe one request when pods get deleted. The watcher detects changes immediately and reconnects to new pods as they come up. The curl loop keeps going like nothing happened.
+
+::YouTubeEmbed
+---
+video-id: dBzFdejBBpc
+---
+::
+
+
+## Getting Started
 
 You'll need `curl` or `wget` installed. Windows users need PowerShell.
 
@@ -177,10 +194,10 @@ To use auto-discovery, navigate to the top menu in kftui and select "Auto Add". 
 
 The interface consists of four main areas:
 
-**Top menu bar**: Contains Help, Auto Add, Import, Export, Settings, About, and Exit options
-**Stopped configurations** (left): Displays configurations ready to start
-**Running configurations** (right): Shows active port-forwards with status information
-**Details panel** (bottom): Provides information about the selected configuration
+- **Top menu bar**: Contains Help, Auto Add, Import, Export, Settings, About, and Exit options
+- **Stopped configurations** (left): Displays configurations ready to start
+- **Running configurations** (right): Shows active port-forwards with status information
+- **Details panel** (bottom): Provides information about the selected configuration
 
 ### Menu Navigation
 
@@ -219,7 +236,7 @@ Enable logging by setting `"http_logs_enabled": true` in your configuration file
 Press `Shift+V` to open the HTTP logs viewer, which operates in two modes:
 
 
-#### **List Mode** (default view):
+#### **HTTP List Mode** (default view):
 ![HTTP Logs](https://raw.githubusercontent.com/hcavarsan/kftray-blog/refs/heads/main/public/img/kftuihttplogsview.png)
 - Displays all HTTP requests with timestamps and status codes
 - Navigate requests with `↑/↓` arrow keys
@@ -228,7 +245,7 @@ Press `Shift+V` to open the HTTP logs viewer, which operates in two modes:
 - Press `a` to toggle automatic scrolling for new requests
 
 
-#### **Detail Mode** (activated by pressing Enter on a request):
+#### **HTTP Detail Mode** :
 ![HTTP Logs](https://raw.githubusercontent.com/hcavarsan/kftray-blog/refs/heads/main/public/img/kftuilogsdetails.png)
 - Shows complete request and response information including headers and body content
 - Scroll through details with `↑/↓` arrow keys
@@ -302,19 +319,6 @@ kftui handles pretty much everything the kftray GUI does, just through terminal 
 If you work mostly in terminals or need to manage port-forwards over SSH, kftui covers everything without needing a desktop environment.
 
 
-## Demo Video
-
-In this quick demo video, I've tested both tools with the same setup - port forwarding to a service while running curl in a loop. Then deleted all pods with kubectl delete pods --all --force to see how each handles recovery.
-
-- kubectl port forward: When pods get deleted, the port forward just dies even though it's forwarding to a service. All requests fail and you have to manually restart it.
-
-- kftray: Loses maybe one request when pods get deleted. The watcher detects changes immediately and reconnects to new pods as they come up. The curl loop keeps going like nothing happened.
-
-::YouTubeEmbed
----
-video-id: dBzFdejBBpc
----
-::
 
 ## Demo Video HTTP Logs
 
