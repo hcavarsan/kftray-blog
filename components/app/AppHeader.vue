@@ -68,7 +68,9 @@ defineProps({
         </div>
 
         <div class="section right">
-          <ThemeSelect />
+          <div class="theme-select-wrapper">
+            <ThemeSelect />
+          </div>
           <AppDocSearch v-if="hasDocSearch" />
           <AppSearch
             v-else
@@ -251,9 +253,17 @@ header .section.right .social-icons {
   header .section.right .social-icons {
     display: none;
   }
-  
+
+  header .section.right .theme-select-wrapper {
+    display: none;
+  }
+
+  header .section.right .sbom-link {
+    display: none;
+  }
+
   header .section.right .github-stars {
-    order: 0;
+    display: none;
   }
 }
 
