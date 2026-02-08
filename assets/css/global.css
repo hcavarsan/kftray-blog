@@ -1,52 +1,47 @@
 :root {
 	color-scheme: light dark;
-  }
+}
 
 body {
 	background-color: var(--color-background);
-  }
-
-
-body.dark {
-  background-color: #2F4858;
-
 }
 
+body.dark {
+	background-color: #2f4858;
+}
 
 /* Add/update Firefox-specific styles */
 @-moz-document url-prefix() {
 	.page-layout {
-	  transform: translateZ(0);
-	  backface-visibility: hidden;
-	  background-color: var(--color-background);
+		transform: translateZ(0);
+		backface-visibility: hidden;
+		background-color: var(--color-background);
 	}
 
 	.ellipsis-container {
-	  will-change: opacity, filter;
-	  transform: translateZ(0);
+		will-change: opacity, filter;
+		transform: translateZ(0);
 	}
 
 	/* Force hardware acceleration */
 	body {
-	  transform: translateZ(0);
-	  backface-visibility: hidden;
-	  perspective: 1000px;
+		transform: translateZ(0);
+		backface-visibility: hidden;
+		perspective: 1000px;
 	}
-  }
-
-  /* Ensure proper color scheme handling */
-
-/* Icon styles */
-.icon, 
-svg.icon, 
-.icon svg, 
-i.icon {
-  display: inline-block !important;
-  width: 1.2em !important;
-  height: 1.2em !important;
-  vertical-align: -0.2em !important;
-  fill: currentColor !important;
-  stroke: currentColor !important;
 }
 
+/* Ensure proper color scheme handling */
 
+/* Icon styles */
+.icon,
+svg.icon,
+.icon svg,
+i.icon {
+	display: inline-block !important;
+	width: 1.2em !important;
+	height: 1.2em !important;
+	vertical-align: -0.2em !important;
+	fill: currentColor !important;
+	stroke: currentColor !important;
+}

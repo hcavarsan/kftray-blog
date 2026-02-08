@@ -1,55 +1,56 @@
 <script setup>
-import BlogCard from "~/components/blog/BlogCard.vue";
-import { ref, watch, computed } from 'vue';
+import { computed, ref, watch } from 'vue'
+import BlogCard from '~/components/blog/BlogCard.vue'
 
 // Get current language from URL parameter
-const route = useRoute();
-const lang = ref(route.query.lang ? String(route.query.lang) : 'en');
+const route = useRoute()
+const lang = ref(route.query.lang ? String(route.query.lang) : 'en')
 
 // Update lang when route query changes
-watch(() => route.query.lang, (newLang) => {
-  if (newLang && ['en', 'es', 'pt'].includes(String(newLang))) {
-    lang.value = String(newLang);
-  } else if (!newLang) {
-    lang.value = 'en';
-  }
-});
+watch(
+	() => route.query.lang,
+	(newLang) => {
+		if (newLang && ['en', 'es', 'pt'].includes(String(newLang))) {
+			lang.value = String(newLang)
+		} else if (!newLang) {
+			lang.value = 'en'
+		}
+	},
+)
 
 // Get router for navigation
-const router = useRouter();
+const router = useRouter()
 
 // Function to switch language without full page reload
 const switchLanguage = (newLang) => {
-  // Update the language state
-  lang.value = newLang;
-  
-  // Update the URL query parameter without reloading the page
-  const query = { ...route.query, lang: newLang };
-  router.replace({ query });
-};
+	// Update the language state
+	lang.value = newLang
+
+	// Update the URL query parameter without reloading the page
+	const query = { ...route.query, lang: newLang }
+	router.replace({ query })
+}
 
 // Get all blog posts
-const { data: allPosts } = await useAsyncData('blog-posts', () => 
-  queryContent('blog/posts')
-    .sort({ timestamp: -1 })
-    .find()
-);
+const { data: allPosts } = await useAsyncData('blog-posts', () =>
+	queryContent('blog/posts').sort({ timestamp: -1 }).find(),
+)
 
 // Filter posts based on language
 const contentQuery = computed(() => {
-  if (!allPosts.value) return [];
-  
-  if (lang.value === 'en') {
-    return allPosts.value.filter(post => !post._path.includes('/es/') && !post._path.includes('/pt/'));
-  } else if (lang.value === 'es') {
-    return allPosts.value.filter(post => post._path.includes('/es/'));
-  } else if (lang.value === 'pt') {
-    return allPosts.value.filter(post => post._path.includes('/pt/'));
-  }
-  
-  // Default to English
-  return allPosts.value.filter(post => !post._path.includes('/es/') && !post._path.includes('/pt/'));
-});
+	if (!allPosts.value) return []
+
+	if (lang.value === 'en') {
+		return allPosts.value.filter((post) => !post._path.includes('/es/') && !post._path.includes('/pt/'))
+	} else if (lang.value === 'es') {
+		return allPosts.value.filter((post) => post._path.includes('/es/'))
+	} else if (lang.value === 'pt') {
+		return allPosts.value.filter((post) => post._path.includes('/pt/'))
+	}
+
+	// Default to English
+	return allPosts.value.filter((post) => !post._path.includes('/es/') && !post._path.includes('/pt/'))
+})
 </script>
 
 <template>

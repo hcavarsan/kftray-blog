@@ -8,25 +8,27 @@
 		"build": "nuxi build",
 		"dev": "nuxi dev",
 		"generate": "nuxi generate",
-		"preview": "nuxi preview"
+		"preview": "nuxi preview",
+		"lint": "biome lint .",
+		"lint:fix": "biome lint --write .",
+		"format": "biome format .",
+		"format:fix": "biome format --write .",
+		"check": "biome check .",
+		"check:fix": "biome check --write .",
+		"knip": "knip"
 	},
 	"dependencies": {
-		"@docsearch/js": "^3.6.0",
 		"@fortawesome/fontawesome-svg-core": "^6.5.2",
 		"@fortawesome/free-brands-svg-icons": "^6.5.2",
-		"@fortawesome/free-regular-svg-icons": "^6.5.2",
 		"@fortawesome/free-solid-svg-icons": "^6.6.0",
 		"@fortawesome/vue-fontawesome": "^3.0.8",
-		"@lehoczky/vue-termynal": "^1.3.0",
-		"@nuxt/ui-templates": "^1.3.4",
 		"@nuxtjs/seo": "^2.0.2",
-		"aos": "^2.3.4",
 		"mermaid": "^11.4.0",
 		"nuxt-og-image": "^4.0.0",
-		"remark-gfm": "^4.0.0",
-		"remark-parse": "^11.0.0"
+		"remark-gfm": "^4.0.0"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "2.3.14",
 		"@nuxt-themes/docus": "1.15.1",
 		"@nuxt/kit": "3.12.0",
 		"@nuxtjs/plausible": "^1.0.0",
@@ -35,9 +37,9 @@
 		"@tailwindcss/typography": "^0.5.15",
 		"@types/mdast": "^4.0.4",
 		"@types/node": "20.12.7",
+		"knip": "5.83.1",
 		"nuxt": "^3.12.0",
 		"pinceau": "0.18.9",
-		"unified": "^11.0.5",
 		"unist-util-visit": "^5.0.0"
 	},
 	"optionalDependencies": {

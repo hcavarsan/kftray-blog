@@ -32,13 +32,13 @@
 
 <script setup lang="ts">
 interface Props {
-  videoId: string
+	videoId: string
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
 const loaded = ref(false)
 
 const loadVideo = () => {
-  loaded.value = true
+	loaded.value = true
 }
 </script>

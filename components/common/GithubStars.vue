@@ -21,20 +21,20 @@
 const stars = ref<number | null>(null)
 
 function formatStars(count: number) {
-  if (count >= 1000) {
-    return `${(count / 1000).toFixed(1)}k`
-  }
-  return count
+	if (count >= 1000) {
+		return `${(count / 1000).toFixed(1)}k`
+	}
+	return count
 }
 
 onMounted(async () => {
-  try {
-    const response = await fetch('https://api.github.com/repos/hcavarsan/kftray')
-    const data = await response.json()
-    stars.value = data.stargazers_count
-  } catch (error) {
-    // Silently fail - stars will just not show
-  }
+	try {
+		const response = await fetch('https://api.github.com/repos/hcavarsan/kftray')
+		const data = await response.json()
+		stars.value = data.stargazers_count
+	} catch {
+		// Silently fail - stars will just not show
+	}
 })
 </script>
 

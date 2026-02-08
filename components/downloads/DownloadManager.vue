@@ -310,8 +310,8 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useSystemDetection } from '~/composables/useSystemDetection'
 import { useLatestRelease } from '~/composables/useLatestRelease'
+import { useSystemDetection } from '~/composables/useSystemDetection'
 
 const { detectedSystem } = useSystemDetection()
 const { latestVersion, isLoading } = useLatestRelease()

@@ -1,37 +1,43 @@
 .gradient-text {
-  background: linear-gradient(45deg, #81F6D4 10%, #12a87b 40%, #0FCF97 60%, #81F6D4 90%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-size: 200% auto;
-  animation: gradient 4s linear infinite;
+	background: linear-gradient(45deg, #81f6d4 10%, #12a87b 40%, #0fcf97 60%, #81f6d4 90%);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-size: 200% auto;
+	animation: gradient 4s linear infinite;
 }
 
 .feature-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-top: 2rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 1.5rem;
+	margin-top: 2rem;
 }
 
 .feature-list li {
-  background: rgba(137, 180, 250, 0.05);
-  padding: 1.25rem;
-  border-radius: 0.75rem;
-  border: 1px solid rgba(137, 180, 250, 0.1);
-  transition: all 0.3s ease;
+	background: rgba(137, 180, 250, 0.05);
+	padding: 1.25rem;
+	border-radius: 0.75rem;
+	border: 1px solid rgba(137, 180, 250, 0.1);
+	transition: all 0.3s ease;
 }
 
 .feature-list li:hover {
-  transform: translateY(-2px);
-  background: rgba(137, 180, 250, 0.1);
-  border-color: rgba(137, 180, 250, 0.2);
+	transform: translateY(-2px);
+	background: rgba(137, 180, 250, 0.1);
+	border-color: rgba(137, 180, 250, 0.2);
 }
 
 @keyframes gradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }
 
 /* Custom styles for header navigation icons */
@@ -40,94 +46,94 @@ header nav ul li a.link svg,
 header nav ul li a svg,
 header nav ul li a i,
 header .icon {
-  display: inline-block !important;
-  width: 18px !important;
-  height: 18px !important;
-  margin-right: 6px !important;
-  vertical-align: -0.125em !important;
-  opacity: 1 !important;
-  visibility: visible !important;
+	display: inline-block !important;
+	width: 18px !important;
+	height: 18px !important;
+	margin-right: 6px !important;
+	vertical-align: -0.125em !important;
+	opacity: 1 !important;
+	visibility: visible !important;
 }
 
 /* Ensure the icon in the Downloads link is visible */
-header nav ul li a[href="/downloads"] .icon {
-  opacity: 1 !important;
-  visibility: visible !important;
-  display: inline-block !important;
+header nav ul li a[href='/downloads'] .icon {
+	opacity: 1 !important;
+	visibility: visible !important;
+	display: inline-block !important;
 }
 
 /* CSS download icon class that can be added in the html */
 .dl-icon {
-  position: relative;
-  padding-left: 20px;
+	position: relative;
+	padding-left: 20px;
 }
 
 .dl-icon:before {
-  content: "↓";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  font-weight: bold;
-  width: 16px;
-  text-align: center;
+	content: '↓';
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	font-weight: bold;
+	width: 16px;
+	text-align: center;
 }
 
 /* Fix for download component in production builds */
 .download-manager .install-option {
-  position: relative;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  border: 1px solid #e2e8f0;
-  overflow: visible;
-  margin-bottom: 1.5rem;
+	position: relative;
+	border-radius: 0.5rem;
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+	border: 1px solid #e2e8f0;
+	overflow: visible;
+	margin-bottom: 1.5rem;
 }
 
 .dark .download-manager .install-option {
-  border-color: #2d3748;
+	border-color: #2d3748;
 }
 
 .download-manager .os-header {
-  position: relative;
-  background-color: #f7fafc;
-  padding: 0.75rem;
-  border-top-left-radius: 0.5rem;
-  border-top-right-radius: 0.5rem;
-  border-bottom: 1px solid #e2e8f0;
-  text-align: center;
+	position: relative;
+	background-color: #f7fafc;
+	padding: 0.75rem;
+	border-top-left-radius: 0.5rem;
+	border-top-right-radius: 0.5rem;
+	border-bottom: 1px solid #e2e8f0;
+	text-align: center;
 }
 
 .dark .download-manager .os-header {
-  background-color: #1a202c;
-  border-color: #2d3748;
+	background-color: #1a202c;
+	border-color: #2d3748;
 }
 
 .download-manager .code-block {
-  position: relative;
-  background-color: #1a202c;
-  color: white;
-  padding: 0.75rem;
-  border-radius: 0.375rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  width: 100%;
-  overflow-x: auto;
-  margin-top: 0.75rem;
+	position: relative;
+	background-color: #1a202c;
+	color: white;
+	padding: 0.75rem;
+	border-radius: 0.375rem;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+	width: 100%;
+	overflow-x: auto;
+	margin-top: 0.75rem;
 }
 
 .dark .download-manager .code-block {
-  background-color: #2d3748;
-  border: 1px solid #4a5568;
+	background-color: #2d3748;
+	border: 1px solid #4a5568;
 }
 
 .download-manager .grid {
-  display: grid;
-  gap: 1.5rem;
+	display: grid;
+	gap: 1.5rem;
 }
 
 @media (min-width: 768px) {
-  .download-manager .grid.md-grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+	.download-manager .grid.md-grid-cols-2 {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
 }

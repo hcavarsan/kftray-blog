@@ -1,9 +1,9 @@
 <script setup lang="ts">
 defineProps({
-  date: {
-    type: Date,
-    required: true
-  },
+	date: {
+		type: Date,
+		required: true,
+	},
 })
 </script>
 

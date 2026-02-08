@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import GithubStars from '~/components/common/GithubStars.vue'
 import SbomLink from '~/components/common/SbomLink.vue'
+
 const { config } = useDocus()
 const { navigation } = useContent()
 const { hasDocSearch } = useDocSearch()
@@ -9,45 +10,45 @@ const hasDialog = computed(() => navigation.value?.length > 1 || navigation.valu
 
 // Fallback release info
 const fallbackRelease = {
-  badgeText: "Release v0.21.0",
-  text: "A new version of kftray has been released.",
-  link: "https://github.com/hcavarsan/kftray/releases/tag/v0.21.0",
-  linkText: "Check it out →"
+	badgeText: 'Release v0.21.0',
+	text: 'A new version of kftray has been released.',
+	link: 'https://github.com/hcavarsan/kftray/releases/tag/v0.21.0',
+	linkText: 'Check it out →',
 }
 
 const latestRelease = ref(null)
 const isLoading = ref(true)
 
 const currentBanner = computed(() => {
-  if (isLoading.value || !latestRelease.value) {
-    return fallbackRelease
-  }
-  
-  return {
-    badgeText: `Release ${latestRelease.value.tag_name}`,
-    text: `${latestRelease.value.name || 'A new version of kftray'} has been released.`,
-    link: latestRelease.value.html_url,
-    linkText: "Check it out →"
-  }
+	if (isLoading.value || !latestRelease.value) {
+		return fallbackRelease
+	}
+
+	return {
+		badgeText: `Release ${latestRelease.value.tag_name}`,
+		text: `${latestRelease.value.name || 'A new version of kftray'} has been released.`,
+		link: latestRelease.value.html_url,
+		linkText: 'Check it out →',
+	}
 })
 
 // Fetch latest release on mount
 onMounted(async () => {
-  try {
-    const response = await fetch('https://api.github.com/repos/hcavarsan/kftray/releases/latest')
-    if (response.ok) {
-      const release = await response.json()
-      latestRelease.value = release
-    }
-  } catch (error) {
-    // Silently fall back to hardcoded release
-  } finally {
-    isLoading.value = false
-  }
+	try {
+		const response = await fetch('https://api.github.com/repos/hcavarsan/kftray/releases/latest')
+		if (response.ok) {
+			const release = await response.json()
+			latestRelease.value = release
+		}
+	} catch {
+		// Silently fall back to hardcoded release
+	} finally {
+		isLoading.value = false
+	}
 })
 
 defineProps({
-  ...variants
+	...variants,
 })
 </script>
 

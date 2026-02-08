@@ -1,13 +1,13 @@
 {
-  "common": {
-    "language": "Português",
-    "languageSwitch": "Idioma",
-    "readMore": "Leia mais",
-    "goBack": "Voltar"
-  },
-  "blog": {
-    "title": "Blog",
-    "latestPosts": "Últimas Postagens",
-    "publishedOn": "Publicado em"
-  }
+	"common": {
+		"language": "Português",
+		"languageSwitch": "Idioma",
+		"readMore": "Leia mais",
+		"goBack": "Voltar"
+	},
+	"blog": {
+		"title": "Blog",
+		"latestPosts": "Últimas Postagens",
+		"publishedOn": "Publicado em"
+	}
 }

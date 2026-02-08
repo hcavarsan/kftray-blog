@@ -1,13 +1,13 @@
 {
-  "common": {
-    "language": "English",
-    "languageSwitch": "Language",
-    "readMore": "Read more",
-    "goBack": "Go back"
-  },
-  "blog": {
-    "title": "Blog",
-    "latestPosts": "Latest Posts",
-    "publishedOn": "Published on"
-  }
+	"common": {
+		"language": "English",
+		"languageSwitch": "Language",
+		"readMore": "Read more",
+		"goBack": "Go back"
+	},
+	"blog": {
+		"title": "Blog",
+		"latestPosts": "Latest Posts",
+		"publishedOn": "Published on"
+	}
 }
