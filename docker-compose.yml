@@ -3,12 +3,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: kftray-docs:latest
-    container_name: kftray-docs
+    image: kftray-blog:latest
+    container_name: kftray-blog
     ports:
       - "3030:3000"
     restart: unless-stopped
     environment:
       - NODE_ENV=production
-      - HOSTNAME=0.0.0.0
+      - HOST=0.0.0.0
       - PORT=3000
