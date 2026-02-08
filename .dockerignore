@@ -1,31 +1,45 @@
-# Git
 .git
 .gitignore
 
-# Docker
 Dockerfile
 docker-compose.yml
 .dockerignore
 
-# Node.js
 node_modules
-npm-debug.log
 .pnpm-store
-.output
+.next
+.source
 .nuxt
+.output
+.turbo
+out
 
-# Editor directories and files
 .idea
 .vscode
+.opencode
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
 
-# System
 .DS_Store
+Thumbs.db
 
-# Tests
-/test
-/coverage
+coverage
+
+*.md
+!content/**/*.md
+!content/**/*.mdx
+LICENSE
+CHANGELOG*
+README*
+img/
+
+.env
+.env.*
+!.env.example
+
+*.log
+npm-debug.log*
+pnpm-debug.log*

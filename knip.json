@@ -1,35 +1,7 @@
 {
-	"$schema": "https://unpkg.com/knip@5/schema.json",
-	"entry": [
-		"app.config.ts",
-		"tailwind.config.ts",
-		"plugins/**/*.{ts,js}",
-		"composables/**/*.ts",
-		"layouts/**/*.vue",
-		"components/**/*.vue",
-		"server/middleware/**/*.ts",
-		"server/routes/**/*.ts",
-		"server/plugins/**/*.ts",
-		"utils/**/*.ts",
-		"app/**/*.ts"
-	],
-	"project": ["**/*.{ts,js,vue}"],
-	"paths": {
-		"~/*": ["./*"]
-	},
-	"ignore": [".nuxt/**", ".output/**", "dist/**", "content/**"],
-	"ignoreDependencies": [
-		"@nuxt/kit",
-		"@nuxt/content",
-		"@nuxt/schema",
-		"@nuxt-themes/docus",
-		"@nuxtjs/mdc",
-		"@nuxtjs/seo",
-		"nuxt-icon",
-		"pinceau",
-		"remark-gfm",
-		"tailwindcss",
-		"vue"
-	],
+	"$schema": "https://unpkg.com/knip@latest/schema.json",
+	"ignore": [".next/**", ".source/**", "source.generated.ts"],
+	"ignoreDependencies": [],
+	"entry": ["source.config.ts", "mdx-components.tsx"],
 	"ignoreExportsUsedInFile": true
 }

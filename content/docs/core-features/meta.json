@@ -1,0 +1,4 @@
+{
+	"title": "Core Features",
+	"pages": ["port-forwarding", "proxy-workloads", "github-sync", "http-logging", "auto-import"]
+}

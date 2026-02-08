@@ -1,15 +1,62 @@
+# Dependencies
 node_modules
-*.iml
-.idea
-*.log*
-.nuxt
-.vscode
-.DS_Store
-coverage
-dist
-sw.*
+.pnp
+.pnp.js
+
+# Next.js build output
+.next/
+out/
+
+# Fumadocs generated files
+.source/
+source.generated.ts
+
+# Next.js generated
+next-env.d.ts
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Production build
+dist/
+
+# Testing
+coverage/
+
+# Environment variables
 .env
+.env*.local
+
+# Debug logs
+*.log*
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea
+*.iml
+.vscode
+*.swp
+*.swo
+*~
+
+# Vercel
+.vercel
+
+# Netlify
+.netlify
+
+# Nuxt (legacy)
+.nuxt
 .output
 
-# Local Netlify folder
-.netlify
+# Turbo
+.turbo
+
+# pnpm store
+.pnpm-store

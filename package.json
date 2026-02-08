@@ -3,55 +3,39 @@
 	"version": "1.0.0",
 	"private": true,
 	"type": "module",
-	"packageManager": "pnpm@9.6.0",
 	"scripts": {
-		"build": "nuxi build",
-		"dev": "nuxi dev",
-		"generate": "nuxi generate",
-		"preview": "nuxi preview",
+		"dev": "next dev --turbopack",
+		"build": "next build",
+		"start": "next start",
+		"postinstall": "fumadocs-mdx",
 		"lint": "biome lint .",
 		"lint:fix": "biome lint --write .",
 		"format": "biome format .",
 		"format:fix": "biome format --write .",
 		"check": "biome check .",
-		"check:fix": "biome check --write .",
-		"knip": "knip"
+		"check:fix": "biome check --write ."
 	},
 	"dependencies": {
-		"@fortawesome/fontawesome-svg-core": "^6.5.2",
-		"@fortawesome/free-brands-svg-icons": "^6.5.2",
-		"@fortawesome/free-solid-svg-icons": "^6.6.0",
-		"@fortawesome/vue-fontawesome": "^3.0.8",
-		"@nuxtjs/seo": "^2.0.2",
-		"mermaid": "^11.4.0",
-		"nuxt-og-image": "^4.0.0",
-		"remark-gfm": "^4.0.0"
+		"fumadocs-core": "^16.5.2",
+		"fumadocs-mdx": "^14.2.7",
+		"fumadocs-ui": "^16.5.2",
+		"lucide-react": "^0.563.0",
+		"mermaid": "^11.12.2",
+		"next": "^16.1.6",
+		"react": "^19.2.4",
+		"react-dom": "^19.2.4",
+		"zod": "^4.3.6"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.3.14",
-		"@nuxt-themes/docus": "1.15.1",
-		"@nuxt/kit": "3.12.0",
-		"@nuxtjs/plausible": "^1.0.0",
-		"@nuxtjs/robots": "^5.0.0",
-		"@nuxtjs/tailwindcss": "6.12.0",
-		"@tailwindcss/typography": "^0.5.15",
-		"@types/mdast": "^4.0.4",
-		"@types/node": "20.12.7",
-		"knip": "5.83.1",
-		"nuxt": "^3.12.0",
-		"pinceau": "0.18.9",
-		"unist-util-visit": "^5.0.0"
-	},
-	"optionalDependencies": {
-		"fsevents": "^2.3.3"
-	},
-	"pnpm": {
-		"overrides": {
-			"nitropack": "^2.10.2"
-		}
-	},
-	"resolutions": {
-		"nitropack": "^2.10.2",
-		"nuxt": "^3.12.0"
+		"@tailwindcss/postcss": "^4.1.18",
+		"@types/mdx": "^2.0.13",
+		"@types/node": "^25.2.2",
+		"@types/react": "^19.2.13",
+		"@types/react-dom": "^19.2.3",
+		"postcss": "^8.5.6",
+		"tailwindcss": "^4.1.18",
+		"typescript": "^5.9.3",
+		"vite": "^7.3.1"
 	}
 }

@@ -3,38 +3,7 @@
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
-		"useIgnoreFile": true,
-		"defaultBranch": "main"
-	},
-	"files": {
-		"ignoreUnknown": true
-	},
-	"formatter": {
-		"enabled": true,
-		"indentStyle": "tab",
-		"indentWidth": 2,
-		"lineWidth": 120,
-		"lineEnding": "lf"
-	},
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"recommended": true,
-			"correctness": {
-				"noUnusedImports": "error",
-				"noUnusedVariables": "error",
-				"useExhaustiveDependencies": "warn"
-			},
-			"style": {
-				"noNonNullAssertion": "warn",
-				"useConst": "error",
-				"useImportType": "error"
-			},
-			"suspicious": {
-				"noExplicitAny": "warn",
-				"noConsole": "warn"
-			}
-		}
+		"useIgnoreFile": false
 	},
 	"assist": {
 		"actions": {
@@ -43,60 +12,54 @@
 			}
 		}
 	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"lineWidth": 100
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"correctness": {
+				"noUnusedImports": "error",
+				"noUnusedVariables": "error"
+			},
+			"style": {
+				"noNonNullAssertion": "warn"
+			},
+			"suspicious": {
+				"noExplicitAny": "error"
+			}
+		}
+	},
 	"javascript": {
 		"formatter": {
 			"quoteStyle": "single",
-			"jsxQuoteStyle": "double",
-			"trailingCommas": "all",
-			"semicolons": "asNeeded",
-			"arrowParentheses": "always",
-			"bracketSpacing": true
-		}
-	},
-	"json": {
-		"parser": {
-			"allowComments": true,
-			"allowTrailingCommas": true
-		},
-		"formatter": {
-			"enabled": true,
-			"trailingCommas": "none"
+			"semicolons": "asNeeded"
 		}
 	},
 	"css": {
 		"parser": {
-			"cssModules": true,
+			"cssModules": false,
 			"tailwindDirectives": true
-		},
-		"formatter": {
-			"enabled": true,
-			"quoteStyle": "single"
-		},
-		"linter": {
-			"enabled": true
 		}
 	},
-	"overrides": [
-		{
-			"includes": ["**/*.vue"],
-			"linter": {
-				"rules": {
-					"correctness": {
-						"noUnusedImports": "off",
-						"noUnusedVariables": "off"
-					}
-				}
-			}
-		},
-		{
-			"includes": ["assets/css/*.css"],
-			"linter": {
-				"rules": {
-					"complexity": {
-						"noImportantStyles": "off"
-					}
-				}
-			}
+	"json": {
+		"formatter": {
+			"trailingCommas": "none"
 		}
-	]
+	},
+	"files": {
+		"includes": [
+			"**",
+			"!node_modules",
+			"!.next",
+			"!.source",
+			"!source.generated.ts",
+			"!next-env.d.ts",
+			"!dist",
+			"!build"
+		]
+	}
 }

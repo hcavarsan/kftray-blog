@@ -1,0 +1,60 @@
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+
+body {
+	font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+	--fd-layout-width: 120rem;
+}
+
+@theme {
+	/* === Dark UI Design System Tokens === */
+	/* Depth layers (shade-based elevation) */
+	--color-dark-base: #1a1a1a;
+	--color-dark-surface: #2a2a2d;
+	--color-dark-control: #333333;
+
+	/* Accent — the only color in the UI; means "interactive" */
+	--color-accent: #4a8af5;
+	--color-accent-hover: #3b7ae0;
+	--color-accent-muted: #4a8af520;
+
+	/* Text hierarchy (brightness = hierarchy) */
+	--color-text-primary: #e0e0e0;
+	--color-text-secondary: #999999;
+
+	/* Borders — whisper, not shout */
+	--color-border: #3a3a3a;
+
+	/* Override fumadocs tokens to match guide */
+	--color-fd-background: #1a1a1a;
+	--color-fd-foreground: #e0e0e0;
+	--color-fd-muted: #333333;
+	--color-fd-muted-foreground: #999999;
+	--color-fd-popover: #222225;
+	--color-fd-popover-foreground: #e0e0e0;
+	--color-fd-card: #2a2a2d;
+	--color-fd-card-foreground: #e0e0e0;
+	--color-fd-border: #3a3a3a;
+	--color-fd-primary: #4a8af5;
+	--color-fd-primary-foreground: #1a1a1a;
+	--color-fd-secondary: #2a2a2d;
+	--color-fd-secondary-foreground: #e0e0e0;
+	--color-fd-accent: #333333;
+	--color-fd-accent-foreground: #e0e0e0;
+	--color-fd-ring: #4a8af5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms;
+		animation-iteration-count: 1;
+		transition-duration: 0.01ms;
+		scroll-behavior: auto;
+	}
+}
