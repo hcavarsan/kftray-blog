@@ -15,12 +15,7 @@ interface NavItem {
 }
 
 const links = computed(() => {
-	return (navigation.value || []).filter((item: NavItem) => {
-		if (filtered.value.includes(item._path)) {
-			return false
-		}
-		return true
-	})
+	return (navigation.value || []).filter((item: NavItem) => !filtered.value.includes(item._path))
 })
 
 const { close, open } = useMenu()
@@ -204,7 +199,6 @@ watch(show, (v) => (v ? open() : close()))
 .footer-socials {
   display: flex;
   align-items: center;
-  gap: 0;
 }
 
 .footer-socials :deep(a) {
