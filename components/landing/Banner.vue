@@ -78,13 +78,6 @@ defineProps({
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .banner-container {
-    background-color: rgba(24, 24, 24, 0.9);
-    border-bottom-color: rgba(48, 48, 48, 0.6);
-  }
-}
-
 :global(.dark) .banner-container {
   background-color: rgba(24, 24, 24, 0.9);
   border-bottom-color: rgba(48, 48, 48, 0.6);
@@ -104,12 +97,6 @@ defineProps({
   line-height: 1.2;
 }
 
-@media (prefers-color-scheme: dark) {
-  .badge {
-    background-color: rgb(75, 85, 99);
-  }
-}
-
 :global(.dark) .badge {
   background-color: rgb(75, 85, 99);
 }
@@ -120,12 +107,6 @@ defineProps({
   font-family: inherit;
   line-height: inherit;
   letter-spacing: inherit;
-}
-
-@media (prefers-color-scheme: dark) {
-  .banner-text {
-    color: rgb(163, 163, 163);
-  }
 }
 
 :global(.dark) .banner-text {
@@ -145,16 +126,6 @@ defineProps({
 .banner-link:hover {
   color: rgb(55, 65, 81);
   text-decoration: underline;
-}
-
-@media (prefers-color-scheme: dark) {
-  .banner-link {
-    color: rgb(209, 213, 219);
-  }
-  
-  .banner-link:hover {
-    color: rgb(229, 231, 235);
-  }
 }
 
 :global(.dark) .banner-link {

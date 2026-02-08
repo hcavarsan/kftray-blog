@@ -114,10 +114,4 @@ const contentQuery = computed(() => {
   </div>
 </template>
 
-<style scoped>
-.blog-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
-  gap: 2rem;
-}
-</style>
+

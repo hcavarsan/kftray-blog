@@ -108,19 +108,6 @@ nav .link:hover {
   color: rgb(107, 114, 128);
 }
 
-@media (prefers-color-scheme: dark) {
-  nav .link {
-    color: rgb(163, 163, 163);
-  }
-  
-  nav .link:active,
-  nav .link.active,
-  nav .link:hover {
-    background-color: rgba(48, 48, 48, 0.6);
-    color: rgb(209, 213, 219);
-  }
-}
-
 :global(.dark) nav .link {
   color: rgb(163, 163, 163);
 }
@@ -136,12 +123,6 @@ nav .link.active {
   box-shadow: inset 0 1px 3px 0 rgb(0 0 0 / 0.1);
   font-weight: 500;
   color: rgb(75, 85, 99);
-}
-
-@media (prefers-color-scheme: dark) {
-  nav .link.active {
-    color: rgb(229, 231, 235);
-  }
 }
 
 :global(.dark) nav .link.active {
