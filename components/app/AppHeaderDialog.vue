@@ -109,14 +109,6 @@ onBeforeUnmount(() => {
   color: rgb(55, 65, 81);
 }
 
-:global(.dark) .menu-trigger {
-  color: rgb(156, 163, 175);
-}
-
-:global(.dark) .menu-trigger:hover {
-  color: rgb(209, 213, 219);
-}
-
 .dialog {
   position: fixed;
   inset: 0;
@@ -126,10 +118,6 @@ onBeforeUnmount(() => {
   overflow-y: auto;
   background-color: rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(4px);
-}
-
-:global(.dark) .dialog {
-  background-color: rgba(0, 0, 0, 0.5);
 }
 
 @media (min-width: 1024px) {
@@ -147,10 +135,6 @@ onBeforeUnmount(() => {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
   padding: 0 1rem;
   background-color: rgb(255, 255, 255);
-}
-
-:global(.dark) .dialog-panel {
-  background-color: rgb(10, 10, 10);
 }
 
 @media (min-width: 640px) {
@@ -202,14 +186,6 @@ onBeforeUnmount(() => {
   color: rgb(55, 65, 81);
 }
 
-:global(.dark) .close-btn {
-  color: rgb(156, 163, 175);
-}
-
-:global(.dark) .close-btn:hover {
-  color: rgb(209, 213, 219);
-}
-
 .dialog-body {
   flex: 1;
   overflow-y: auto;
@@ -222,10 +198,6 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-}
-
-:global(.dark) .dialog-footer {
-  border-top-color: rgba(64, 64, 64, 0.4);
 }
 
 .footer-actions {
@@ -247,5 +219,35 @@ onBeforeUnmount(() => {
 :deep(.icon) {
   width: 1.25rem;
   height: 1.25rem;
+}
+</style>
+
+<style>
+.dark .menu-trigger {
+  color: rgb(156, 163, 175);
+}
+
+.dark .menu-trigger:hover {
+  color: rgb(209, 213, 219);
+}
+
+.dark .dialog {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.dark .dialog-panel {
+  background-color: rgb(10, 10, 10);
+}
+
+.dark .close-btn {
+  color: rgb(156, 163, 175);
+}
+
+.dark .close-btn:hover {
+  color: rgb(209, 213, 219);
+}
+
+.dark .dialog-footer {
+  border-top-color: rgba(64, 64, 64, 0.4);
 }
 </style>

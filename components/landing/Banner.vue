@@ -78,11 +78,6 @@ defineProps({
   }
 }
 
-:global(.dark) .banner-container {
-  background-color: rgba(24, 24, 24, 0.9);
-  border-bottom-color: rgba(48, 48, 48, 0.6);
-}
-
 .badge {
   margin-right: 0.75rem;
   padding: 0.25rem 0.625rem;
@@ -97,20 +92,12 @@ defineProps({
   line-height: 1.2;
 }
 
-:global(.dark) .badge {
-  background-color: rgb(75, 85, 99);
-}
-
 .banner-text {
   color: rgb(107, 114, 128);
   margin-right: 0.5rem;
   font-family: inherit;
   line-height: inherit;
   letter-spacing: inherit;
-}
-
-:global(.dark) .banner-text {
-  color: rgb(163, 163, 163);
 }
 
 .banner-link {
@@ -128,11 +115,27 @@ defineProps({
   text-decoration: underline;
 }
 
-:global(.dark) .banner-link {
+</style>
+
+<style>
+.dark .banner-container {
+  background-color: rgba(24, 24, 24, 0.9);
+  border-bottom-color: rgba(48, 48, 48, 0.6);
+}
+
+.dark .badge {
+  background-color: rgb(75, 85, 99);
+}
+
+.dark .banner-text {
+  color: rgb(163, 163, 163);
+}
+
+.dark .banner-link {
   color: rgb(209, 213, 219);
 }
 
-:global(.dark) .banner-link:hover {
+.dark .banner-link:hover {
   color: rgb(229, 231, 235);
 }
 </style>

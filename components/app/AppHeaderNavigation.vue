@@ -29,7 +29,7 @@ const isActive = (link: NavItem) => (link.exact ? route.fullPath === link._path 
 </script>
 
 <template>
-  <nav v-if="hasNavigation">
+  <nav v-if="hasNavigation" class="app-nav">
     <ul>
       <li v-for="link in tree" :key="link._path">
         <NuxtLink class="link" :to="link.redirect ? link.redirect : navBottomLink(link)" :class="{ active: isActive(link) }">
@@ -108,24 +108,26 @@ nav .link:hover {
   color: rgb(107, 114, 128);
 }
 
-:global(.dark) nav .link {
-  color: rgb(163, 163, 163);
-}
-
-:global(.dark) nav .link:active,
-:global(.dark) nav .link.active,
-:global(.dark) nav .link:hover {
-  background-color: rgba(48, 48, 48, 0.6);
-  color: rgb(209, 213, 219);
-}
-
 nav .link.active {
   box-shadow: inset 0 1px 3px 0 rgb(0 0 0 / 0.1);
   font-weight: 500;
   color: rgb(75, 85, 99);
 }
+</style>
 
-:global(.dark) nav .link.active {
+<style>
+.dark .app-nav .link {
+  color: rgb(163, 163, 163);
+}
+
+.dark .app-nav .link:active,
+.dark .app-nav .link.active,
+.dark .app-nav .link:hover {
+  background-color: rgba(48, 48, 48, 0.6);
+  color: rgb(209, 213, 219);
+}
+
+.dark .app-nav .link.active {
   color: rgb(229, 231, 235);
 }
 </style>

@@ -55,7 +55,7 @@ defineProps({
 <template>
   <div>
 
-    <header :class="{ 'has-dialog': hasDialog }">
+    <header class="app-header" :class="{ 'has-dialog': hasDialog }">
       <Container :fluid="config?.header?.fluid">
         <div class="section left">
           <AppHeaderDialog v-if="hasDialog" />
@@ -139,11 +139,6 @@ header {
   }
 }
 
-:global(.dark) header {
-  border-bottom-color: rgba(24, 24, 24, 0.7);
-  background-color: rgba(12, 12, 12, 0.96);
-}
-
 header .container {
   display: grid;
   height: 100%;
@@ -163,6 +158,7 @@ header .section {
   display: flex;
   align-items: center;
   flex: none;
+  min-width: 0;
   min-height: 0;
 }
 
@@ -185,8 +181,7 @@ header .section.left {
 header .section.center {
   grid-column: span 6 / span 6;
   justify-content: flex-start;
-  flex: 1;
-  z-index: 1;
+  overflow: hidden;
 }
 
 @media (min-width: 768px) {
@@ -253,5 +248,12 @@ header .section.right .github-stars {
   header .section.right .github-stars {
     order: 0;
   }
+}
+</style>
+
+<style>
+.dark .app-header {
+  border-bottom-color: rgba(24, 24, 24, 0.7);
+  background-color: rgba(12, 12, 12, 0.96);
 }
 </style>

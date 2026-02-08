@@ -65,21 +65,10 @@ onMounted(async () => {
   }
 }
 
-:global(.dark) .github-button {
-  color: rgb(163, 163, 163);
-  border-color: rgba(64, 64, 64, 0.4);
-}
-
 .github-button:hover {
   color: rgb(75, 85, 99);
   border-color: rgb(156, 163, 175);
   background: rgba(249, 250, 251, 0.8);
-}
-
-:global(.dark) .github-button:hover {
-  color: rgb(209, 213, 219);
-  border-color: rgba(75, 75, 75, 0.6);
-  background: rgba(48, 48, 48, 0.4);
 }
 
 .github-button:active {
@@ -126,7 +115,21 @@ onMounted(async () => {
   }
 }
 
-:global(.dark) .star-count {
+</style>
+
+<style>
+.dark .github-button {
+  color: rgb(163, 163, 163);
+  border-color: rgba(64, 64, 64, 0.4);
+}
+
+.dark .github-button:hover {
+  color: rgb(209, 213, 219);
+  border-color: rgba(75, 75, 75, 0.6);
+  background: rgba(48, 48, 48, 0.4);
+}
+
+.dark .star-count {
   background: rgba(48, 48, 48, 0.3);
   border-color: rgba(64, 64, 64, 0.4);
   color: rgb(163, 163, 163);
