@@ -96,10 +96,10 @@ onBeforeUnmount(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   padding: 0;
-  border-radius: 0.375rem;
+  border-radius: 0.25rem;
   color: rgb(115, 115, 115);
   transition: all 0.2s ease;
 }
@@ -174,7 +174,7 @@ onBeforeUnmount(() => {
 }
 
 .dialog-header {
-  height: 44px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -185,10 +185,10 @@ onBeforeUnmount(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   padding: 0;
-  border-radius: 0.375rem;
+  border-radius: 0.25rem;
   color: rgb(115, 115, 115);
   transition: all 0.2s ease;
 }
@@ -221,8 +221,8 @@ onBeforeUnmount(() => {
 
 .footer-actions :deep(button),
 .footer-actions :deep(.theme-select) {
-  height: 28px !important;
-  min-height: 28px;
+  height: 24px !important;
+  min-height: 24px;
 }
 
 .footer-socials {
@@ -231,13 +231,13 @@ onBeforeUnmount(() => {
 }
 
 .footer-socials :deep(a) {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.375rem;
+  border-radius: 0.25rem;
   color: rgb(115, 115, 115);
   transition: all 0.2s ease;
 }
@@ -248,8 +248,8 @@ onBeforeUnmount(() => {
 }
 
 :deep(.icon) {
-  width: 0.875rem;
-  height: 0.875rem;
+  width: 0.75rem;
+  height: 0.75rem;
 }
 </style>
 

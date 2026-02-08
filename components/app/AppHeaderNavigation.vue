@@ -70,10 +70,10 @@ nav ul li {
 nav .link {
   display: flex;
   align-items: center;
-  gap: 0.375rem;
-  height: 28px;
-  padding: 0 0.625rem;
-  font-size: 0.75rem;
+  gap: 0.25rem;
+  height: 24px;
+  padding: 0 0.5rem;
+  font-size: 0.6875rem;
   font-weight: 400;
   color: rgb(115, 115, 115);
   border-radius: 0.25rem;
@@ -86,8 +86,8 @@ nav .link {
 nav .link .icon,
 nav .link .fa-icon {
   display: inline-block;
-  width: 0.875rem;
-  height: 0.875rem;
+  width: 0.75rem;
+  height: 0.75rem;
   flex-shrink: 0;
 }
 
