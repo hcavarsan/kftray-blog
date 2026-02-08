@@ -10,28 +10,16 @@ body.dark {
 	background-color: #2f4858;
 }
 
-/* Add/update Firefox-specific styles */
-@-moz-document url-prefix() {
-	.page-layout {
-		transform: translateZ(0);
-		backface-visibility: hidden;
-		background-color: var(--color-background);
-	}
-
-	.ellipsis-container {
-		will-change: opacity, filter;
-		transform: translateZ(0);
-	}
-
-	/* Force hardware acceleration */
-	body {
-		transform: translateZ(0);
-		backface-visibility: hidden;
-		perspective: 1000px;
-	}
+/* GPU acceleration for smooth rendering across all browsers */
+.page-layout {
+	transform: translateZ(0);
+	backface-visibility: hidden;
 }
 
-/* Ensure proper color scheme handling */
+.ellipsis-container {
+	will-change: opacity, filter;
+	transform: translateZ(0);
+}
 
 /* Icon styles */
 .icon,

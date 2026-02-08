@@ -93,10 +93,15 @@ onBeforeUnmount(() => {
 .menu-trigger {
   position: relative;
   z-index: 10;
-  display: flex;
-  padding: 0.5rem;
-  padding-left: 0;
-  color: rgb(107, 114, 128);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 0.25rem;
+  color: rgb(115, 115, 115);
+  transition: all 0.2s ease;
 }
 
 @media (min-width: 1024px) {
@@ -106,15 +111,8 @@ onBeforeUnmount(() => {
 }
 
 .menu-trigger:hover {
-  color: rgb(55, 65, 81);
-}
-
-:global(.dark) .menu-trigger {
-  color: rgb(156, 163, 175);
-}
-
-:global(.dark) .menu-trigger:hover {
-  color: rgb(209, 213, 219);
+  background: rgba(0, 0, 0, 0.04);
+  color: rgb(64, 64, 64);
 }
 
 .dialog {
@@ -126,10 +124,6 @@ onBeforeUnmount(() => {
   overflow-y: auto;
   background-color: rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(4px);
-}
-
-:global(.dark) .dialog {
-  background-color: rgba(0, 0, 0, 0.5);
 }
 
 @media (min-width: 1024px) {
@@ -149,10 +143,6 @@ onBeforeUnmount(() => {
   background-color: rgb(255, 255, 255);
 }
 
-:global(.dark) .dialog-panel {
-  background-color: rgb(10, 10, 10);
-}
-
 @media (min-width: 640px) {
   .dialog-panel {
     max-width: 24rem;
@@ -160,7 +150,6 @@ onBeforeUnmount(() => {
   }
 }
 
-/* Dialog transition — overlay fades, panel slides */
 .dialog-enter-active,
 .dialog-leave-active {
   transition: opacity 0.25s ease;
@@ -185,7 +174,7 @@ onBeforeUnmount(() => {
 }
 
 .dialog-header {
-  height: 56px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -193,21 +182,20 @@ onBeforeUnmount(() => {
 }
 
 .close-btn {
-  display: flex;
-  padding: 0.5rem;
-  color: rgb(107, 114, 128);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 0.25rem;
+  color: rgb(115, 115, 115);
+  transition: all 0.2s ease;
 }
 
 .close-btn:hover {
-  color: rgb(55, 65, 81);
-}
-
-:global(.dark) .close-btn {
-  color: rgb(156, 163, 175);
-}
-
-:global(.dark) .close-btn:hover {
-  color: rgb(209, 213, 219);
+  background: rgba(0, 0, 0, 0.04);
+  color: rgb(64, 64, 64);
 }
 
 .dialog-body {
@@ -221,18 +209,20 @@ onBeforeUnmount(() => {
   padding: 0.75rem 0;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-}
-
-:global(.dark) .dialog-footer {
-  border-top-color: rgba(64, 64, 64, 0.4);
+  gap: 0.625rem;
 }
 
 .footer-actions {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.375rem;
   flex-wrap: wrap;
+}
+
+.footer-actions :deep(button),
+.footer-actions :deep(.theme-select) {
+  height: 24px !important;
+  min-height: 24px;
 }
 
 .footer-socials {
@@ -241,11 +231,65 @@ onBeforeUnmount(() => {
 }
 
 .footer-socials :deep(a) {
-  padding: 0.5rem;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  color: rgb(115, 115, 115);
+  transition: all 0.2s ease;
+}
+
+.footer-socials :deep(a:hover) {
+  background: rgba(0, 0, 0, 0.04);
+  color: rgb(64, 64, 64);
 }
 
 :deep(.icon) {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 0.75rem;
+  height: 0.75rem;
+}
+</style>
+
+<style>
+.dark .menu-trigger {
+  color: rgb(163, 163, 163);
+}
+
+.dark .menu-trigger:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgb(229, 231, 235);
+}
+
+.dark .dialog {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.dark .dialog-panel {
+  background-color: rgb(10, 10, 10);
+}
+
+.dark .close-btn {
+  color: rgb(163, 163, 163);
+}
+
+.dark .close-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgb(229, 231, 235);
+}
+
+.dark .dialog-footer {
+  border-top-color: rgba(64, 64, 64, 0.4);
+}
+
+.dark .footer-socials a {
+  color: rgb(163, 163, 163) !important;
+}
+
+.dark .footer-socials a:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: rgb(229, 231, 235) !important;
 }
 </style>

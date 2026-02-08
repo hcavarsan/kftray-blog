@@ -59,6 +59,11 @@ export default defineNuxtConfig({
 	components: {
 		dirs: [
 			{
+				path: '~/components/globals',
+				global: true,
+				pathPrefix: false,
+			},
+			{
 				path: '~/components/content',
 				global: true,
 				pathPrefix: false,
@@ -97,9 +102,9 @@ export default defineNuxtConfig({
 
 	mdc: {
 		highlight: {
-			langs: ['bash', 'json', 'yaml', 'powershell', 'toml', 'hcl', 'terraform', 'mermaid'],
+			langs: ['bash', 'json', 'yaml', 'powershell', 'toml', 'hcl', 'terraform', 'mermaid', 'dockerfile'],
 			theme: 'github-dark',
-			preload: ['bash', 'json', 'yaml', 'powershell', 'toml', 'hcl', 'terraform', 'mermaid'],
+			preload: ['bash', 'json', 'yaml', 'powershell', 'toml', 'hcl', 'terraform', 'mermaid', 'dockerfile'],
 		},
 		headings: {
 			anchorLinks: {

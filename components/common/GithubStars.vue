@@ -42,60 +42,34 @@ onMounted(async () => {
 .github-button {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  height: 1.75rem;
-  padding: 0 0.625rem;
-  color: rgb(156, 163, 175);
+  gap: 0.3125rem;
+  height: 28px;
+  padding: 0 0.5rem;
+  color: rgb(100, 100, 100);
   transition: all 0.2s ease;
-  border: 1px solid rgb(209, 213, 219);
-  border-radius: 0.3125rem;
-  font-size: 0.75rem;
+  border-radius: 0.4375rem;
+  font-size: 0.6875rem;
   font-weight: 400;
   line-height: 1;
   user-select: none;
   text-decoration: none;
 }
 
-@media (min-width: 768px) {
-  .github-button {
-    height: 2rem;
-    padding: 0 0.75rem;
-    font-size: 0.8125rem;
-    gap: 0.5rem;
-  }
-}
-
-:global(.dark) .github-button {
-  color: rgb(163, 163, 163);
-  border-color: rgba(64, 64, 64, 0.4);
-}
-
 .github-button:hover {
-  color: rgb(75, 85, 99);
-  border-color: rgb(156, 163, 175);
-  background: rgba(249, 250, 251, 0.8);
-}
-
-:global(.dark) .github-button:hover {
-  color: rgb(209, 213, 219);
-  border-color: rgba(75, 75, 75, 0.6);
-  background: rgba(48, 48, 48, 0.4);
-}
-
-.github-button:active {
-  transform: translateY(1px);
+  color: rgb(50, 50, 50);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .github-icon {
-  width: 1rem;
-  height: 1rem;
+  width: 0.875rem;
+  height: 0.875rem;
   flex-shrink: 0;
 }
 
 .star-text {
-  font-weight: 400;
+  font-weight: 500;
   display: none;
-  font-size: inherit;
+  font-size: 0.6875rem;
 }
 
 @media (min-width: 640px) {
@@ -106,29 +80,20 @@ onMounted(async () => {
 
 .star-count {
   font-weight: 400;
-  display: inline-flex;
-  align-items: center;
-  height: 1.125rem;
-  padding: 0 0.375rem;
-  background: rgba(229, 231, 235, 0.8);
-  color: rgb(107, 114, 128);
-  border-radius: 0.25rem;
-  border: 1px solid rgba(209, 213, 219, 0.6);
-  font-size: 0.6875rem;
+  font-size: 0.625rem;
+  color: inherit;
   line-height: 1;
+  opacity: 0.7;
+}
+</style>
+
+<style>
+.dark .github-button {
+  color: rgb(180, 180, 180);
 }
 
-@media (min-width: 768px) {
-  .star-count {
-    height: 1.25rem;
-    padding: 0 0.5rem;
-    font-size: 0.75rem;
-  }
-}
-
-:global(.dark) .star-count {
-  background: rgba(48, 48, 48, 0.3);
-  border-color: rgba(64, 64, 64, 0.4);
-  color: rgb(163, 163, 163);
+.dark .github-button:hover {
+  color: rgb(240, 240, 240);
+  background: rgba(255, 255, 255, 0.06);
 }
 </style>

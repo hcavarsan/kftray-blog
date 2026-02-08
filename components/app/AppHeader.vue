@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import GithubStars from '~/components/common/GithubStars.vue'
 import SbomLink from '~/components/common/SbomLink.vue'
+import ThemeToggle from '~/components/common/ThemeToggle.vue'
 
 const { config } = useDocus()
 const { navigation } = useContent()
@@ -55,7 +56,7 @@ defineProps({
 <template>
   <div>
 
-    <header :class="{ 'has-dialog': hasDialog }">
+    <header class="app-header" :class="{ 'has-dialog': hasDialog }">
       <Container :fluid="config?.header?.fluid">
         <div class="section left">
           <AppHeaderDialog v-if="hasDialog" />
@@ -65,21 +66,23 @@ defineProps({
         <div class="section center">
           <AppHeaderLogo v-if="hasDialog" />
           <AppHeaderNavigation />
+          <SbomLink class="sbom-link" />
         </div>
 
         <div class="section right">
-          <div class="theme-select-wrapper">
-            <ThemeSelect />
-          </div>
-          <AppDocSearch v-if="hasDocSearch" />
-          <AppSearch
-            v-else
-            :fuse="config.fuse"
-          />
-          <SbomLink class="sbom-link" />
-          <GithubStars class="github-stars" />
-          <div class="social-icons">
-            <AppSocialIcons />
+          <div class="right-toolbar">
+            <AppDocSearch v-if="hasDocSearch" />
+            <AppSearch
+              v-else
+              :fuse="config.fuse"
+            />
+            <span class="toolbar-divider" />
+            <GithubStars class="github-stars" />
+            <div class="social-icons">
+              <AppSocialIcons />
+            </div>
+            <span class="toolbar-divider" />
+            <ThemeToggle class="theme-toggle-desktop" />
           </div>
         </div>
       </Container>
@@ -96,7 +99,6 @@ defineProps({
 </template>
 
 <style scoped>
-/* Logo: always visible in left, always hidden in center */
 .section.left :deep(.navbar-logo) {
   display: block;
 }
@@ -106,19 +108,10 @@ defineProps({
 }
 
 :deep(.icon) {
-  width: 1.25rem;
-  height: 1.25rem;
-  min-width: 1.25rem;
-  min-height: 1.25rem;
-}
-
-@media (max-width: 767px) {
-  :deep(.icon) {
-    width: 1.5rem;
-    height: 1.5rem;
-    min-width: 1.5rem;
-    min-height: 1.5rem;
-  }
+  width: 0.75rem;
+  height: 0.75rem;
+  min-width: 0.75rem;
+  min-height: 0.75rem;
 }
 
 header {
@@ -127,21 +120,15 @@ header {
   top: 0;
   z-index: 10;
   width: 100%;
-  border-bottom: 1px solid rgba(229, 231, 235, 0.8);
   background-color: rgba(255, 255, 255, 0.85);
-  height: 56px;
+  height: 48px;
   transition: all 0.3s ease;
 }
 
 @media (min-width: 768px) {
   header {
-    height: 60px;
+    height: 52px;
   }
-}
-
-:global(.dark) header {
-  border-bottom-color: rgba(24, 24, 24, 0.7);
-  background-color: rgba(12, 12, 12, 0.96);
 }
 
 header .container {
@@ -149,13 +136,20 @@ header .container {
   height: 100%;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 0.5rem;
-  padding: 0.5rem 0;
+  padding: 0 1rem;
+  align-items: center;
 }
 
 @media (min-width: 768px) {
   header .container {
     gap: 0.75rem;
-    padding: 0.5rem 0;
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  header .container {
+    padding: 0 2.5rem;
   }
 }
 
@@ -163,6 +157,7 @@ header .section {
   display: flex;
   align-items: center;
   flex: none;
+  min-width: 0;
   min-height: 0;
 }
 
@@ -172,26 +167,19 @@ header .section.left {
 
 @media (min-width: 768px) {
   header .section.left {
-    grid-column: span 4 / span 4;
-  }
-}
-
-@media (min-width: 1024px) {
-  header .section.left {
-    margin-left: 0;
+    grid-column: span 3 / span 3;
   }
 }
 
 header .section.center {
   grid-column: span 6 / span 6;
-  justify-content: flex-start;
-  flex: 1;
-  z-index: 1;
+  justify-content: center;
+  overflow: hidden;
 }
 
 @media (min-width: 768px) {
   header .section.center {
-    grid-column: span 4 / span 4;
+    grid-column: span 5 / span 5;
     justify-content: center;
   }
 }
@@ -199,24 +187,132 @@ header .section.center {
 header .section.right {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0;
   grid-column: span 3 / span 3;
   justify-content: flex-end;
   flex: none;
-  margin-right: -0.5rem;
 }
 
 @media (min-width: 768px) {
   header .section.right {
     grid-column: span 4 / span 4;
-    gap: 0.75rem;
-    margin-right: -1rem;
+    gap: 0;
   }
+}
+
+.right-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 0.625rem;
+  padding: 3px 4px;
+  height: 34px;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 16px;
+  background: rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+  margin: 0 2px;
 }
 
 header .section.right .social-icons {
   display: flex;
   align-items: center;
+  gap: 2px;
+}
+
+.theme-toggle-desktop {
+  display: flex;
+  align-items: center;
+}
+
+.section.right :deep(.DocSearch-Button),
+.section.right :deep([class*="search"]) {
+  height: 28px !important;
+  min-height: 28px;
+  border-radius: 0.4375rem;
+  font-size: 0.75rem;
+}
+
+.section.right :deep(button[aria-label="Search"]) {
+  padding: 0 !important;
+}
+
+.section.right :deep(.content) {
+  border: none !important;
+  border-radius: 0.4375rem !important;
+  padding: 0.25rem 0.625rem !important;
+  gap: 0.25rem !important;
+  font-size: 0.6875rem !important;
+  height: 28px;
+  display: inline-flex !important;
+  align-items: center !important;
+  background: transparent;
+}
+
+.section.right :deep(.content:hover) {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.section.right :deep(.content > .icon:first-child) {
+  display: none !important;
+}
+
+.section.right :deep(.content > span:nth-child(2)) {
+  display: none !important;
+}
+
+.section.right :deep(.content > span:nth-child(3)) {
+  display: flex !important;
+  align-items: center;
+  gap: 0.1875rem;
+}
+
+.section.right :deep(.content kbd) {
+  font-size: 0.6875rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  padding: 0;
+  border: none;
+  background: none;
+  color: rgb(100, 100, 100);
+  line-height: 1;
+  font-weight: 500;
+}
+
+.social-icons :deep(a),
+.social-icons :deep(button) {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px;
+  min-height: 28px;
+  padding: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.4375rem;
+  color: rgb(100, 100, 100);
+  transition: all 0.2s ease;
+}
+
+.social-icons :deep(a:hover),
+.social-icons :deep(button:hover) {
+  background: rgba(0, 0, 0, 0.04);
+  color: rgb(50, 50, 50);
+}
+
+.social-icons :deep(.icon),
+.social-icons :deep(svg) {
+  width: 0.875rem !important;
+  height: 0.875rem !important;
+}
+
+.section.left :deep(.navbar-logo img),
+.section.center :deep(.navbar-logo img) {
+  height: 32px;
+  width: auto;
 }
 
 @media (max-width: 767px) {
@@ -224,34 +320,75 @@ header .section.right .social-icons {
     display: none;
   }
 
-  header .section.right .theme-select-wrapper {
-    display: none;
-  }
-
-  header .section.right .sbom-link {
+  header .section.right .theme-toggle-desktop {
     display: none;
   }
 
   header .section.right .github-stars {
     display: none;
   }
-}
 
-header .section.right .sbom-link {
-  order: -2;
-}
-
-header .section.right .github-stars {
-  order: -1;
-}
-
-@media (min-width: 768px) {
-  header .section.right .sbom-link {
-    order: 0;
+  .toolbar-divider {
+    display: none;
   }
 
-  header .section.right .github-stars {
-    order: 0;
+  .right-toolbar {
+    background: transparent;
+    padding: 0;
   }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  header .section.right .social-icons {
+    display: none;
+  }
+}
+
+.section.center .sbom-link {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .section.center .sbom-link {
+    display: inline-flex;
+  }
+}
+</style>
+
+<style>
+.dark .app-header {
+  background-color: rgba(12, 12, 12, 0.96);
+}
+
+.dark .right-toolbar {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.dark .toolbar-divider {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.dark .section.right .content {
+  background: transparent !important;
+  border: none !important;
+}
+
+.dark .section.right .content:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark .section.right .content kbd {
+  color: rgb(180, 180, 180);
+}
+
+.dark .social-icons a,
+.dark .social-icons button {
+  color: rgb(180, 180, 180) !important;
+}
+
+.dark .social-icons a:hover,
+.dark .social-icons button:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: rgb(240, 240, 240) !important;
 }
 </style>
