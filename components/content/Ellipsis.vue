@@ -15,17 +15,17 @@
   </template>
 
   <script>
-  export default {
+export default {
 	name: 'Ellipsis',
 	props: {
-	  right: String,
-	  left: String,
-	  width: String,
-	  top: String,
-	  blur: String
-	}
-  }
-  </script>
+		right: String,
+		left: String,
+		width: String,
+		top: String,
+		blur: String,
+	},
+}
+</script>
 
   <style scoped>
   .ellipsis {

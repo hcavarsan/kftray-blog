@@ -7,75 +7,75 @@
   </template>
 
   <script setup>
-  import { nodeTextContent } from '@nuxtjs/mdc/runtime/utils/node'
+import { nodeTextContent } from '@nuxtjs/mdc/runtime/utils/node'
 
-  const el = ref(null)
-  const rendered = ref(false)
-  const rerenderCounter = ref(1)
-  const slots = useSlots()
+const el = ref(null)
+const rendered = ref(false)
+const rerenderCounter = ref(1)
+const slots = useSlots()
 
-  const mermaidSyntax = computed(() => {
+const mermaidSyntax = computed(() => {
 	// Trick to force re-render when the slot content changes (for preview inside studio)
 	rerenderCounter.value
 
 	const defaultSlot = slots.default?.()[0]
 	if (!defaultSlot) {
-	  return ''
+		return ''
 	}
 
 	// Old syntax with text node
 	if (typeof defaultSlot.children === 'string') {
-	  return defaultSlot.children
+		return defaultSlot.children
 	}
 
 	// New syntax with code node
 	const codeChild = defaultSlot.children?.default()[0]
 	if (codeChild.type !== 'code') {
-	  return ''
+		return ''
 	}
 
 	// New syntax without highlight
 	if (typeof codeChild.children === 'string') {
-	  return codeChild.children
+		return codeChild.children
 	}
 
 	// New syntax with highlight
 	return nodeTextContent(codeChild.children)
-  })
+})
 
-  // watch(mermaidSyntax, () => {
-  //   render()
-  // })
+// watch(mermaidSyntax, () => {
+//   render()
+// })
 
-  async function render() {
+async function render() {
 	if (!el.value) {
-	  return
+		return
 	}
 	if (el.value.querySelector('svg')) {
-	  // Already rendered
-	  return
+		// Already rendered
+		return
 	}
 
 	// // Iterate children to remove comments
 	for (const child of el.value.childNodes) {
-	  if (child.nodeType === Node.COMMENT_NODE) {
-		el.value.removeChild(child)
-	  }
+		if (child.nodeType === Node.COMMENT_NODE) {
+			el.value.removeChild(child)
+		}
 	}
-	const { default: mermaid } = await import("mermaid")
+	const { default: mermaid } = await import('mermaid')
 	el.value.classList.add('mermaid')
 	rendered.value = true
 	await mermaid.run({ nodes: [el.value] })
-  }
+}
 
-  onBeforeUpdate(() => {
+onBeforeUpdate(() => {
 	rerenderCounter.value++
-  })
+})
 
-  onMounted(() => {
+onMounted(() => {
 	render()
-  })
-  </script>
+})
+</script>
 
   <style>
   .mermaid rect {

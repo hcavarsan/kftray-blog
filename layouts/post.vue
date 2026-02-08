@@ -1,223 +1,188 @@
 <script setup lang="ts">
-import BlogComments from "~/components/blog/BlogComments.vue";
-import FormatDate from "~/components/common/FormatDate.vue";
-import { useContent } from "#imports";
-import { watch, ref, computed, onMounted } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue'
+import { useContent } from '#imports'
+import BlogComments from '~/components/blog/BlogComments.vue'
+import FormatDate from '~/components/common/FormatDate.vue'
 
-const { page } = useContent();
-const route = useRoute();
+const { page } = useContent()
+const route = useRoute()
 
 // Get language from query parameter first, then fallback to path detection
 const currentLang = computed(() => {
-  // First check query parameter
-  if (route.query.lang && ['en', 'es', 'pt'].includes(String(route.query.lang))) {
-    return String(route.query.lang);
-  }
-  
-  // If no query parameter, check path for language directory
-  const pathParts = route.path.split('/');
-  if (pathParts.length >= 4 && ['en', 'es', 'pt'].includes(pathParts[3])) {
-    return pathParts[3];
-  }
-  
-  // Default to English
-  return 'en';
-});
+	// First check query parameter
+	if (route.query.lang && ['en', 'es', 'pt'].includes(String(route.query.lang))) {
+		return String(route.query.lang)
+	}
 
-// Generate alternate language links
-const getAlternateLinks = () => {
-  const alternateLinks = [];
-  
-  // Only add links for languages that we have translations for
-  if (currentPostLanguages.value.some(l => l.code === 'en')) {
-    alternateLinks.push({ rel: 'alternate', hreflang: 'en', href: `https://kftray.app${route.path}` });
-  }
-  
-  if (currentPostLanguages.value.some(l => l.code === 'es')) {
-    alternateLinks.push({ rel: 'alternate', hreflang: 'es', href: `https://kftray.app${route.path}?lang=es` });
-  }
-  
-  if (currentPostLanguages.value.some(l => l.code === 'pt')) {
-    alternateLinks.push({ rel: 'alternate', hreflang: 'pt', href: `https://kftray.app${route.path}?lang=pt` });
-  }
-  
-  return alternateLinks;
-};
+	// If no query parameter, check path for language directory
+	const pathParts = route.path.split('/')
+	if (pathParts.length >= 4 && ['en', 'es', 'pt'].includes(pathParts[3])) {
+		return pathParts[3]
+	}
+
+	// Default to English
+	return 'en'
+})
 
 // Computed property for the content to display (original or translated)
 const displayContent = computed(() => {
-  return translatedContent.value || page.value;
-});
+	return translatedContent.value || page.value
+})
 
 // Format the timestamp
 const formattedDate = computed(() => {
-  if (!page.value?.timestamp) return null;
-  return new Date(page.value.timestamp * 1000);
-});
+	if (!page.value?.timestamp) return null
+	return new Date(page.value.timestamp * 1000)
+})
 
 // Get the image URL
 const bannerImage = computed(() => {
-  if (!page.value?.image) return null;
-  return page.value.image.startsWith('http')
-    ? page.value.image
-    : page.value.image;
-});
-
-// Get URL with language query parameter - simplified for better performance
-const getLanguageUrl = (langCode) => {
-  // Just change the query parameter, don't change the path
-  // This avoids unnecessary redirects and full page reloads
-  return {
-    query: { 
-      ...route.query,
-      lang: langCode 
-    }
-  };
-};
+	if (!page.value?.image) return null
+	return page.value.image.startsWith('http') ? page.value.image : page.value.image
+})
 
 // Available languages
 const availableLanguages = [
-  { code: 'en', name: 'English' },
-  { code: 'es', name: 'Español' },
-  { code: 'pt', name: 'Português' }
-];
+	{ code: 'en', name: 'English' },
+	{ code: 'es', name: 'Español' },
+	{ code: 'pt', name: 'Português' },
+]
 
 // Current post languages (initially just the current language)
-const currentPostLanguages = ref([]);
+const currentPostLanguages = ref([])
 
 // Get the translated content, if available
-const translatedContent = ref(null);
+const translatedContent = ref(null)
 
 // Function to check if translations exist and load translated content - simplified version
 const findTranslations = async () => {
-  try {
-    // Extract the post basename from the path
-    const pathParts = page.value._path.split('/');
-    const basename = pathParts[pathParts.length - 1];
-    
-    // Reset the languages list
-    currentPostLanguages.value = [];
-    translatedContent.value = null;
-    
-    // Determine if we're already in a language directory
-    let inLanguageDir = false;
-    let currentPathLang = 'en';
-    
-    if (pathParts.length >= 4 && ['en', 'es', 'pt'].includes(pathParts[3])) {
-      inLanguageDir = true;
-      currentPathLang = pathParts[3];
-    }
-    
-    // Try to find translations in all languages
-    // Use Promise.all to run these in parallel
-    const checkResults = await Promise.all([
-      checkTranslationExists('en', basename),
-      checkTranslationExists('es', basename),
-      checkTranslationExists('pt', basename)
-    ]);
-    
-    // Add languages that have translations
-    ['en', 'es', 'pt'].forEach((lang, index) => {
-      if (checkResults[index]) {
-        // Find the language object from available languages
-        const langObj = availableLanguages.find(l => l.code === lang);
-        if (langObj) {
-          currentPostLanguages.value.push(langObj);
-        }
-      }
-    });
-    
-    // If no languages found, add English as fallback
-    if (currentPostLanguages.value.length === 0) {
-      currentPostLanguages.value = [{ code: 'en', name: 'English' }];
-    }
-    
-    // Load the selected language content
-    if (currentLang.value !== currentPathLang) {
-      await loadSelectedLanguageContent(basename, currentPathLang);
-    }
-    
-    return true;
-  } catch (e) {
-    console.error("Error checking post translations:", e);
-    return false;
-  }
-};
+	try {
+		// Extract the post basename from the path
+		const pathParts = page.value._path.split('/')
+		const basename = pathParts[pathParts.length - 1]
+
+		// Reset the languages list
+		currentPostLanguages.value = []
+		translatedContent.value = null
+
+		// Determine if we're already in a language directory
+		let currentPathLang = 'en'
+
+		if (pathParts.length >= 4 && ['en', 'es', 'pt'].includes(pathParts[3])) {
+			currentPathLang = pathParts[3]
+		}
+
+		// Try to find translations in all languages
+		// Use Promise.all to run these in parallel
+		const checkResults = await Promise.all([
+			checkTranslationExists('en', basename),
+			checkTranslationExists('es', basename),
+			checkTranslationExists('pt', basename),
+		])
+
+		// Add languages that have translations
+		;['en', 'es', 'pt'].forEach((lang, index) => {
+			if (checkResults[index]) {
+				// Find the language object from available languages
+				const langObj = availableLanguages.find((l) => l.code === lang)
+				if (langObj) {
+					currentPostLanguages.value.push(langObj)
+				}
+			}
+		})
+
+		// If no languages found, add English as fallback
+		if (currentPostLanguages.value.length === 0) {
+			currentPostLanguages.value = [{ code: 'en', name: 'English' }]
+		}
+
+		// Load the selected language content
+		if (currentLang.value !== currentPathLang) {
+			await loadSelectedLanguageContent(basename, currentPathLang)
+		}
+
+		return true
+	} catch {
+		return false
+	}
+}
 
 // Function to check if a translation exists (without loading the content)
 const checkTranslationExists = async (langCode, basename) => {
-  try {
-    const path = `/blog/posts/${langCode}/${basename}`;
-    const result = await queryContent(path).only(['_path']).find();
-    return result.length > 0;
-  } catch (e) {
-    return false;
-  }
-};
+	try {
+		const path = `/blog/posts/${langCode}/${basename}`
+		const result = await queryContent(path).only(['_path']).find()
+		return result.length > 0
+	} catch {
+		return false
+	}
+}
 
 // Function to load the content for the selected language
 const loadSelectedLanguageContent = async (basename, currentPathLang) => {
-  // Only load if the selected language is different from the current path language
-  if (currentLang.value === currentPathLang) return;
-  
-  try {
-    // Try to load the selected language content
-    const langPath = `/blog/posts/${currentLang.value}/${basename}`;
-    const content = await queryContent(langPath).find();
-    
-    if (content.length > 0) {
-      translatedContent.value = content[0];
-    }
-  } catch (e) {
-    // No translation found for the selected language
-  }
-};
+	// Only load if the selected language is different from the current path language
+	if (currentLang.value === currentPathLang) return
 
+	try {
+		// Try to load the selected language content
+		const langPath = `/blog/posts/${currentLang.value}/${basename}`
+		const content = await queryContent(langPath).find()
+
+		if (content.length > 0) {
+			translatedContent.value = content[0]
+		}
+	} catch {
+		// No translation found for the selected language
+	}
+}
 
 // Get router for navigation
-const router = useRouter();
+const router = useRouter()
 
 // Function to switch language efficiently
 const switchLanguage = (newLang) => {
-  // Use the router to update the query parameter
-  // This is more robust than manually changing history state
-  router.replace({ 
-    query: { 
-      ...route.query, 
-      lang: newLang 
-    } 
-  });
-  
-  // Update the selected language immediately for UI feedback
-  currentLang.value = newLang;
-};
+	// Use the router to update the query parameter
+	// This is more robust than manually changing history state
+	router.replace({
+		query: {
+			...route.query,
+			lang: newLang,
+		},
+	})
+
+	// Update the selected language immediately for UI feedback
+	currentLang.value = newLang
+}
 
 // Watch for route changes to handle direct URL navigation
-watch(() => route.path, () => {
-  // Only run the expensive operation if we're on a new post
-  findTranslations();
-});
+watch(
+	() => route.path,
+	() => {
+		// Only run the expensive operation if we're on a new post
+		findTranslations()
+	},
+)
 
 // Handle query parameter changes
-watch(() => route.query.lang, (newLang, oldLang) => {
-  if (newLang && ['en', 'es', 'pt'].includes(newLang.toString()) && newLang !== oldLang) {
-    // Update the selected language
-    currentLang.value = newLang.toString();
-    
-    // Load the content for the selected language
-    const pathParts = page.value._path.split('/');
-    const basename = pathParts[pathParts.length - 1];
-    const currentPathLang = pathParts.length >= 4 && ['en', 'es', 'pt'].includes(pathParts[3]) 
-      ? pathParts[3] 
-      : 'en';
-      
-    loadSelectedLanguageContent(basename, currentPathLang);
-  }
-});
+watch(
+	() => route.query.lang,
+	(newLang, oldLang) => {
+		if (newLang && ['en', 'es', 'pt'].includes(newLang.toString()) && newLang !== oldLang) {
+			// Update the selected language
+			currentLang.value = newLang.toString()
+
+			// Load the content for the selected language
+			const pathParts = page.value._path.split('/')
+			const basename = pathParts[pathParts.length - 1]
+			const currentPathLang = pathParts.length >= 4 && ['en', 'es', 'pt'].includes(pathParts[3]) ? pathParts[3] : 'en'
+
+			loadSelectedLanguageContent(basename, currentPathLang)
+		}
+	},
+)
 
 // Find translations when component is mounted
-onMounted(findTranslations);
-
+onMounted(findTranslations)
 </script>
 
 <template>

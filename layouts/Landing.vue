@@ -20,17 +20,17 @@
 
 
   <script setup>
-  const { config } = useDocus()
-  const isLoaded = ref(false)
+const { config } = useDocus()
+const isLoaded = ref(false)
 
-  onMounted(() => {
+onMounted(() => {
 	nextTick(() => {
-	  setTimeout(() => {
-		isLoaded.value = true
-	  }, 100)
+		setTimeout(() => {
+			isLoaded.value = true
+		}, 100)
 	})
-  })
-  </script>
+})
+</script>
 
   <style scoped>
   .page-layout {

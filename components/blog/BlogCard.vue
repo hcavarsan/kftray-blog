@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import type PropType from 'vue'
 import type ParsedContent from '@nuxt/content'
-import FormatDate from "~/components/common/FormatDate.vue";
-import { useRoute } from '#imports';
-import { computed } from 'vue';
+import type PropType from 'vue'
+import { computed } from 'vue'
+import { useRoute } from '#imports'
+import FormatDate from '~/components/common/FormatDate.vue'
 
 defineProps({
-  post: {
-    type: Object as PropType<typeof ParsedContent>,
-    required: true
-  },
+	post: {
+		type: Object as PropType<typeof ParsedContent>,
+		required: true,
+	},
 })
 
 // Get route to access query params
-const route = useRoute();
+const route = useRoute()
 
 // Get the current language from the URL if available
-const currentLang = computed(() => route.query.lang as string || '');
+const currentLang = computed(() => (route.query.lang as string) || '')
 </script>
 
 <template>

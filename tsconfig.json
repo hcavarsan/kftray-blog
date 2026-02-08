@@ -1,6 +1,6 @@
 {
-  "extends": "./.nuxt/tsconfig.json",
-  "compilerOptions": {
-    "types": ["./types/markdown.d.ts"]
-  }
+	"extends": "./.nuxt/tsconfig.json",
+	"compilerOptions": {
+		"types": ["./types/markdown.d.ts"]
+	}
 }

@@ -1,21 +1,21 @@
 <script setup lang="ts">
 defineProps({
-  badgeText: {
-    type: String,
-    default: undefined,
-  },
-  text: {
-    type: String,
-    required: true,
-  },
-  link: {
-    type: String,
-    default: undefined,
-  },
-  linkText: {
-    type: String,
-    default: 'Check it out!',
-  },
+	badgeText: {
+		type: String,
+		default: undefined,
+	},
+	text: {
+		type: String,
+		required: true,
+	},
+	link: {
+		type: String,
+		default: undefined,
+	},
+	linkText: {
+		type: String,
+		default: 'Check it out!',
+	},
 })
 </script>
 

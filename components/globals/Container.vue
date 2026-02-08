@@ -4,19 +4,19 @@ import type { PropType } from 'vue'
 type HTMLElementsTags = keyof HTMLElementTagNameMap
 
 defineProps({
-  as: {
-    type: String as PropType<HTMLElementsTags>,
-    required: false,
-    default: 'div'
-  },
-  fluid: {
-    type: Boolean,
-    default: false
-  },
-  padded: {
-    type: [Boolean, String],
-    default: true
-  }
+	as: {
+		type: String as PropType<HTMLElementsTags>,
+		required: false,
+		default: 'div',
+	},
+	fluid: {
+		type: Boolean,
+		default: false,
+	},
+	padded: {
+		type: [Boolean, String],
+		default: true,
+	},
 })
 </script>
 

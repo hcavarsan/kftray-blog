@@ -3,10 +3,10 @@ const { config } = useDocus()
 
 // We'll keep the watch but remove the useHead
 watch(
-  () => config.value.titleTemplate,
-  () => {
-    // Empty for now, handled in app.vue
-  }
+	() => config.value.titleTemplate,
+	() => {
+		// Empty for now, handled in app.vue
+	},
 )
 </script>
 

@@ -7,14 +7,25 @@ const { config } = useDocus()
 const hasNavigation = computed(() => !!config.value.aside?.level)
 const filtered = computed(() => config.value.header?.exclude || [])
 
+interface NavItem {
+	_path: string
+	exact?: boolean
+	title?: string
+	icon?: string
+	redirect?: string
+	children?: unknown[]
+}
+
 const tree = computed(() => {
-  return (navigation.value || []).filter((item: any) => {
-    if (filtered.value.includes(item._path as never)) { return false }
-    return true
-  })
+	return (navigation.value || []).filter((item: NavItem) => {
+		if (filtered.value.includes(item._path as never)) {
+			return false
+		}
+		return true
+	})
 })
 
-const isActive = (link: any) => (link.exact ? route.fullPath === link._path : route.fullPath.startsWith(link._path))
+const isActive = (link: NavItem) => (link.exact ? route.fullPath === link._path : route.fullPath.startsWith(link._path))
 </script>
 
 <template>
