@@ -60,58 +60,47 @@ nav ul {
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-nav ul > * + * {
-  margin-left: 0.5rem;
+  gap: 0.125rem;
 }
 
 nav ul li {
   display: inline-flex;
-  gap: 0.25rem;
 }
 
 nav .link {
   display: flex;
   align-items: center;
   gap: 0.375rem;
-  padding: 0.375rem 0.75rem;
+  height: 28px;
+  padding: 0 0.625rem;
   font-size: 0.75rem;
   font-weight: 400;
-  color: rgb(156, 163, 175);
-  border-radius: 0.3125rem;
+  color: rgb(115, 115, 115);
+  border-radius: 0.25rem;
   outline: none;
   transition: all 200ms ease;
   text-decoration: none;
-}
-
-@media (min-width: 768px) {
-  nav .link {
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    font-size: 0.8125rem;
-  }
+  line-height: 1;
 }
 
 nav .link .icon,
 nav .link .fa-icon {
   display: inline-block;
-  width: 18px;
-  height: 18px;
-  margin-right: 5px;
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
 }
 
 nav .link:active,
 nav .link.active,
 nav .link:hover {
-  background-color: rgba(249, 250, 251, 0.8);
-  color: rgb(107, 114, 128);
+  background-color: rgba(0, 0, 0, 0.04);
+  color: rgb(64, 64, 64);
 }
 
 nav .link.active {
-  box-shadow: inset 0 1px 3px 0 rgb(0 0 0 / 0.1);
   font-weight: 500;
-  color: rgb(75, 85, 99);
+  color: rgb(64, 64, 64);
 }
 </style>
 
@@ -123,8 +112,8 @@ nav .link.active {
 .dark .app-nav .link:active,
 .dark .app-nav .link.active,
 .dark .app-nav .link:hover {
-  background-color: rgba(48, 48, 48, 0.6);
-  color: rgb(209, 213, 219);
+  background-color: rgba(255, 255, 255, 0.06);
+  color: rgb(229, 231, 235);
 }
 
 .dark .app-nav .link.active {

@@ -65,7 +65,8 @@
 	},
 	"css": {
 		"parser": {
-			"cssModules": true
+			"cssModules": true,
+			"tailwindDirectives": true
 		},
 		"formatter": {
 			"enabled": true,

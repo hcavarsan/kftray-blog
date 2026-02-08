@@ -6,8 +6,8 @@
     class="sbom-button"
     title="Security SBOM Report"
   >
-    <font-awesome-icon
-      icon="fa-solid fa-shield-halved"
+    <Icon
+      name="heroicons:shield-check"
       class="sbom-icon"
     />
     <span class="sbom-text">SBOM</span>
@@ -19,12 +19,12 @@
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  height: 1.75rem;
+  height: 28px;
   padding: 0 0.625rem;
-  color: rgb(156, 163, 175);
+  color: rgb(115, 115, 115);
   transition: all 0.2s ease;
-  border: 1px solid rgb(209, 213, 219);
-  border-radius: 0.3125rem;
+  border: 1px solid rgba(229, 231, 235, 0.6);
+  border-radius: 0.375rem;
   font-size: 0.75rem;
   font-weight: 400;
   line-height: 1;
@@ -32,19 +32,10 @@
   text-decoration: none;
 }
 
-@media (min-width: 768px) {
-  .sbom-button {
-    height: 2rem;
-    padding: 0 0.75rem;
-    font-size: 0.8125rem;
-    gap: 0.5rem;
-  }
-}
-
 .sbom-button:hover {
-  color: rgb(75, 85, 99);
-  border-color: rgb(156, 163, 175);
-  background: rgba(249, 250, 251, 0.8);
+  color: rgb(64, 64, 64);
+  border-color: rgba(209, 213, 219, 0.8);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .sbom-button:active {
@@ -55,13 +46,6 @@
   width: 0.875rem;
   height: 0.875rem;
   flex-shrink: 0;
-}
-
-@media (min-width: 768px) {
-  .sbom-icon {
-    width: 1rem;
-    height: 1rem;
-  }
 }
 
 .sbom-text {
@@ -80,12 +64,12 @@
 <style>
 .dark .sbom-button {
   color: rgb(163, 163, 163);
-  border-color: rgba(64, 64, 64, 0.4);
+  border-color: rgba(64, 64, 64, 0.3);
 }
 
 .dark .sbom-button:hover {
-  color: rgb(209, 213, 219);
-  border-color: rgba(75, 75, 75, 0.6);
-  background: rgba(48, 48, 48, 0.4);
+  color: rgb(229, 231, 235);
+  border-color: rgba(75, 75, 75, 0.5);
+  background: rgba(255, 255, 255, 0.06);
 }
 </style>

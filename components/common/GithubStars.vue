@@ -43,12 +43,12 @@ onMounted(async () => {
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  height: 1.75rem;
+  height: 28px;
   padding: 0 0.625rem;
-  color: rgb(156, 163, 175);
+  color: rgb(115, 115, 115);
   transition: all 0.2s ease;
-  border: 1px solid rgb(209, 213, 219);
-  border-radius: 0.3125rem;
+  border: 1px solid rgba(229, 231, 235, 0.6);
+  border-radius: 0.375rem;
   font-size: 0.75rem;
   font-weight: 400;
   line-height: 1;
@@ -56,19 +56,10 @@ onMounted(async () => {
   text-decoration: none;
 }
 
-@media (min-width: 768px) {
-  .github-button {
-    height: 2rem;
-    padding: 0 0.75rem;
-    font-size: 0.8125rem;
-    gap: 0.5rem;
-  }
-}
-
 .github-button:hover {
-  color: rgb(75, 85, 99);
-  border-color: rgb(156, 163, 175);
-  background: rgba(249, 250, 251, 0.8);
+  color: rgb(64, 64, 64);
+  border-color: rgba(209, 213, 219, 0.8);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .github-button:active {
@@ -76,8 +67,8 @@ onMounted(async () => {
 }
 
 .github-icon {
-  width: 1rem;
-  height: 1rem;
+  width: 0.875rem;
+  height: 0.875rem;
   flex-shrink: 0;
 }
 
@@ -99,39 +90,30 @@ onMounted(async () => {
   align-items: center;
   height: 1.125rem;
   padding: 0 0.375rem;
-  background: rgba(229, 231, 235, 0.8);
-  color: rgb(107, 114, 128);
+  background: rgba(229, 231, 235, 0.5);
+  color: rgb(115, 115, 115);
   border-radius: 0.25rem;
-  border: 1px solid rgba(209, 213, 219, 0.6);
-  font-size: 0.6875rem;
+  border: 1px solid rgba(229, 231, 235, 0.4);
+  font-size: 0.625rem;
   line-height: 1;
 }
-
-@media (min-width: 768px) {
-  .star-count {
-    height: 1.25rem;
-    padding: 0 0.5rem;
-    font-size: 0.75rem;
-  }
-}
-
 </style>
 
 <style>
 .dark .github-button {
   color: rgb(163, 163, 163);
-  border-color: rgba(64, 64, 64, 0.4);
+  border-color: rgba(64, 64, 64, 0.3);
 }
 
 .dark .github-button:hover {
-  color: rgb(209, 213, 219);
-  border-color: rgba(75, 75, 75, 0.6);
-  background: rgba(48, 48, 48, 0.4);
+  color: rgb(229, 231, 235);
+  border-color: rgba(75, 75, 75, 0.5);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .dark .star-count {
   background: rgba(48, 48, 48, 0.3);
-  border-color: rgba(64, 64, 64, 0.4);
+  border-color: rgba(64, 64, 64, 0.3);
   color: rgb(163, 163, 163);
 }
 </style>

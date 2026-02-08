@@ -68,14 +68,14 @@ defineProps({
         </div>
 
         <div class="section right">
-          <div class="theme-select-wrapper">
-            <ThemeSelect />
-          </div>
           <AppDocSearch v-if="hasDocSearch" />
           <AppSearch
             v-else
             :fuse="config.fuse"
           />
+          <div class="theme-select-wrapper">
+            <ThemeSelect />
+          </div>
           <SbomLink class="sbom-link" />
           <GithubStars class="github-stars" />
           <div class="social-icons">
@@ -96,7 +96,6 @@ defineProps({
 </template>
 
 <style scoped>
-/* Logo: always visible in left, always hidden in center */
 .section.left :deep(.navbar-logo) {
   display: block;
 }
@@ -106,19 +105,10 @@ defineProps({
 }
 
 :deep(.icon) {
-  width: 1.25rem;
-  height: 1.25rem;
-  min-width: 1.25rem;
-  min-height: 1.25rem;
-}
-
-@media (max-width: 767px) {
-  :deep(.icon) {
-    width: 1.5rem;
-    height: 1.5rem;
-    min-width: 1.5rem;
-    min-height: 1.5rem;
-  }
+  width: 0.875rem;
+  height: 0.875rem;
+  min-width: 0.875rem;
+  min-height: 0.875rem;
 }
 
 header {
@@ -129,13 +119,13 @@ header {
   width: 100%;
   border-bottom: 1px solid rgba(229, 231, 235, 0.8);
   background-color: rgba(255, 255, 255, 0.85);
-  height: 56px;
+  height: 44px;
   transition: all 0.3s ease;
 }
 
 @media (min-width: 768px) {
   header {
-    height: 60px;
+    height: 48px;
   }
 }
 
@@ -143,14 +133,20 @@ header .container {
   display: grid;
   height: 100%;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 0.5rem;
-  padding: 0.5rem 0;
+  gap: 0.375rem;
+  padding: 0 1rem;
 }
 
 @media (min-width: 768px) {
   header .container {
-    gap: 0.75rem;
-    padding: 0.5rem 0;
+    gap: 0.5rem;
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  header .container {
+    padding: 0 2rem;
   }
 }
 
@@ -172,12 +168,6 @@ header .section.left {
   }
 }
 
-@media (min-width: 1024px) {
-  header .section.left {
-    margin-left: 0;
-  }
-}
-
 header .section.center {
   grid-column: span 6 / span 6;
   justify-content: flex-start;
@@ -194,24 +184,96 @@ header .section.center {
 header .section.right {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.375rem;
   grid-column: span 3 / span 3;
   justify-content: flex-end;
   flex: none;
-  margin-right: -0.5rem;
 }
 
 @media (min-width: 768px) {
   header .section.right {
     grid-column: span 4 / span 4;
-    gap: 0.75rem;
-    margin-right: -1rem;
+    gap: 0.375rem;
   }
 }
 
 header .section.right .social-icons {
   display: flex;
   align-items: center;
+}
+
+.theme-select-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.theme-select-wrapper :deep(button),
+.theme-select-wrapper :deep(.theme-select) {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px;
+  min-height: 28px;
+  padding: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  border: 1px solid rgba(229, 231, 235, 0.6);
+  color: rgb(115, 115, 115);
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+.theme-select-wrapper :deep(button:hover) {
+  background: rgba(0, 0, 0, 0.04);
+  color: rgb(64, 64, 64);
+}
+
+.theme-select-wrapper :deep(button .icon),
+.theme-select-wrapper :deep(button svg) {
+  width: 0.875rem !important;
+  height: 0.875rem !important;
+}
+
+.section.right :deep(.DocSearch-Button),
+.section.right :deep([class*="search"]) {
+  height: 28px !important;
+  min-height: 28px;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+}
+
+.social-icons :deep(a),
+.social-icons :deep(button) {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px;
+  min-height: 28px;
+  padding: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  color: rgb(115, 115, 115);
+  transition: all 0.2s ease;
+}
+
+.social-icons :deep(a:hover),
+.social-icons :deep(button:hover) {
+  background: rgba(0, 0, 0, 0.04);
+  color: rgb(64, 64, 64);
+}
+
+.social-icons :deep(.icon),
+.social-icons :deep(svg) {
+  width: 0.875rem !important;
+  height: 0.875rem !important;
+}
+
+.section.left :deep(.navbar-logo img),
+.section.center :deep(.navbar-logo img) {
+  height: 24px;
+  width: auto;
 }
 
 @media (max-width: 767px) {
@@ -232,21 +294,13 @@ header .section.right .social-icons {
   }
 }
 
-header .section.right .sbom-link {
-  order: -2;
-}
-
-header .section.right .github-stars {
-  order: -1;
-}
-
-@media (min-width: 768px) {
-  header .section.right .sbom-link {
-    order: 0;
+@media (min-width: 768px) and (max-width: 1023px) {
+  header .section.right .social-icons {
+    display: none;
   }
 
-  header .section.right .github-stars {
-    order: 0;
+  header .section.right .sbom-link {
+    display: none;
   }
 }
 </style>
@@ -255,5 +309,27 @@ header .section.right .github-stars {
 .dark .app-header {
   border-bottom-color: rgba(24, 24, 24, 0.7);
   background-color: rgba(12, 12, 12, 0.96);
+}
+
+.dark .theme-select-wrapper button,
+.dark .theme-select-wrapper .theme-select {
+  border-color: rgba(64, 64, 64, 0.3) !important;
+  color: rgb(163, 163, 163) !important;
+}
+
+.dark .theme-select-wrapper button:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: rgb(229, 231, 235) !important;
+}
+
+.dark .social-icons a,
+.dark .social-icons button {
+  color: rgb(163, 163, 163) !important;
+}
+
+.dark .social-icons a:hover,
+.dark .social-icons button:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: rgb(229, 231, 235) !important;
 }
 </style>

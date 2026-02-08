@@ -23,12 +23,12 @@ watch(
 
 <style scoped>
 .app-layout main {
-  min-height: calc(100vh - 56px - var(--footer-height, 60px));
+  min-height: calc(100vh - 44px - var(--footer-height, 60px));
 }
 
 @media (min-width: 768px) {
   .app-layout main {
-    min-height: calc(100vh - 60px - var(--footer-height, 60px));
+    min-height: calc(100vh - 48px - var(--footer-height, 60px));
   }
 }
 </style>

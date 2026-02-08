@@ -53,16 +53,6 @@ onMounted(() => {
 	opacity: 0;
 	position: absolute;
 	z-index: 0;
-  }
-
-  @-moz-document url-prefix() {
-	.page-layout {
-	  transform: translateZ(0);
-	}
-
-	.ellipsis-container {
-	  opacity: 0;
-	  will-change: opacity;
-	}
+	will-change: opacity;
   }
   </style>

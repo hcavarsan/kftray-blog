@@ -48,19 +48,4 @@ export default {
 	);
 	transform: translateZ(0);
   }
-
-  @-moz-document url-prefix() {
-	.ellipsis {
-	  opacity: 0.3;
-	}
-
-	.ellipsis-inner {
-	  background: radial-gradient(
-		circle at center,
-		rgba(91, 243, 199, 0.2) 0%,
-		rgba(137, 180, 250, 0.2) 25%,
-		transparent 70%
-	  );
-	}
-  }
   </style>
