@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import GithubStars from '~/components/common/GithubStars.vue'
+import SbomLink from '~/components/common/SbomLink.vue'
 const { config } = useDocus()
 const { navigation } = useContent()
 const { hasDocSearch } = useDocSearch()
@@ -72,6 +73,7 @@ defineProps({
             v-else
             :fuse="config.fuse"
           />
+          <SbomLink class="sbom-link" />
           <GithubStars class="github-stars" />
           <div class="social-icons">
             <AppSocialIcons />
@@ -254,11 +256,19 @@ header .section.right .social-icons {
   }
 }
 
+header .section.right .sbom-link {
+  order: -2;
+}
+
 header .section.right .github-stars {
   order: -1;
 }
 
 @media (min-width: 768px) {
+  header .section.right .sbom-link {
+    order: 0;
+  }
+
   header .section.right .github-stars {
     order: 0;
   }
