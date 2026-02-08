@@ -20,7 +20,19 @@ const links = computed(() => {
 
 const { close, open } = useMenu()
 
-watch(show, (v) => (v ? open() : close()))
+watch(show, (v) => {
+	if (v) {
+		open()
+		document.body.style.overflow = 'hidden'
+	} else {
+		close()
+		document.body.style.overflow = ''
+	}
+})
+
+onBeforeUnmount(() => {
+	document.body.style.overflow = ''
+})
 </script>
 
 <template>
@@ -37,41 +49,43 @@ watch(show, (v) => (v ? open() : close()))
 
   <!-- eslint-disable-next-line vue/no-multiple-template-root -->
   <teleport to="body">
-    <nav
-      v-if="show"
-      class="dialog"
-      @click="show = false"
-    >
-      <div class="dialog-panel" @click.stop>
-        <div class="dialog-header">
-          <button
-            aria-label="Close menu"
-            class="close-btn"
-            @click="show = false"
-          >
-            <Icon
-              name="heroicons-outline:x"
-              aria-hidden="true"
-            />
-          </button>
-        </div>
-
-        <div class="dialog-body">
-          <DocsAsideTree :links="links" />
-        </div>
-
-        <div class="dialog-footer">
-          <div class="footer-actions">
-            <ThemeSelect />
-            <SbomLink />
-            <GithubStars />
+    <transition name="dialog">
+      <nav
+        v-if="show"
+        class="dialog"
+        @click="show = false"
+      >
+        <div class="dialog-panel" @click.stop>
+          <div class="dialog-header">
+            <button
+              aria-label="Close menu"
+              class="close-btn"
+              @click="show = false"
+            >
+              <Icon
+                name="heroicons-outline:x"
+                aria-hidden="true"
+              />
+            </button>
           </div>
-          <div class="footer-socials">
-            <AppSocialIcons />
+
+          <div class="dialog-body">
+            <DocsAsideTree :links="links" />
+          </div>
+
+          <div class="dialog-footer">
+            <div class="footer-actions">
+              <ThemeSelect />
+              <SbomLink />
+              <GithubStars />
+            </div>
+            <div class="footer-socials">
+              <AppSocialIcons />
+            </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </transition>
   </teleport>
 </template>
 
@@ -125,7 +139,7 @@ watch(show, (v) => (v ? open() : close()))
 }
 
 .dialog-panel {
-  max-width: 20rem;
+  max-width: 85vw;
   width: 100%;
   min-height: 100%;
   display: flex;
@@ -141,8 +155,33 @@ watch(show, (v) => (v ? open() : close()))
 
 @media (min-width: 640px) {
   .dialog-panel {
+    max-width: 24rem;
     padding: 0 1.5rem;
   }
+}
+
+/* Dialog transition — overlay fades, panel slides */
+.dialog-enter-active,
+.dialog-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.dialog-enter-active .dialog-panel {
+  transition: transform 0.25s ease-out;
+}
+
+.dialog-leave-active .dialog-panel {
+  transition: transform 0.2s ease-in;
+}
+
+.dialog-enter-from,
+.dialog-leave-to {
+  opacity: 0;
+}
+
+.dialog-enter-from .dialog-panel,
+.dialog-leave-to .dialog-panel {
+  transform: translateX(-100%);
 }
 
 .dialog-header {

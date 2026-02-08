@@ -82,8 +82,6 @@ defineProps({
             <AppSocialIcons />
           </div>
         </div>
-		<div class="banner-container"></div>
-
       </Container>
 
     </header>
@@ -98,29 +96,13 @@ defineProps({
 </template>
 
 <style scoped>
-/* Logo visibility logic */
+/* Logo: always visible in left, always hidden in center */
 .section.left :deep(.navbar-logo) {
   display: block;
 }
 
-.has-dialog .section.left :deep(.navbar-logo) {
-  display: block;
-}
-
-@media (min-width: 1024px) {
-  .has-dialog .section.left :deep(.navbar-logo) {
-    display: block;
-  }
-}
-
 .section.center :deep(.navbar-logo) {
   display: none;
-}
-
-@media (min-width: 1024px) {
-  .section.center :deep(.navbar-logo) {
-    display: none;
-  }
 }
 
 :deep(.icon) {
@@ -154,13 +136,6 @@ header {
 @media (min-width: 768px) {
   header {
     height: 60px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  header {
-    border-bottom-color: rgba(24, 24, 24, 0.7);
-    background-color: rgba(12, 12, 12, 0.96);
   }
 }
 
@@ -228,19 +203,14 @@ header .section.right {
   grid-column: span 3 / span 3;
   justify-content: flex-end;
   flex: none;
-  margin-right: calc(0px - 0.5rem);
+  margin-right: -0.5rem;
 }
 
 @media (min-width: 768px) {
   header .section.right {
     grid-column: span 4 / span 4;
-  }
-}
-
-@media (min-width: 768px) {
-  header .section.right {
     gap: 0.75rem;
-    margin-right: calc(0px - 1rem);
+    margin-right: -1rem;
   }
 }
 

@@ -141,17 +141,12 @@ const router = useRouter()
 
 // Function to switch language efficiently
 const switchLanguage = (newLang) => {
-	// Use the router to update the query parameter
-	// This is more robust than manually changing history state
 	router.replace({
 		query: {
 			...route.query,
 			lang: newLang,
 		},
 	})
-
-	// Update the selected language immediately for UI feedback
-	currentLang.value = newLang
 }
 
 // Watch for route changes to handle direct URL navigation
@@ -168,10 +163,6 @@ watch(
 	() => route.query.lang,
 	(newLang, oldLang) => {
 		if (newLang && ['en', 'es', 'pt'].includes(newLang.toString()) && newLang !== oldLang) {
-			// Update the selected language
-			currentLang.value = newLang.toString()
-
-			// Load the content for the selected language
 			const pathParts = page.value._path.split('/')
 			const basename = pathParts[pathParts.length - 1]
 			const currentPathLang = pathParts.length >= 4 && ['en', 'es', 'pt'].includes(pathParts[3]) ? pathParts[3] : 'en'
@@ -186,7 +177,7 @@ onMounted(findTranslations)
 </script>
 
 <template>
-  <div>
+  <div class="post-layout">
 
     <div class="relative min-h-[91vh]">
       <!-- Replace the existing header section (lines 32-72) with this: -->
@@ -318,79 +309,95 @@ onMounted(findTranslations)
   </div>
 </template>
 <style>
-.custom-prose {
+/* All styles scoped under .post-layout to prevent global pollution */
+
+/* Prose base */
+.post-layout .custom-prose {
   color: rgba(255, 255, 255, 0.8) !important;
 }
 
-/* Headings */
-.custom-prose h1,
-.custom-prose h2,
-.custom-prose h3,
-.custom-prose h4,
-.custom-prose h5,
-.custom-prose h6 {
+.post-layout .custom-prose h1,
+.post-layout .custom-prose h2,
+.post-layout .custom-prose h3,
+.post-layout .custom-prose h4,
+.post-layout .custom-prose h5,
+.post-layout .custom-prose h6 {
   color: white !important;
   font-weight: 300 !important;
 }
 
-/* Paragraphs and text */
-.custom-prose p {
+.post-layout .custom-prose p {
   color: rgba(255, 255, 255, 0.8) !important;
   font-weight: 300 !important;
 }
 
-.custom-prose strong {
+.post-layout .custom-prose strong {
   color: white !important;
   font-weight: 400 !important;
 }
 
 /* Links */
-.custom-prose a {
+.post-layout .custom-prose a {
   color: #89b4fa !important;
   text-decoration: none !important;
   font-weight: 400 !important;
 }
 
-.custom-prose a:hover {
+.post-layout .custom-prose a:hover {
   color: #b4befe !important;
 }
 
 /* Lists */
-.custom-prose ul,
-.custom-prose ol {
+.post-layout .custom-prose ul,
+.post-layout .custom-prose ol {
   color: rgba(255, 255, 255, 0.8) !important;
 }
 
-.custom-prose li {
+.post-layout .custom-prose li {
   color: rgba(255, 255, 255, 0.8) !important;
   font-weight: 300 !important;
 }
 
-/* Blockquotes */
-.custom-prose blockquote {
-  border-left: 4px solid #89b4fa !important;
+/* Blockquotes (consolidated) */
+.post-layout .custom-prose blockquote {
+  position: relative;
   margin: 1.5em 0 !important;
-  padding: 1em 0 1em 1em !important;
-  font-style: italic !important;
-  color: rgba(255, 255, 255, 0.7) !important;
+  padding: 1em 1em 1em 2em !important;
+  border-left: 4px solid #89b4fa !important;
   background: rgba(137, 180, 250, 0.1) !important;
   border-radius: 0 0.5rem 0.5rem 0 !important;
+  font-style: normal !important;
+  quotes: none !important;
 }
 
-.custom-prose blockquote p {
+.post-layout .custom-prose blockquote::before,
+.post-layout .custom-prose blockquote::after,
+.post-layout .custom-prose blockquote p::before,
+.post-layout .custom-prose blockquote p::after {
+  content: none !important;
+  display: none !important;
+}
+
+.post-layout .custom-prose blockquote p {
   margin: 0 !important;
-}
-/* Add these new styles */
-header.relative {
-  margin-bottom: 10rem; /* Add space after the header */
+  padding: 0 !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 1.1em !important;
+  line-height: 1.6 !important;
+  font-style: italic !important;
 }
 
-.custom-prose blockquote strong {
+.post-layout .custom-prose blockquote * {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.post-layout .custom-prose blockquote strong {
   color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 600 !important;
 }
 
 /* Inline code */
-.custom-prose :not(pre) > code {
+.post-layout .custom-prose :not(pre) > code {
   color: #89b4fa !important;
   background: rgba(255, 255, 255, 0.1) !important;
   padding: 2px 6px !important;
@@ -400,7 +407,7 @@ header.relative {
 }
 
 /* Code blocks */
-.custom-prose pre {
+.post-layout .custom-prose pre {
   background: #1e1e2e !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   padding: 1.25rem !important;
@@ -411,208 +418,61 @@ header.relative {
 }
 
 /* Syntax highlighting */
-.custom-prose .hljs {
-  color: #cdd6f4 !important;
-}
-
-.custom-prose .hljs-keyword {
-  color: #f38ba8 !important;
-}
-
-.custom-prose .hljs-string {
-  color: #a6e3a1 !important;
-}
-
-.custom-prose .hljs-number {
-  color: #fab387 !important;
-}
-
-.custom-prose .hljs-comment {
-  color: #585b70 !important;
-  font-style: italic !important;
-}
-
-.custom-prose .hljs-title {
-  color: #89b4fa !important;
-}
-
-.custom-prose .hljs-attr {
-  color: #89dceb !important;
-}
-
-.custom-prose .hljs-built_in {
-  color: #f5c2e7 !important;
-}
+.post-layout .custom-prose .hljs { color: #cdd6f4 !important; }
+.post-layout .custom-prose .hljs-keyword { color: #f38ba8 !important; }
+.post-layout .custom-prose .hljs-string { color: #a6e3a1 !important; }
+.post-layout .custom-prose .hljs-number { color: #fab387 !important; }
+.post-layout .custom-prose .hljs-comment { color: #585b70 !important; font-style: italic !important; }
+.post-layout .custom-prose .hljs-title { color: #89b4fa !important; }
+.post-layout .custom-prose .hljs-attr { color: #89dceb !important; }
+.post-layout .custom-prose .hljs-built_in { color: #f5c2e7 !important; }
 
 /* Tree/Filesystem specific */
-.custom-prose .language-tree,
-.custom-prose .language-filesystem {
+.post-layout .custom-prose .language-tree,
+.post-layout .custom-prose .language-filesystem {
   white-space: pre !important;
   tab-size: 2 !important;
 }
 
-.custom-prose .language-tree .tree-structure,
-.custom-prose .language-filesystem .tree-structure {
-  color: #6c7086 !important;
-}
+.post-layout .custom-prose .language-tree .tree-structure,
+.post-layout .custom-prose .language-filesystem .tree-structure { color: #6c7086 !important; }
 
-.custom-prose .language-tree .directory,
-.custom-prose .language-filesystem .directory {
-  color: #89b4fa !important;
-  font-weight: 500 !important;
-}
+.post-layout .custom-prose .language-tree .directory,
+.post-layout .custom-prose .language-filesystem .directory { color: #89b4fa !important; font-weight: 500 !important; }
 
-.custom-prose .language-tree .file,
-.custom-prose .language-filesystem .file {
-  color: #cdd6f4 !important;
-}
+.post-layout .custom-prose .language-tree .file,
+.post-layout .custom-prose .language-filesystem .file { color: #cdd6f4 !important; }
 
-.custom-prose .language-tree .special-file,
-.custom-prose .language-filesystem .special-file {
-  color: #f9e2af !important;
-}
+.post-layout .custom-prose .language-tree .special-file,
+.post-layout .custom-prose .language-filesystem .special-file { color: #f9e2af !important; }
 
-.custom-prose .language-tree .size,
-.custom-prose .language-filesystem .size {
-  color: #a6e3a1 !important;
-}
+.post-layout .custom-prose .language-tree .size,
+.post-layout .custom-prose .language-filesystem .size { color: #a6e3a1 !important; }
 
 /* Tables */
-.custom-prose table {
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-.custom-prose th {
-  color: white !important;
-  font-weight: 400 !important;
-}
-
-.custom-prose td {
-  color: rgba(255, 255, 255, 0.8) !important;
-}
+.post-layout .custom-prose table { border-color: rgba(255, 255, 255, 0.1) !important; }
+.post-layout .custom-prose th { color: white !important; font-weight: 400 !important; }
+.post-layout .custom-prose td { color: rgba(255, 255, 255, 0.8) !important; }
 
 /* Scrollbar styling */
-.custom-prose pre::-webkit-scrollbar {
-  height: 8px !important;
+.post-layout .custom-prose pre::-webkit-scrollbar { height: 8px !important; }
+.post-layout .custom-prose pre::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05) !important; border-radius: 4px !important; }
+.post-layout .custom-prose pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1) !important; border-radius: 4px !important; }
+.post-layout .custom-prose pre::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2) !important; }
+
+/* Layout */
+.post-layout .prose { max-width: none; }
+
+.post-layout header.relative {
+  margin-bottom: 10rem;
 }
 
-.custom-prose pre::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border-radius: 4px !important;
-}
-
-.custom-prose pre::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border-radius: 4px !important;
-}
-
-.custom-prose pre::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2) !important;
-}
-
-/* Layout specific */
-.HeaderContainer {
-  position: relative;
-  z-index: 10;
-}
-
-.PostContainer {
-  position: relative;
-  z-index: 10;
-}
-
-.prose {
-  max-width: none;
-}
-
-.bg-pickled-bluewood-900 {
-  margin-top: -15rem;
-  position: relative;
-}
-header.relative {
-  margin-bottom: 10rem; /* Add space after the header */
-}
-.custom-prose blockquote {
-  position: relative;
-  margin: 1.5em 0 !important;
-  padding: 1em 1em 1em 2em !important;
-  border-left: 4px solid #89b4fa !important;
-  background: rgba(137, 180, 250, 0.1) !important;
-  border-radius: 0 0.5rem 0.5rem 0 !important;
-  font-style: normal !important;
-}
-
-/* Remove default quote marks */
-.custom-prose blockquote::before,
-.custom-prose blockquote::after,
-.custom-prose blockquote p::before,
-.custom-prose blockquote p::after,
-.custom-prose blockquote [data-v-fec8c867]::before,
-.custom-prose blockquote [data-v-fec8c867]::after,
-.custom-prose blockquote [data-v-9caa2399]::before,
-.custom-prose blockquote [data-v-9caa2399]::after,
-.custom-prose blockquote _moz_generated_content_before,
-.custom-prose blockquote _moz_generated_content_after {
-  content: none !important;
-  display: none !important;
-}
-
-/* Style blockquote text */
-.custom-prose blockquote p {
-  margin: 0 !important;
-  padding: 0 !important;
-  color: rgba(255, 255, 255, 0.8) !important;
-  font-size: 1.1em !important;
-  line-height: 1.6 !important;
-  font-style: italic !important;
-}
-
-/* Style nested elements */
-.custom-prose blockquote * {
-  color: rgba(255, 255, 255, 0.8) !important;
-}
-
-.custom-prose blockquote strong {
-  color: rgba(255, 255, 255, 0.9) !important;
-  font-weight: 600 !important;
-}
-
-/* Remove any unwanted generated content */
-.custom-prose *::before,
-.custom-prose *::after {
-  display: none !important;
-}
-
-/* Additional specificity for Mozilla */
-.custom-prose blockquote:-moz-any-link,
-.custom-prose blockquote::-moz-any-link {
-  quotes: none !important;
-}
-
-/* Force remove quotes */
-.custom-prose blockquote {
-  quotes: none !important;
-}
-
-/* Override any theme-specific styles */
-.prose blockquote,
-.dark\:prose-invert blockquote {
-  quotes: none !important;
-  font-style: normal !important;
-}
-
-/* Target specific Vue-generated attributes */
-[data-v-fec8c867],
-[data-v-9caa2399] {
-  quotes: none !important;
-}
-
-.bg-pickled-bluewood-900 {
+.post-layout .bg-pickled-bluewood-900 {
   margin-top: -10rem;
   position: relative;
 }
 
-.bg-pickled-bluewood-900::before {
+.post-layout .bg-pickled-bluewood-900::before {
   content: "";
   position: absolute;
   top: -20px;
@@ -629,61 +489,60 @@ header.relative {
   mask-image: linear-gradient(to bottom, transparent, black);
 }
 
+/* Override theme blockquote quotes */
+.post-layout .prose blockquote,
+.post-layout .dark\:prose-invert blockquote {
+  quotes: none !important;
+  font-style: normal !important;
+}
+
 /* Mobile-specific header positioning */
 @media (max-width: 1023px) {
-  header .absolute.inset-x-0 {
+  .post-layout header .absolute.inset-x-0 {
     z-index: 60 !important;
   }
-  
-  /* Adjust header height on mobile */
-  header .relative.h-\[50vh\] {
+
+  .post-layout header .relative.h-\[50vh\] {
     height: 55vh !important;
   }
-  
-  /* More compact spacing for mobile content */
-  header .absolute.top-1\/2 .max-w-4xl {
+
+  .post-layout header .absolute.top-1\/2 .max-w-4xl {
     padding-top: 1rem;
     padding-bottom: 1rem;
   }
-  
-  /* Compact navigation section */
-  header .flex.flex-col.sm\:flex-row {
+
+  .post-layout header .flex.flex-col.sm\:flex-row {
     gap: 0.75rem !important;
     margin-bottom: 1rem !important;
   }
-  
-  /* Reduce title size and spacing on mobile */
-  header h1 {
+
+  .post-layout header h1 {
     font-size: 1.875rem !important;
     line-height: 1.1 !important;
     margin-bottom: 0.75rem !important;
   }
-  
-  /* Reduce description size and spacing on mobile */
-  header p.text-lg {
+
+  .post-layout header p.text-lg {
     font-size: 0.9375rem !important;
     line-height: 1.4 !important;
     margin-bottom: 1.25rem !important;
   }
-  
-  /* Compact author section */
-  header .border-t.border-white\/10 {
+
+  .post-layout header .border-t.border-white\/10 {
     padding-top: 1rem !important;
     gap: 0.5rem !important;
   }
-  
-  /* Smaller avatar on mobile */
-  header .w-10.h-10 {
+
+  .post-layout header .w-10.h-10 {
     width: 2rem !important;
     height: 2rem !important;
   }
-  
-  /* Compact author text */
-  header .flex-grow.min-w-0 span {
+
+  .post-layout header .flex-grow.min-w-0 span {
     font-size: 0.875rem !important;
   }
-  
-  header .flex-grow.min-w-0 p {
+
+  .post-layout header .flex-grow.min-w-0 p {
     font-size: 0.75rem !important;
     margin-top: 0.125rem !important;
   }

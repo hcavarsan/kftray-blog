@@ -31,6 +31,5 @@
 		"tailwindcss",
 		"vue"
 	],
-	"ignoreUnresolved": ["#imports"],
 	"ignoreExportsUsedInFile": true
 }
