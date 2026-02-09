@@ -41,6 +41,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 				<div className="relative z-10 mx-auto w-full max-w-7xl px-6 py-10 md:py-16 lg:px-8">
 					<Link
 						href="/blog"
+						data-umami-event="blog-back"
 						className="mb-8 inline-flex items-center gap-2 text-sm text-text-secondary transition-colors hover:text-text-primary"
 					>
 						<ArrowLeft className="h-4 w-4" />

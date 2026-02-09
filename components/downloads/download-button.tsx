@@ -110,6 +110,7 @@ export function DownloadButton({
 				data-umami-event-app={app}
 				data-umami-event-os={osDisplayNames[os]}
 				data-umami-event-arch={archDisplayNames[arch] ?? arch}
+				data-umami-event-version={version}
 				className={`cursor-pointer inline-flex h-10 min-w-[220px] items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
 					highlighted
 						? 'bg-accent text-dark-base hover:bg-accent-hover'

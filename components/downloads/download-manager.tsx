@@ -76,6 +76,8 @@ export function DownloadManager({ latestVersion }: { latestVersion: string }) {
 							aria-selected={activeTab === 'kftray'}
 							aria-controls="tabpanel-kftray"
 							id="tab-kftray"
+							data-umami-event="download-tab"
+							data-umami-event-app="kftray"
 							onClick={() => setActiveTab('kftray')}
 							className={`cursor-pointer border-b-2 px-6 py-3 font-medium transition-colors ${
 								activeTab === 'kftray'
@@ -91,6 +93,8 @@ export function DownloadManager({ latestVersion }: { latestVersion: string }) {
 							aria-selected={activeTab === 'kftui'}
 							aria-controls="tabpanel-kftui"
 							id="tab-kftui"
+							data-umami-event="download-tab"
+							data-umami-event-app="kftui"
 							onClick={() => setActiveTab('kftui')}
 							className={`cursor-pointer border-b-2 px-6 py-3 font-medium transition-colors ${
 								activeTab === 'kftui'
