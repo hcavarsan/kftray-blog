@@ -38,7 +38,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 				)}
 				{!data.image && <div className="absolute inset-0 bg-dark-base" />}
 
-				<div className="relative z-10 mx-auto w-full max-w-4xl px-6 py-16 md:py-24 lg:px-8">
+				<div className="relative z-10 mx-auto w-full max-w-7xl px-6 py-16 md:py-24 lg:px-8">
 					<Link
 						href="/blog"
 						className="mb-8 inline-flex items-center gap-2 text-sm text-text-secondary transition-colors hover:text-text-primary"
@@ -77,13 +77,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 				</div>
 			</div>
 
-			<article className="mx-auto w-full max-w-3xl px-6 lg:px-8">
+			<article className="mx-auto w-full max-w-7xl px-6 lg:px-8">
 				<div className="prose prose-fd">
 					<Mdx components={getMDXComponents()} />
 				</div>
 			</article>
 
-			<div className="mx-auto mt-16 w-full max-w-3xl px-6 lg:px-8">
+			<div className="mx-auto mt-16 w-full max-w-7xl px-6 lg:px-8">
 				<BlogComments />
 			</div>
 		</main>
