@@ -40,7 +40,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
 	return (
 		<html lang="en" className={`${inter.variable} dark`} style={{ colorScheme: 'dark' }}>
-			<head />
+			<head>
+				<meta property="og:logo" content="https://kftray.app/img/logo.png" />
+			</head>
 			<body className="flex min-h-screen flex-col">
 				<RootProvider
 					theme={{

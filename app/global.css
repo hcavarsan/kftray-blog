@@ -48,6 +48,25 @@ body {
 	--color-fd-ring: #4a8af5;
 }
 
+/* Ensure wide tables (5+ columns) scroll horizontally on constrained viewports */
+.prose table {
+	display: block;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.prose table th,
+.prose table td {
+	white-space: nowrap;
+}
+
+/* Allow description columns to wrap */
+.prose table th:last-child,
+.prose table td:last-child {
+	white-space: normal;
+	min-width: 12rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
 	*,
 	*::before,

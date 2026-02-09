@@ -111,6 +111,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 			title: data.title,
 			description: data.description,
 			type: 'article',
+			url: `/blog/${slug}`,
 			authors: [data.author],
 			images: data.image
 				? [{ url: data.image }]

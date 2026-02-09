@@ -9,6 +9,8 @@ export const metadata: Metadata = {
 	openGraph: {
 		title: 'Downloads | kftray',
 		description: 'Download kftray and kftui for macOS, Linux, and Windows.',
+		url: '/downloads',
+		type: 'website',
 		images: [{ url: '/api/og?title=Downloads' }],
 	},
 }

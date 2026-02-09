@@ -9,6 +9,8 @@ export const metadata: Metadata = {
 	openGraph: {
 		title: 'Blog | kftray',
 		description: 'Updates, tutorials, and insights about kftray and Kubernetes port forwarding.',
+		url: '/blog',
+		type: 'website',
 		images: [{ url: '/api/og?title=Blog' }],
 	},
 }
