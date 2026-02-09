@@ -324,20 +324,21 @@ The site uses **Fumadocs** as its documentation engine, which provides:
 **Content is defined in `source.config.ts`:**
 
 ```typescript
-import { defineDocs, defineCollections } from 'fumadocs-mdx/config'
+import { defineCollections, defineConfig, defineDocs } from 'fumadocs-mdx/config'
+import { z } from 'zod'
 
 export const docs = defineDocs({
   dir: 'content/docs',
-  // Standard docs collection
 })
 
 export const blog = defineCollections({
+  type: 'doc',
   dir: 'content/blog',
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
     image: z.string().optional(),
-    date: z.string().date(),
+    date: z.string().date().or(z.date()),
     author: z.string(),
     position: z.string().optional(),
     avatar: z.string().optional(),
@@ -345,22 +346,25 @@ export const blog = defineCollections({
     published: z.boolean().default(true),
   }),
 })
+
+export default defineConfig({})
 ```
 
 **Content sources are loaded in `lib/source.ts`:**
 
 ```typescript
 import { loader } from 'fumadocs-core/source'
-import { docs, blog } from '@/.source'
+import { toFumadocsSource } from 'fumadocs-mdx/runtime/server'
+import { blog, docs } from '@/.source/server'
 
-export const docsSource = loader({
+export const source = loader({
   baseUrl: '/docs',
-  source: docs,
+  source: docs.toFumadocsSource(),
 })
 
 export const blogSource = loader({
   baseUrl: '/blog',
-  source: blog,
+  source: toFumadocsSource(blog, []),
 })
 ```
 
@@ -459,28 +463,21 @@ This is the introduction paragraph.
 
 Content goes here. You can use all standard Markdown syntax plus custom MDX components.
 
-<BlogImage
-  src="/images/blog/screenshot.png"
-  alt="Screenshot description"
-  width={800}
-  height={600}
-/>
+<BlogImage src="/img/screenshot.png" alt="Screenshot description" />
 
 ## Section 2
 
 More content with a Mermaid diagram:
 
-<Mermaid
-  chart={`
-    graph TD
-      A[Start] --> B[Process]
-      B --> C[End]
-  `}
-/>
+<Mermaid>
+{`graph TD
+    A[Start] --> B[Process]
+    B --> C[End]`}
+</Mermaid>
 
 ## Embedding YouTube Videos
 
-<YouTubeEmbed videoId="dQw4w9WgXcQ" />
+<YouTubeEmbed id="dQw4w9WgXcQ" title="Demo video" />
 ```
 
 **Step 3: Add cover image (optional)**

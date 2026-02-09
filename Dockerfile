@@ -50,7 +50,6 @@ COPY --from=build --chown=nextjs:nodejs /app/public ./public
 
 # Runtime config
 ENV NODE_ENV=production
-ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
 ENV NEXT_TELEMETRY_DISABLED=1
 # Tell Next.js where to find sharp
@@ -63,4 +62,6 @@ USER nextjs
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
     CMD wget -qO- http://localhost:3000/ || exit 1
 
-CMD ["node", "server.js"]
+# HOSTNAME must be set inline — Docker overrides ENV HOSTNAME with the container ID at runtime.
+# See: https://github.com/vercel/next.js/issues/58657
+CMD HOSTNAME=0.0.0.0 node server.js
