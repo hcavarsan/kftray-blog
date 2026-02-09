@@ -60,3 +60,10 @@ Thumbs.db
 
 # pnpm store
 .pnpm-store
+
+
+.claude
+.opencode
+.next
+.sisyphus
+.source

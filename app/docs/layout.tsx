@@ -1,6 +1,7 @@
 import { DocsLayout } from 'fumadocs-ui/layouts/docs'
 import type { ReactNode } from 'react'
-import { DocsNavbar } from '@/components/common/docs-navbar'
+import { GithubStars } from '@/components/common/github-stars'
+import { SbomLink } from '@/components/common/sbom-link'
 import { navTitle } from '@/lib/nav-links'
 import { source } from '@/lib/source'
 
@@ -10,8 +11,23 @@ export default function Layout({ children }: { children: ReactNode }) {
 			tree={source.getPageTree()}
 			nav={{
 				title: navTitle,
-				component: <DocsNavbar />,
+				url: '/',
 			}}
+			links={[
+				{ text: 'Home', url: '/' },
+				{ text: 'Blog', url: '/blog' },
+				{ text: 'Downloads', url: '/downloads' },
+				{
+					type: 'custom',
+					secondary: true,
+					children: <SbomLink />,
+				},
+				{
+					type: 'custom',
+					secondary: true,
+					children: <GithubStars />,
+				},
+			]}
 			sidebar={{
 				defaultOpenLevel: 999,
 			}}
