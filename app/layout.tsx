@@ -60,7 +60,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 						process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID ?? '70662892-98e8-48ce-bde0-d360b7a0d0fc'
 					}
 					data-domains="kftray.app"
-					data-do-not-track="true"
+					data-do-not-track="false"
 					data-exclude-search="true"
 					data-auto-track="false"
 					strategy="afterInteractive"
