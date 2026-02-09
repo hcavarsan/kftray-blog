@@ -23,22 +23,22 @@ export default function Layout({ children }: { children: ReactNode }) {
 						{ text: 'Downloads', description: 'Get kftray and kftui', url: '/downloads' },
 					],
 				},
-				{
-					type: 'custom',
-					secondary: true,
-					children: <SbomLink />,
-				},
-				{
-					type: 'custom',
-					secondary: true,
-					children: <GithubStars />,
-				},
 			]}
 			sidebar={{
 				defaultOpenLevel: 999,
+				footer: (
+					<div className="flex items-center gap-2 px-2 md:hidden">
+						<SbomLink />
+						<GithubStars />
+					</div>
+				),
 			}}
 			themeSwitch={{ enabled: false }}
 		>
+			<div className="fixed right-4 top-3.5 z-50 hidden items-center gap-2 md:flex">
+				<SbomLink />
+				<GithubStars />
+			</div>
 			{children}
 		</DocsLayout>
 	)
