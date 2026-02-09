@@ -54,7 +54,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 					{children}
 				</RootProvider>
 				<Script
-					src="/u/script.js"
+					src="https://umami.cavarsa.app/script.js"
 					data-website-id={
 						process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID ?? '70662892-98e8-48ce-bde0-d360b7a0d0fc'
 					}
