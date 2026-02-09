@@ -1,68 +1,75 @@
 ---
-title: introduction to kftray
-description: understand when and why kftray helps with kubernetes development work
+title: Documentation
+description: Everything you need to get started with kftray — from installation to advanced configuration.
 ---
 
-# introduction to kftray
+import { BookOpen, Download, Zap, Cog, ArrowRightLeft, Monitor, Terminal, TerminalSquare, FileCode, Blocks, FileSearch, GitBranch, Radio, Layers } from 'lucide-react';
 
-here's what `kftray` does: it handles port-forwarding for kubernetes development work without the usual kubectl headaches.
+## Getting Started
 
-## when this comes up
+<Cards>
+  <Card icon={<BookOpen />} href="/docs/getting-started/introduction" title="Introduction">
+    What kftray is and why it exists.
+  </Card>
+  <Card icon={<Download />} href="/docs/getting-started/installation" title="Install">
+    Get kftray running on macOS, Linux, or Windows.
+  </Card>
+  <Card icon={<Zap />} href="/docs/getting-started/quick-start" title="Quick Start">
+    Create your first port forward in minutes.
+  </Card>
+  <Card icon={<Cog />} href="/docs/getting-started/how-it-works" title="How It Works">
+    Understand the forwarding pipeline.
+  </Card>
+</Cards>
 
-most developers working with kubernetes hit the same problems. `kubectl port-forward` works fine for basic tcp connections, but it has some rough edges:
+## Features
 
-when pods restart, connections drop and need manual reconnection. UDP services don't work at all with kubectl port-forward. managing multiple forwards means juggling terminal windows or complex scripts. configuration sharing across teams becomes a manual file-passing exercise.
+<Cards>
+  <Card icon={<Layers />} href="/docs/configuration/workload-types" title="Workload Types">
+    Service, pod, proxy, and expose modes.
+  </Card>
+  <Card icon={<FileCode />} href="/docs/configuration" title="Configuration">
+    Field reference, defaults, and storage.
+  </Card>
+  <Card icon={<ArrowRightLeft />} href="/docs/configuration/port-forwarding" title="Port Forwarding">
+    TCP and UDP forwarding options.
+  </Card>
+  <Card icon={<Radio />} href="/docs/configuration/proxy-forwarding" title="Proxy Forwarding">
+    Route traffic through cluster proxies.
+  </Card>
+  <Card icon={<FileSearch />} href="/docs/configuration/http-logging" title="HTTP Logging">
+    Capture request and response data.
+  </Card>
+  <Card icon={<GitBranch />} href="/docs/configuration/github-sync" title="GitHub Sync">
+    Share configs across teams.
+  </Card>
+  <Card icon={<Download />} href="/docs/configuration/auto-import" title="Auto Import">
+    Discover services from annotations.
+  </Card>
 
-this comes up especially when developing microservices locally against kubernetes clusters, debugging production issues, or sharing development environments across teams.
+</Cards>
 
-## the basic idea
+## Interfaces
 
-instead of running `kubectl port-forward` commands manually, developers can set up forwards once and manage them from one place. `kftray` handles reconnecting automatically, works with UDP traffic, and manages multiple forwards without requiring dozens of terminal windows.
+<Cards>
+  <Card icon={<Monitor />} href="/docs/interfaces/desktop" title="GUI">
+    System tray app with HTTP logging and GitHub sync.
+  </Card>
+  <Card icon={<Terminal />} href="/docs/interfaces/terminal" title="TUI">
+    Keyboard-driven, SSH-compatible, lightweight.
+  </Card>
+  <Card icon={<TerminalSquare />} href="/docs/interfaces/cli" title="CLI">
+    Flags, non-interactive mode, scripting, CI/CD.
+  </Card>
+</Cards>
 
-the tool comes in two interfaces: `kftray` (a desktop app with system tray) and `kftui` (terminal interface). both work with the same configuration and state, so teams can mix interfaces based on preference.
+## Resources
 
-## honest disclaimer: when to skip this
-
-`kubectl port-forward` works perfectly fine for simple cases. someone doing occasional debugging or working with a single TCP service probably doesn't need `kftray`. the overhead isn't worth it for quick one-off connections.
-
-this becomes useful when managing multiple forwards regularly, dealing with UDP services, or sharing configurations across teams. for casual kubectl users, the built-in port-forward command is simpler.
-
-## how it works in practice
-
-here's a typical development workflow: someone configures their local services once (database, API, frontend), saves the configuration as JSON, and shares it with their team via github or direct file sharing. when pods restart or connections drop, `kftray` handles reconnection automatically.
-
-for UDP services (like DNS or some message queues), `kftray` deploys a small proxy server in the cluster that acts as a bridge. this proxy handles the UDP traffic that kubectl can't forward directly.
-
-team configuration sharing works through github repositories or direct JSON file export/import. configuration changes sync automatically when using github integration.
-
-## workflow integration
-
-`kftray` fits into the development cycle where someone needs local access to cluster services. this happens during feature development, debugging sessions, or when running integration tests locally.
-
-the tool doesn't replace kubectl for cluster management -- it specifically handles port-forwarding scenarios where kubectl's limitations become annoying. developers still use kubectl for deployments, debugging, and cluster operations.
-
-## realistic example
-
-a team working on an e-commerce platform might forward their postgres database (port 5432), redis cache (6379), elasticsearch (9200), and a few microservices (8080, 8081, 8082). without `kftray`, this means managing six separate kubectl commands, reconnecting when pods restart, and manually sharing port assignments across the team.
-
-with `kftray`, someone sets up the configuration once, saves it as JSON, and shares it. team members import the configuration and enable the forwards they need. when the postgres pod restarts during a cluster update, `kftray` automatically reconnects without intervention.
-
-## current limitations
-
-UDP forwarding requires deploying the `kftray-server` component in kubernetes clusters -- it's not purely client-side like TCP forwarding. some corporate networks or security policies might restrict this proxy deployment.
-
-http logging and github sync currently only work in the desktop interface, not the terminal version. configuration format changes between versions sometimes require manual migration.
-
-the tool assumes standard kubeconfig access and standard kubernetes RBAC permissions. environments with non-standard authentication or network policies might need additional setup.
-
-## interface choice
-
-choose `kftray` (desktop) for visual configuration management, system tray convenience, and features like http traffic logging. choose `kftui` (terminal) for minimal resource usage, server environments, or when preferring command-line workflows.
-
-both interfaces work with the same underlying configuration and state, so teams can mix both based on individual preference without compatibility issues.
-
-## next steps
-
-someone wanting to try this can start with either interface based on their preference:
-
-- [installing either interface](/docs/getting-started/installation)
+<Cards>
+  <Card icon={<FileCode />} href="/docs/resources/cli-reference" title="CLI Reference">
+    Environment variables, keyboard shortcuts, debug logging.
+  </Card>
+  <Card icon={<Blocks />} href="/docs/resources/architecture" title="Architecture">
+    Deep dive into components and internals.
+  </Card>
+</Cards>

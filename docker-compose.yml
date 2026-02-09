@@ -12,3 +12,13 @@ services:
       - NODE_ENV=production
       - HOSTNAME=0.0.0.0
       - PORT=3000
+    networks:
+      - acogsgggo880c0oo4os80oco
+    labels:
+      - coolify.managed=true
+      - coolify.applicationId=1
+      - coolify.type=application
+
+networks:
+  acogsgggo880c0oo4os80oco:
+    external: true

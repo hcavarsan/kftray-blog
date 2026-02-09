@@ -1,0 +1,151 @@
+---
+title: Auto Import
+description: Automatically discover port-forward configurations from Kubernetes service annotations.
+---
+
+Auto import discovers port-forward configurations from Kubernetes service annotations, so you don't have to create them manually.
+
+## Annotation format
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway
+  namespace: production
+  annotations:
+    kftray.app/enabled: "true"
+    kftray.app/configs: "api-8080-80,admin-8081-8080"
+spec:
+  selector:
+    app: api-gateway
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+    - name: admin
+      port: 8080
+      targetPort: 8080
+```
+
+The `kftray.app/configs` annotation defines port forwards using the format `alias-localport-remoteport`. Multiple forwards are comma-separated.
+
+This example creates two configurations:
+
+1. `api`: `localhost:8080` → service port `80`
+2. `admin`: `localhost:8081` → service port `8080`
+
+## Required annotations
+
+| Annotation | Value | Description |
+|------------|-------|-------------|
+| `kftray.app/enabled` | `"true"` | Enables auto import for this service |
+| `kftray.app/configs` | `"alias-local-remote,..."` | Comma-separated list of port forward definitions |
+
+## How discovery works
+
+kftray scans all services in namespaces you have access to, looking for the `kftray.app/enabled: "true"` annotation. For each annotated service:
+
+<Steps>
+<Step>
+Parse the `kftray.app/configs` value.
+</Step>
+<Step>
+Create a configuration object with `service` and `namespace` from metadata, `context` from your current Kubernetes context, and `alias`, `local_port`, `remote_port` from the config string parts.
+</Step>
+<Step>
+Add the configuration to your local database.
+</Step>
+</Steps>
+
+Discovery runs:
+
+- On kftray startup
+- When you manually trigger "Discover Services" in the interface
+- Every 10 minutes (desktop interface only)
+
+<Callout type="warn" title="RBAC permissions required">
+Auto import requires permissions to list services across namespaces. If discovery fails, verify permissions with `kubectl auth can-i list services --all-namespaces`. You may need a ClusterRole binding for cluster-wide discovery. If you don't have LIST privilege on a namespace, you can type the namespace name manually in the import dialog.
+</Callout>
+
+## Integration with Helm
+
+```yaml
+# templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "myapp.fullname" . }}
+  annotations:
+    kftray.app/enabled: "true"
+    kftray.app/configs: "{{ .Values.kftray.alias }}-{{ .Values.kftray.localPort }}-{{ .Values.service.port }}"
+spec:
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+```
+
+```yaml
+# values.yaml
+service:
+  port: 8080
+
+kftray:
+  alias: "myapp"
+  localPort: 8080
+```
+
+Deploy with Helm and kftray automatically discovers the service:
+
+```bash
+helm install myapp ./myapp
+# kftray discovers: myapp-8080-8080
+```
+
+## Using auto import
+
+<Tabs items={['Desktop', 'Terminal']}>
+<Tab value="Desktop">
+
+<Steps>
+<Step>
+Open kftray desktop interface.
+</Step>
+<Step>
+Click "Discover Services" in the toolbar.
+</Step>
+<Step>
+Select namespaces to scan (or "All Namespaces").
+</Step>
+<Step>
+Click "Scan".
+</Step>
+<Step>
+Review discovered configurations.
+</Step>
+<Step>
+Click "Import Selected".
+</Step>
+</Steps>
+
+Discovered configurations appear in your port forward list immediately.
+
+</Tab>
+<Tab value="Terminal">
+
+```bash
+# Discover services in current namespace
+kftray discover
+
+# Discover services in specific namespace
+kftray discover -n production
+
+# Discover services across all namespaces
+kftray discover --all-namespaces
+
+# Import discovered configurations
+kftray import --from-discovery
+```
+
+</Tab>
+</Tabs>

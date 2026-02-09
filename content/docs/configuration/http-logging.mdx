@@ -1,0 +1,108 @@
+---
+title: HTTP Logging
+description: Capture and inspect HTTP traffic flowing through port forwards.
+---
+
+HTTP logging captures request and response data flowing through your port forwards for debugging API interactions.
+
+## Enabling HTTP logging
+
+<Tabs items={['Desktop', 'Terminal']}>
+<Tab value="Desktop">
+
+<Steps>
+<Step>
+Right-click the port forward in the desktop interface.
+</Step>
+<Step>
+Select "Configure HTTP Logging".
+</Step>
+<Step>
+Toggle "Enable HTTP Logging".
+</Step>
+<Step>
+Click "Save".
+</Step>
+</Steps>
+
+</Tab>
+<Tab value="Terminal">
+
+Press `l` to toggle HTTP logging on the selected configuration, or set `"http_logs_enabled": true` in your JSON config.
+
+Press `L` to configure log retention (1–365 days) and maximum log size (1–1000 MB).
+
+</Tab>
+</Tabs>
+
+Logging starts immediately for new connections. Existing connections continue without logging until they reconnect.
+
+## Log file location
+
+Logs are written to `~/.kftray/http_logs/` with one file per port forward:
+
+<Files>
+<Folder name="~/.kftray/http_logs" defaultOpen>
+<File name="api-gateway-8080.log" />
+<File name="auth-service-8001.log" />
+<File name="user-service-8002.log" />
+</Folder>
+</Files>
+
+File names follow the pattern `{alias-or-service}-{local-port}.log`.
+
+## Log format
+
+```
+[2026-02-09T14:32:15.123Z] trace_id=a1b2c3d4 method=POST path=/api/users status=201 duration=45ms
+
+REQUEST:
+POST /api/users HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+Authorization: Bearer eyJhbGc...
+Content-Length: 87
+
+{"email":"user@example.com","name":"Jane Doe","role":"admin"}
+
+RESPONSE:
+HTTP/1.1 201 Created
+Content-Type: application/json
+X-Request-ID: a1b2c3d4
+Content-Length: 156
+
+{"id":"usr_123","email":"user@example.com","name":"Jane Doe","role":"admin","created_at":"2026-02-09T14:32:15Z"}
+
+---
+```
+
+Each log entry includes:
+
+| Field | Detail |
+|---|---|
+| Timestamp | Millisecond precision |
+| Trace ID | For correlating requests |
+| HTTP method, path, status code | Request identification |
+| Request duration | Timing information |
+| Full request headers and body | Complete request capture |
+| Full response headers and body | Complete response capture |
+
+## Log management
+
+### Viewing logs in kftui
+
+Press `V` to open the log viewer for the selected configuration. From the detail view, press `r` to replay any captured HTTP request — useful for re-testing endpoints without leaving the terminal. Press `o` to open logs in your default external editor.
+
+### Cleanup
+
+Delete old logs manually:
+
+```bash
+rm ~/.kftray/http_logs/*.log
+```
+
+<Callout type="error" title="Sensitive data in logs">
+HTTP logs capture full request and response bodies, including authentication tokens, API keys, and personal data. Delete logs when debugging is complete.
+</Callout>
+
+

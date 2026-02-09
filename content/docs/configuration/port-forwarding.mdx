@@ -1,0 +1,120 @@
+---
+title: Port Forwarding
+description: Configure TCP and UDP port forwards with automatic reconnection.
+---
+
+Port forwarding lets you access Kubernetes services on your local machine through managed, auto-reconnecting connections.
+
+## TCP forwarding
+
+```json
+{
+  "service": "api-gateway",
+  "namespace": "production",
+  "local_port": 8080,
+  "remote_port": 80,
+  "context": "prod-cluster",
+  "alias": "Production API"
+}
+```
+
+This forwards `localhost:8080` to port `80` on the `api-gateway` service in the `production` namespace. You can now access the service at `http://localhost:8080`.
+
+TCP is the default protocol and works for HTTP, databases, gRPC, and most other services.
+
+## UDP forwarding
+
+```json
+{
+  "service": "dns-service",
+  "namespace": "kube-system",
+  "local_port": 5353,
+  "remote_port": 53,
+  "context": "dev-cluster",
+  "protocol": "udp",
+  "workload_type": "proxy"
+}
+```
+
+UDP forwarding requires the kftray-server proxy component running in your cluster. See [proxy forwarding](/docs/configuration/proxy-forwarding) for setup details.
+
+<Callout type="info" title="UDP requires proxy mode">
+UDP port forwards must use `"workload_type": "proxy"` because `kubectl port-forward` only supports TCP. The proxy component handles UDP traffic routing.
+</Callout>
+
+## Automatic reconnection
+
+kftray monitors all active port forwards and reconnects automatically when:
+
+- Network connectivity drops
+- Pods restart or get rescheduled
+- Kubernetes API server becomes temporarily unavailable
+- The forwarded service scales or updates
+
+Reconnection uses exponential backoff starting at 1 second, doubling up to 30 seconds between attempts. You'll see connection status updates in the interface during reconnection.
+
+For a detailed breakdown of each workload type (service, pod, proxy, expose), see [Workload Types](/docs/configuration/workload-types).
+
+<Callout type="warn" title="Port conflicts">
+If the local port is already in use, kftray won't start the forward. Check for conflicting processes with `lsof -i :PORT` on macOS/Linux or `netstat -ano | findstr :PORT` on Windows.
+</Callout>
+
+## Practical examples
+
+### Web service debugging
+
+```json
+{
+  "service": "frontend",
+  "local_port": 3000,
+  "remote_port": 3000,
+  "context": "staging",
+  "alias": "Staging Frontend"
+}
+```
+
+Access your staging frontend at `http://localhost:3000` to test changes before production deployment.
+
+### Database access
+
+```json
+{
+  "service": "mysql",
+  "namespace": "databases",
+  "local_port": 3306,
+  "remote_port": 3306,
+  "context": "prod-cluster",
+  "alias": "Production MySQL"
+}
+```
+
+Connect your local database client to `localhost:3306` to query production data. Remember to use read-only credentials when possible.
+
+### Microservices debugging
+
+```json
+[
+  {
+    "service": "auth-service",
+    "local_port": 8001,
+    "remote_port": 8080,
+    "context": "dev"
+  },
+  {
+    "service": "user-service",
+    "local_port": 8002,
+    "remote_port": 8080,
+    "context": "dev"
+  },
+  {
+    "service": "payment-service",
+    "local_port": 8003,
+    "remote_port": 8080,
+    "context": "dev"
+  }
+]
+```
+
+Forward multiple services simultaneously to debug service-to-service communication. Each service gets a unique local port.
+
+

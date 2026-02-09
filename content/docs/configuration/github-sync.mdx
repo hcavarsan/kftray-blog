@@ -1,0 +1,194 @@
+---
+title: GitHub Sync
+description: Share and synchronize port-forward configurations across teams using GitHub repositories.
+---
+
+GitHub sync lets you share port-forward configurations through a GitHub repository, keeping your team's setups consistent and up to date.
+
+## Setup
+
+### Create a configuration repository
+
+Create a new GitHub repository to store your team's port-forward configurations:
+
+```bash
+mkdir kftray-configs
+cd kftray-configs
+git init
+
+# Create configuration files
+cat > production.json <<EOF
+[
+  {
+    "service": "api-gateway",
+    "namespace": "production",
+    "local_port": 8080,
+    "remote_port": 80,
+    "context": "prod-cluster",
+    "alias": "Production API"
+  },
+  {
+    "service": "postgres",
+    "namespace": "databases",
+    "local_port": 5432,
+    "remote_port": 5432,
+    "context": "prod-cluster",
+    "alias": "Production Database"
+  }
+]
+EOF
+
+git add production.json
+git commit -m "Add production configurations"
+git remote add origin git@github.com:your-org/kftray-configs.git
+git push -u origin main
+```
+
+### Repository structure
+
+<Files>
+<Folder name="kftray-configs" defaultOpen>
+<File name="production.json" />
+<File name="staging.json" />
+<File name="development.json" />
+<File name="README.md" />
+</Folder>
+</Files>
+
+Each JSON file contains an array of [configuration objects](/docs/configuration). Organize files by environment, team, or service group.
+
+### Configure sync
+
+<Tabs items={['Desktop', 'Terminal']}>
+<Tab value="Desktop">
+
+<Steps>
+<Step>
+Open kftray desktop interface.
+</Step>
+<Step>
+Go to Settings → GitHub Sync.
+</Step>
+<Step>
+Enter repository URL: `https://github.com/your-org/kftray-configs`
+</Step>
+<Step>
+Enter branch name: `main`
+</Step>
+<Step>
+Provide Personal Access Token (see authentication below).
+</Step>
+<Step>
+Click "Enable Sync".
+</Step>
+</Steps>
+
+kftray immediately fetches configurations and checks for updates every 5 minutes.
+
+</Tab>
+<Tab value="Terminal">
+
+Pass the GitHub repository URL and config file path when launching kftui:
+
+```bash
+kftui --github-url https://github.com/your-org/kftray-configs --configs-path env/production.json
+```
+
+Add `--save` to persist the imported configurations to the local database:
+
+```bash
+kftui --github-url https://github.com/your-org/kftray-configs --configs-path env/production.json --save
+```
+
+For private repositories, set the `GITHUB_TOKEN` environment variable before launching.
+
+</Tab>
+</Tabs>
+
+## Authentication
+
+GitHub sync requires a Personal Access Token with `repo` scope for private repositories or `public_repo` scope for public repositories.
+
+Create a token at https://github.com/settings/tokens:
+
+<Steps>
+<Step>
+Click "Generate new token (classic)".
+</Step>
+<Step>
+Name: "kftray sync".
+</Step>
+<Step>
+Expiration: Choose based on your security policy.
+</Step>
+<Step>
+Scopes: Select `repo` (or `public_repo` for public repositories only).
+</Step>
+<Step>
+Click "Generate token".
+</Step>
+<Step>
+Copy the token immediately (you won't see it again).
+</Step>
+</Steps>
+
+<Callout type="error" title="Token security">
+Personal Access Tokens grant access to all repositories in the selected scope. Store tokens securely and rotate them regularly. Never commit tokens to version control or share them in chat.
+</Callout>
+
+## Sync behavior
+
+### Periodic checks
+
+kftray checks the repository for updates every 5 minutes. When changes are detected:
+
+<Steps>
+<Step>
+New configurations are added to your local database.
+</Step>
+<Step>
+Modified configurations update existing entries (matched by service + namespace + context).
+</Step>
+<Step>
+Deleted configurations are removed from your local database.
+</Step>
+</Steps>
+
+### Conflict resolution
+
+Repository configurations always win. If you modify a synced configuration locally, the next sync overwrites your changes with the repository version.
+
+To preserve local changes:
+
+<Steps>
+<Step>
+Disable GitHub sync temporarily.
+</Step>
+<Step>
+Export your local configurations.
+</Step>
+<Step>
+Merge changes into the repository.
+</Step>
+<Step>
+Push to GitHub.
+</Step>
+<Step>
+Re-enable sync.
+</Step>
+</Steps>
+
+### Manual trigger
+
+Force an immediate sync check:
+
+<Steps>
+<Step>
+Go to Settings → GitHub Sync.
+</Step>
+<Step>
+Click "Sync Now".
+</Step>
+</Steps>
+
+This bypasses the 5-minute interval and fetches the latest configurations immediately.

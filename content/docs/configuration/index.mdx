@@ -1,0 +1,113 @@
+---
+title: Configuration
+description: How kftray configurations work — field reference, storage, and sharing options.
+---
+
+kftray configurations are JSON objects that describe which Kubernetes services to forward and how.
+
+## Full configuration reference
+
+```json
+{
+  "service": "my-service",
+  "namespace": "production",
+  "local_port": 8080,
+  "remote_port": 80,
+  "context": "prod-cluster",
+  "workload_type": "service",
+  "protocol": "tcp",
+  "alias": "Production API",
+  "remote_address": "internal-api.company.com:443",
+  "local_address": "127.0.0.1",
+  "auto_loopback_address": false,
+  "domain_enabled": false,
+  "kubeconfig": "/custom/path/to/kubeconfig",
+  "target": "specific-pod-name",
+  "http_logs_enabled": false,
+  "exposure_type": "internal",
+  "cert_manager_enabled": false,
+  "cert_issuer": "letsencrypt-prod",
+  "cert_issuer_kind": "ClusterIssuer",
+  "ingress_class": "nginx"
+}
+```
+
+Every configuration defines a single port forward. You can create multiple configurations to forward multiple services.
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `service` | string | — | Yes | Kubernetes service or pod name to forward |
+| `namespace` | string | `"default"` | No | Kubernetes namespace containing the workload |
+| `local_port` | number | — | Yes | Port on your local machine |
+| `remote_port` | number | — | Yes | Port on the Kubernetes service or pod |
+| `context` | string | — | Yes | Kubernetes context from your kubeconfig |
+| `workload_type` | string | `"service"` | No | Type of workload: `"service"`, `"pod"`, `"proxy"`, or `"expose"` |
+| `protocol` | string | `"tcp"` | No | Network protocol: `"tcp"` or `"udp"` |
+| `alias` | string | — | No | Human-readable name shown in the interface |
+| `remote_address` | string | — | No | Target address for proxy workloads (see [proxy forwarding](/docs/configuration/proxy-forwarding)) |
+| `local_address` | string | `"127.0.0.1"` | No | Local bind address (`127.0.0.1` for localhost only, `0.0.0.0` for all interfaces) |
+| `auto_loopback_address` | boolean | `false` | No | Automatically configure hostfile entries for local domains |
+| `domain_enabled` | boolean | `false` | No | Enable local domain resolution |
+| `kubeconfig` | string | — | No | Path to custom kubeconfig file (overrides default) |
+| `target` | string | — | No | Label selector or specific pod name for pod workloads |
+| `http_logs_enabled` | boolean | `false` | No | Enable HTTP traffic logging for this forward |
+| `exposure_type` | string | — | No | For expose workloads: `"internal"` (cluster only) or `"public"` (internet via ingress) |
+| `cert_manager_enabled` | boolean | `false` | No | Enable automatic TLS certificates via cert-manager (expose workloads) |
+| `cert_issuer` | string | — | No | cert-manager issuer name (e.g., `"letsencrypt-prod"`) |
+| `cert_issuer_kind` | string | — | No | cert-manager issuer kind: `"Issuer"` or `"ClusterIssuer"` |
+| `ingress_class` | string | — | No | Ingress class for public expose workloads (e.g., `"nginx"`) |
+
+## Minimal configuration
+
+```json
+{
+  "service": "postgres",
+  "local_port": 5432,
+  "remote_port": 5432,
+  "context": "dev-cluster"
+}
+```
+
+This creates a TCP forward from `localhost:5432` to the `postgres` service in the `default` namespace.
+
+## Storage location
+
+kftray stores all configurations in a SQLite database at `~/.kftray/kftray.db`. The database persists your port forwards, connection history, and settings across restarts.
+
+You don't need to interact with this file directly. The [desktop interface](/docs/interfaces/desktop) and [terminal interface](/docs/interfaces/terminal) both manage configurations through their respective UIs.
+
+## Sharing configurations
+
+### File export and import
+
+Export configurations as JSON files to share with teammates or back up your setup:
+
+```bash
+# Export from desktop interface: File → Export Configurations
+# Import from desktop interface: File → Import Configurations
+```
+
+The exported JSON contains an array of configuration objects:
+
+```json
+[
+  {
+    "service": "api",
+    "local_port": 8080,
+    "remote_port": 80,
+    "context": "prod"
+  },
+  {
+    "service": "database",
+    "local_port": 5432,
+    "remote_port": 5432,
+    "context": "prod"
+  }
+]
+```
+
+### GitHub sync
+
+[GitHub sync](/docs/configuration/github-sync) automatically synchronizes configurations from a GitHub repository. This keeps your team's port forwards consistent and up to date without manual file sharing.
+
+

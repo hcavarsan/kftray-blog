@@ -1,1 +1,4 @@
-{ "title": "Interfaces", "pages": ["kftray-gui", "kftui-terminal"] }
+{
+	"title": "Interfaces",
+	"pages": ["desktop", "terminal", "cli"]
+}

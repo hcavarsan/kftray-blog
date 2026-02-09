@@ -1,148 +1,151 @@
 ---
-title: installing kftray
-description: set up kftray for kubernetes port-forwarding work
+title: Install
+description: Install the kftray desktop app or kftui terminal interface on macOS, Linux, or Windows.
 ---
 
-# installing kftray
+# Install
 
-getting `kftray` running depends on whether someone prefers a desktop interface or terminal interface. both work with the same configuration, so the choice comes down to workflow preference.
+There are several ways to install kftray. Pick the method that matches your platform and preference, then move on to the [Quick Start](/docs/getting-started/quick-start).
 
-## understanding the options
+## Desktop Interface (kftray)
 
-`kftray` (desktop) makes sense for visual configuration management and features like http traffic logging. `kftui` (terminal) works better for minimal resource usage, server environments, or when staying in command-line workflows.
+<Tabs items={['macOS', 'Linux', 'Windows']}>
+<Tab value="macOS">
 
-both interfaces access the same configuration database, so someone can switch between them or use both depending on the situation.
-
-## desktop interface installation
-
-### macOS setup
-
-the homebrew approach handles dependencies automatically:
+Install via Homebrew (recommended):
 
 ```bash
 brew tap hcavarsan/kftray
 brew install --cask kftray
 ```
 
-for manual installation, download the universal binary that works on both Intel and Apple Silicon macs. the dmg file includes the application bundle and handles system permissions.
+Or download `kftray_universal.dmg` from the [latest release](https://github.com/hcavarsan/kftray/releases/latest). The universal binary works on both Intel and Apple Silicon.
 
-### linux desktop setup  
 
-homebrew works across most linux distributions:
+</Tab>
+<Tab value="Linux">
+
+Install via Homebrew:
 
 ```bash
 brew tap hcavarsan/kftray
 brew install kftray-linux
 ```
 
-on GNOME-based distributions, the system tray requires AppIndicator support. install the [AppIndicator extension](https://extensions.gnome.org/extension/615/appindicator-support/) for the system tray icon to appear properly.
+Or download the AppImage from the [latest release](https://github.com/hcavarsan/kftray/releases/latest):
 
-for non-GNOME environments (KDE, XFCE, i3), the AppImage format typically works without additional setup.
+- `kftray_amd64.AppImage` — x86_64 systems
+- `kftray_aarch64.AppImage` — ARM64 systems
 
-### windows desktop setup
+Make it executable before running:
 
-windows users can download the installer for their architecture. the x64 installer covers most systems, while ARM64 specifically targets newer Windows ARM devices.
+```bash
+chmod +x kftray_amd64.AppImage
+./kftray_amd64.AppImage
+```
 
-the installer handles PATH configuration and creates Start Menu entries automatically.
+<Callout type="warn" title="GNOME Users">
+The system tray icon requires AppIndicator support. Install the [AppIndicator extension](https://extensions.gnome.org/extension/615/appindicator-support/) for the tray icon to appear. KDE, XFCE, and i3 include tray support by default.
+</Callout>
 
-## terminal interface installation
+</Tab>
+<Tab value="Windows">
 
-### unix-like systems (linux, macOS, WSL)
+Download the installer from the [latest release](https://github.com/hcavarsan/kftray/releases/latest):
 
-the installer script handles platform detection and downloads the appropriate binary:
+- `kftray_x64-setup.exe` — standard x86_64 systems
+- `kftray_arm64-setup.exe` — ARM64 devices (Surface Pro X, etc.)
+
+The installer configures PATH and creates Start Menu entries automatically.
+
+</Tab>
+</Tabs>
+
+## Terminal Interface (kftui)
+
+<Tabs items={['Homebrew', 'Cargo', 'Installer Script', 'Windows']}>
+<Tab value="Homebrew">
+
+```bash
+brew tap hcavarsan/kftray
+brew install kftui
+```
+
+</Tab>
+<Tab value="Cargo">
+
+```bash
+cargo install kftui
+```
+
+Requires a working Rust toolchain. See [rustup.rs](https://rustup.rs) if you don't have one.
+
+</Tab>
+<Tab value="Installer Script">
 
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/hcavarsan/kftray/main/hacks/kftui_installer.sh)
 ```
 
-alternatively with wget:
+Or with `wget`:
 
 ```bash
 bash <(wget -qO- https://raw.githubusercontent.com/hcavarsan/kftray/main/hacks/kftui_installer.sh)
 ```
 
-this script installs to `/usr/local/bin/kftui` and requires sudo permissions for system-wide installation.
+This installs `kftui` to `/usr/local/bin/` and requires `sudo` for the system-wide install.
 
-### windows terminal setup
+</Tab>
+<Tab value="Windows">
 
-powershell installation handles the windows-specific setup:
+Run in PowerShell:
 
 ```powershell
 Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/hcavarsan/kftray/main/hacks/kftui_installer.ps1'))
 ```
 
-the installer adds the binary to PATH and creates the necessary directories.
+</Tab>
+</Tabs>
 
-## manual installation approach
+### Manual Binary Downloads
 
-when automatic installers don't work (corporate networks, security policies), direct binary downloads provide an alternative.
+If the installer scripts don't work in your environment (corporate firewalls, restricted networks), download binaries directly from the [latest release](https://github.com/hcavarsan/kftray/releases/latest):
 
-### desktop interface binaries
+| Platform | Desktop | Terminal |
+|---|---|---|
+| macOS (Universal) | `kftray_universal.dmg` | `kftui_macos_universal` |
+| Linux x86_64 | `kftray_amd64.AppImage` | `kftui_amd64` |
+| Linux ARM64 | `kftray_aarch64.AppImage` | `kftui_arm64` |
+| Windows x64 | `kftray_x64-setup.exe` | `kftui_x86_64.exe` |
+| Windows ARM64 | `kftray_arm64-setup.exe` | — |
 
-download the appropriate file for the target platform:
+## Verifying the Installation
 
-- macOS: `kftray_universal.dmg` works on all mac hardware
-- Windows x64: `kftray_x64-setup.exe` for standard Windows systems  
-- Windows ARM: `kftray_arm64-setup.exe` for ARM Windows devices
-- Linux x64: `kftray_amd64.AppImage` for most linux distributions
-- Linux ARM: `kftray_aarch64.AppImage` for ARM-based linux systems
+<Tabs items={['Desktop', 'Terminal']}>
+<Tab value="Desktop">
 
-### terminal interface binaries
+Launch kftray from your applications menu. You should see a system tray icon (a small Kubernetes logo). Click it to open the main configuration interface.
 
-similar platform-specific binaries are available:
-
-- macOS: `kftui_macos_universal` 
-- Linux x64: `kftui_amd64`
-- Linux ARM: `kftui_arm64`
-- Windows x86: `kftui_x86.exe`
-- Windows x64: `kftui_x86_64.exe`
-
-all binaries are available from the [latest GitHub release](https://github.com/hcavarsan/kftray/releases/latest).
-
-## verifying the installation
-
-### desktop interface verification
-
-launch `kftray` from the applications menu. the system tray should show the kftray icon (a small kubernetes logo). clicking the icon opens the main configuration interface.
-
-if the tray icon doesn't appear on linux, check that AppIndicator support is installed and enabled.
-
-### terminal interface verification
-
-run `kftui` from any terminal to launch the text interface. the application displays a configuration list (initially empty) with keyboard shortcuts at the bottom.
+</Tab>
+<Tab value="Terminal">
 
 ```bash
 kftui
 ```
 
-press `Ctrl+C` to exit the application.
+You should see a text-based interface with an empty configuration list and keyboard shortcuts at the bottom. Press `Ctrl+C` to exit.
 
-## common installation issues
+</Tab>
+</Tabs>
 
-### permission problems
+## Configuration Storage
 
-on macOS, the system may prevent unsigned applications from running. go to System Preferences > Security & Privacy and allow the kftray application to run.
+Both interfaces store data in `~/.kftray/`:
 
-on linux, AppImage files need execute permissions:
+| File | Purpose |
+|---|---|
+| `kftray.db` | SQLite database with all configurations and state |
+| `app.log` | Application logs |
+| `http_logs/` | HTTP traffic captures (when enabled) |
 
-```bash
-chmod +x kftray_amd64.AppImage
-```
-
-### missing dependencies
-
-the terminal interface is statically linked and doesn't require additional dependencies on most systems. the desktop interface may need system tray support, which varies by linux distribution.
-
-### network restrictions
-
-corporate networks may block the installer scripts. in these cases, download the binary manually and place it in the appropriate location (/usr/local/bin for unix systems, or any directory in PATH).
-
-## configuration storage
-
-both interfaces create configuration files in the user's home directory under `.kftray/`. this includes the configuration database, logs, and any cached data.
-
-the configuration database is shared between both interfaces, so switching between desktop and terminal modes preserves all settings.
-
-## next steps
-
-with either interface installed, the next step is creating port-forward configurations. the [quick start guide](/docs/getting-started/quick-start) walks through the basic workflow for both interfaces.
+This directory is shared between both interfaces, so configurations created in one appear instantly in the other.

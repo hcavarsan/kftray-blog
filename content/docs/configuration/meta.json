@@ -1,0 +1,12 @@
+{
+	"title": "Features",
+	"pages": [
+		"workload-types",
+		"index",
+		"port-forwarding",
+		"proxy-forwarding",
+		"http-logging",
+		"github-sync",
+		"auto-import"
+	]
+}

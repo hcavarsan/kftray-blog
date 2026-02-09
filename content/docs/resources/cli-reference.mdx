@@ -1,0 +1,207 @@
+---
+title: CLI Reference
+description: Command-line behavior, environment variables, and debug logging for both interfaces.
+---
+
+Both kftray interfaces accept environment variables and command-line options for startup, debugging, and integration with automation scripts.
+
+## Desktop startup
+
+<Tabs items={['macOS', 'Linux', 'Windows']}>
+<Tab value="macOS">
+```bash
+# Launch from Applications folder
+open /Applications/kftray.app
+
+# Launch from terminal
+/Applications/kftray.app/Contents/MacOS/kftray
+
+# Launch with debug logging
+RUST_LOG=debug /Applications/kftray.app/Contents/MacOS/kftray
+```
+</Tab>
+<Tab value="Linux">
+```bash
+# Launch from desktop environment
+kftray
+
+# Launch from terminal
+/usr/bin/kftray
+
+# Launch with debug logging
+RUST_LOG=debug kftray
+```
+</Tab>
+<Tab value="Windows">
+```powershell
+# Launch from Start Menu or desktop shortcut
+
+# Launch from PowerShell
+& "C:\Program Files\kftray\kftray.exe"
+
+# Launch with debug logging
+$env:RUST_LOG="debug"; & "C:\Program Files\kftray\kftray.exe"
+```
+</Tab>
+</Tabs>
+
+## Terminal launch
+
+```bash
+# Basic launch
+kftui
+
+# Load from a JSON file
+kftui --configs-path config.json
+
+# Load from GitHub repository
+kftui --github-url https://github.com/team/configs --configs-path env/dev.json
+
+# Auto-start all forwards
+kftui --configs-path config.json --auto-start
+
+# Non-interactive mode (no TUI)
+kftui --json '[{...}]' --auto-start --non-interactive
+
+# Read from stdin
+cat config.json | kftui --stdin
+
+# With custom terminal type
+TERM=xterm-256color kftui
+
+# Inside tmux session
+tmux new-session -s kftray kftui
+
+# Inside screen session
+screen -S kftray kftui
+```
+
+### Command-line flags
+
+| Flag | Description |
+|------|-------------|
+| `--configs-path` | Path to JSON configuration file |
+| `--save` | Persist imported configs to local database |
+| `--github-url` | GitHub repository URL for config sync |
+| `--auto-start` | Start all forwards on launch |
+| `--non-interactive` | Run without TUI (forward and block until interrupted) |
+| `--json` | Inline JSON configuration string |
+| `--stdin` | Read configuration from stdin |
+| `--flush` | Clear existing configs before importing |
+
+## Environment variables
+
+| Variable | Purpose | Example Values |
+|----------|---------|----------------|
+| `RUST_LOG` | Logging level and component filtering | `info`, `debug`, `warn`, `error`, `kftray=debug,kube=info` |
+| `KUBECONFIG` | Custom kubeconfig path or multiple files | `/path/to/config`, `/path/one:/path/two` |
+| `GITHUB_TOKEN` | GitHub Personal Access Token for private repo sync | `ghp_xxxxxxxxxxxx` |
+| `HTTPS_PROXY` | HTTPS proxy for Kubernetes API requests | `http://proxy.example.com:8080` |
+| `HTTP_PROXY` | HTTP proxy for Kubernetes API requests | `http://proxy.example.com:8080` |
+| `NO_PROXY` | Bypass proxy for specific hosts | `localhost,127.0.0.1,.local` |
+| `TERM` | Terminal type for kftui rendering | `xterm-256color`, `screen-256color` |
+
+Component-specific logging targets the exact subsystem you need:
+
+```bash
+# Debug only kftray components, info for everything else
+RUST_LOG=kftray=debug,info kftui
+
+# Debug Kubernetes client, warn for everything else
+RUST_LOG=kube=debug,warn kftray
+
+# Trace-level logging for port forwarding
+RUST_LOG=kftray_portforward=trace kftui
+```
+
+## Data directories
+
+<Tabs items={['macOS', 'Linux', 'Windows']}>
+<Tab value="macOS">
+```bash
+# Configuration database
+~/.kftray/kftray.db
+
+# HTTP logs (desktop only)
+~/.kftray/http_logs/
+
+# Application logs
+~/Library/Logs/kftray/
+```
+</Tab>
+<Tab value="Linux">
+```bash
+# Configuration database
+~/.kftray/kftray.db
+
+# HTTP logs (desktop only)
+~/.kftray/http_logs/
+
+# Application logs
+~/.local/share/kftray/logs/
+```
+</Tab>
+<Tab value="Windows">
+```powershell
+# Configuration database
+%USERPROFILE%\.kftray\kftray.db
+
+# HTTP logs (desktop only)
+%USERPROFILE%\.kftray\http_logs\
+
+# Application logs
+%APPDATA%\kftray\logs\
+```
+</Tab>
+</Tabs>
+
+## Terminal keyboard shortcuts
+
+| Key | Action |
+|-----|--------|
+| `↑` `↓` `←` `→` | Navigate lists and sections |
+| `Space` | Select/deselect item |
+| `a` | Select all items |
+| `f` | Toggle forward for selected configs |
+| `i` | Import configuration from JSON file |
+| `e` | Export selected configurations to JSON |
+| `d` | Delete selected configurations |
+| `s` | Open settings |
+| `l` | Toggle HTTP logging for selected |
+| `L` | Configure HTTP logging (retention, max size) |
+| `V` | View HTTP logs |
+| `o` | Open HTTP logs in external editor |
+| `r` | Replay HTTP request (in log detail view) |
+| `h` | Show help screen |
+| `q` | Quit application |
+| `Tab` | Switch between sections |
+| `Ctrl+C` | Exit |
+
+See the [terminal interface guide](/docs/interfaces/terminal) for workflow examples.
+
+## Debug logging
+
+Enable debug logging to diagnose connection issues, authentication problems, or unexpected behavior:
+
+```bash
+# Desktop with full debug output
+RUST_LOG=debug kftray 2>&1 | tee kftray-debug.log
+
+# Terminal with debug output
+RUST_LOG=debug kftui 2>&1 | tee kftui-debug.log
+
+# Component-specific debugging
+RUST_LOG=kftray_portforward=trace,kube=debug kftui
+```
+
+The log output includes:
+
+| Category | Details |
+|---|---|
+| Kubernetes API | Requests and responses |
+| Port binding | Attempts and failures |
+| Configuration | Database operations |
+| Proxy server | Deployment events |
+| HTTP parsing | Request/response parsing (when [HTTP logging](/docs/configuration/http-logging) is enabled) |
+
+

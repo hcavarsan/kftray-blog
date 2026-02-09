@@ -22,6 +22,8 @@ export function BlogCard({ page }: BlogCardProps) {
 	return (
 		<Link
 			href={url}
+			data-umami-event="blog-post-click"
+			data-umami-event-title={data.title}
 			className="group flex flex-col overflow-hidden rounded-xl border border-fd-border bg-fd-card transition-colors duration-300 hover:bg-dark-control cursor-pointer"
 		>
 			<div className="relative aspect-[16/9] overflow-hidden">

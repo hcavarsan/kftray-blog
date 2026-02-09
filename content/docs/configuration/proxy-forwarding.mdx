@@ -1,0 +1,75 @@
+---
+title: Proxy Forwarding
+description: Route traffic through Kubernetes clusters to reach internal or external services.
+---
+
+Proxy forwarding routes traffic through your Kubernetes cluster to reach services that aren't directly accessible from your local machine.
+
+## Basic proxy configuration
+
+```json
+{
+  "service": "kftray-server",
+  "workload_type": "proxy",
+  "remote_address": "internal-api.company.com:443",
+  "local_port": 8443,
+  "remote_port": 8080,
+  "context": "prod-cluster",
+  "alias": "Internal API via Proxy"
+}
+```
+
+This forwards `localhost:8443` through the kftray-server proxy pod to `internal-api.company.com:443`. Traffic flows: your machine → kftray-server pod → target service.
+
+## The kftray-server proxy component
+
+kftray-server is a lightweight proxy pod that runs in your Kubernetes cluster. It receives traffic from your local port forward and routes it to the `remote_address` target.
+
+The proxy component is required for:
+
+- UDP port forwarding
+- Accessing services outside the cluster from within cluster network context
+- Reaching internal corporate services through cluster network policies
+- Bypassing IP allowlist restrictions using cluster egress IPs
+
+kftray automatically deploys the proxy pod when you create a proxy-type forward. The pod runs in the same namespace as your target service.
+
+<Callout type="warn" title="Cluster permissions required">
+Deploying the proxy requires permissions to create pods and services in the target namespace. If you see deployment errors, check your RBAC permissions with `kubectl auth can-i create pods -n NAMESPACE`.
+</Callout>
+
+## Use cases
+
+### Internal corporate APIs
+
+```json
+{
+  "service": "kftray-server",
+  "workload_type": "proxy",
+  "remote_address": "hr-api.internal.company.com:8080",
+  "local_port": 9000,
+  "remote_port": 8080,
+  "context": "corp-cluster",
+  "namespace": "default"
+}
+```
+
+Access internal APIs that are only reachable from within your corporate network. The cluster's network context provides access even when your local machine is outside the VPN.
+
+### Cloud services with IP restrictions
+
+```json
+{
+  "service": "kftray-server",
+  "workload_type": "proxy",
+  "remote_address": "restricted-api.cloud-provider.com:443",
+  "local_port": 8443,
+  "remote_port": 8080,
+  "context": "prod-cluster",
+  "namespace": "production"
+}
+```
+
+Reach cloud services that allowlist your cluster's egress IPs but not your local IP. Traffic appears to originate from the cluster, satisfying IP restrictions.
+
+

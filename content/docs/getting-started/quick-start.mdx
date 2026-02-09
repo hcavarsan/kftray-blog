@@ -1,127 +1,135 @@
 ---
-title: quick start
-description: get up and running with port forwarding when kubectl becomes limiting
+title: Quick Start
+description: Create your first port-forward configuration, start it, and verify the connection.
 ---
 
-# quick start
+# Quick Start
 
-here's when someone might need `kftray`: when `kubectl port-forward` becomes annoying due to dropped connections, the need for UDP forwarding, or managing multiple terminal windows for different services.
+In this guide, you'll create a port-forward configuration, start it, and verify that traffic flows from your local machine to a Kubernetes service.
 
-## honest disclaimer: when to skip this
+## Prerequisites
 
-`kubectl port-forward` works perfectly fine for simple cases. someone doing occasional debugging or working with a single TCP service probably doesn't need the complexity of `kftray`. the overhead isn't worth it for quick one-off connections.
+- kftray or kftui [installed](/docs/getting-started/installation)
+- A running Kubernetes cluster accessible via `kubeconfig`
+- At least one service running in the cluster (we'll use a web service on port 80 as an example)
 
-this becomes useful when managing multiple forwards regularly, dealing with UDP services, or working in teams that need shared configurations.
+Verify your cluster access first:
 
-## the basic workflow
-
-both interfaces (`kftray` desktop and `kftui` terminal) work with the same JSON configuration format and shared database. the general approach is: create configurations once, enable the forwards needed for current work, and let automatic reconnection handle network hiccups.
-
-## configuration format essentials
-
-all port forwards use this JSON structure:
-
-```json
-{
-  "service": "my-service",
-  "namespace": "default",
-  "local_port": 8080,
-  "remote_port": 80,
-  "context": "my-cluster",
-  "workload_type": "service",
-  "protocol": "tcp",
-  "alias": "my-service"
-}
+```bash
+kubectl get services -n default
 ```
 
-the essential fields are service name, namespace, ports, kubernetes context, and protocol. optional fields like alias make configurations easier to manage when working with many services.
+## Step 1 — Create a Configuration
 
-## getting started with the desktop interface
+<Tabs items={['Desktop', 'Terminal']}>
+<Tab value="Desktop">
 
-launch `kftray` and look for the system tray icon. clicking it opens the main interface where configurations appear in a list format with toggle switches for each forward.
+<Steps>
+<Step>
+Click the kftray system tray icon to open the main window.
+</Step>
+<Step>
+Click the **+** button (or press `Ctrl+N` / `Cmd+N`).
+</Step>
+<Step>
+Fill in the configuration form:
 
-adding a new configuration means clicking the "+" button and filling in the service details: name, namespace, local and remote ports, and protocol (TCP or UDP). saving the configuration adds it to the shared database for both interfaces to use.
+| Field | Value |
+|---|---|
+| Service | `my-service` |
+| Namespace | `default` |
+| Local Port | `8080` |
+| Remote Port | `80` |
+| Protocol | `tcp` |
+| Alias | `web` |
+</Step>
+<Step>
+Click **Save**.
+</Step>
+</Steps>
 
-starting port forwards works through toggle switches next to each configuration, or "start all" enables multiple forwards simultaneously. the interface shows real-time status for each forward and handles reconnection automatically when pods restart.
+</Tab>
+<Tab value="Terminal">
 
-## getting started with the terminal interface
+Create a JSON configuration file:
 
-launch `kftui` from any terminal to see the text-based interface. the layout shows available configurations in a table format with keyboard shortcuts for common operations.
+```json
+[
+  {
+    "service": "my-service",
+    "namespace": "default",
+    "local_port": 8080,
+    "remote_port": 80,
+    "context": "my-cluster",
+    "workload_type": "service",
+    "protocol": "tcp",
+    "alias": "web"
+  }
+]
+```
 
-adding configurations works through JSON file import -- press 'i' to import, select the configuration file, then use space bar to select which configurations to activate. the 'f' key starts or stops selected forwards.
+Save it as `config.json`, then import it in kftui:
 
-navigation uses standard terminal patterns: arrow keys move between configurations, space bar selects items, ctrl+a selects everything, and ctrl+c quits. the help screen ('h' key) shows all available shortcuts.
+<Steps>
+<Step>
+Launch `kftui`.
+</Step>
+<Step>
+Press `i` to open the import dialog.
+</Step>
+<Step>
+Navigate to your `config.json` file and press `Enter`.
+</Step>
+</Steps>
 
-## verifying that forwards work
+</Tab>
+</Tabs>
 
-test connections by accessing the forwarded service at its local port:
+## Step 2 — Start the Port Forward
+
+<Tabs items={['Desktop', 'Terminal']}>
+<Tab value="Desktop">
+
+Toggle the switch next to your "web" configuration, or click **Start All** to enable all forwards.
+
+A green status indicator means the connection is active.
+
+</Tab>
+<Tab value="Terminal">
+
+<Steps>
+<Step>
+Use arrow keys to highlight the "web" configuration.
+</Step>
+<Step>
+Press `Space` to select it.
+</Step>
+<Step>
+Press `f` to start forwarding.
+</Step>
+</Steps>
+
+The status column changes to **Running**.
+
+</Tab>
+</Tabs>
+
+## Step 3 — Verify the Connection
+
+Test that traffic flows through the forward:
 
 ```bash
 curl http://localhost:8080
 ```
 
-for database connections, use the local port with normal database client tools. web applications become accessible at localhost with the configured local port.
+You should see the response from your Kubernetes service. For database services, connect your client to `localhost:LOCAL_PORT` as usual.
 
-when something doesn't work, check that the target service exists and is running in the cluster. use `kubectl get services -n <namespace>` to verify service names and `kubectl get pods -n <namespace>` to check that backing pods are healthy.
+## Step 4 — Test Automatic Reconnection
 
-## realistic configuration examples
+Restart the target pod to see automatic reconnection in action:
 
-### microservices development setup
-
-someone working on an e-commerce platform might configure forwards for the main services:
-
-```json
-{
-  "service": "api-gateway",
-  "namespace": "development",
-  "local_port": 8080,
-  "remote_port": 8080,
-  "protocol": "tcp",
-  "alias": "gateway"
-}
+```bash
+kubectl rollout restart deployment/my-service -n default
 ```
 
-```json
-{
-  "service": "postgres-primary",
-  "namespace": "data",
-  "local_port": 5432,
-  "remote_port": 5432,
-  "protocol": "tcp",
-  "alias": "database"
-}
-```
-
-this setup allows local development code to access both the API gateway and database using standard localhost connections.
-
-### debugging production issues
-
-when investigating production problems, someone might forward specific services temporarily:
-
-```json
-{
-  "service": "user-service",
-  "namespace": "production",
-  "context": "prod-cluster",
-  "local_port": 9001,
-  "remote_port": 8080,
-  "protocol": "tcp",
-  "alias": "prod-users"
-}
-```
-
-the different local port (9001) prevents conflicts with development forwards, and the specific context ensures connection to the right cluster.
-
-## when forwards don't work
-
-**port binding errors** happen when another process uses the local port. check what's running with `lsof -i :PORT` on unix systems and either stop the conflicting process or choose a different local port.
-
-**authentication failures** usually mean kubernetes credentials are expired or the context doesn't exist. verify with `kubectl config get-contexts` and `kubectl get nodes` to test cluster access.
-
-**service connectivity problems** often indicate the target service isn't running or isn't named correctly. double-check service names and namespaces with `kubectl get services -n <namespace>`.
-
-## what happens next
-
-once basic forwarding works, teams often evolve toward shared configurations through JSON file export or github sync (desktop interface only). http traffic logging (also desktop only) becomes useful for debugging API integration issues.
-
-the next step depends on whether someone wants visual management (desktop interface) or prefers staying in terminals (text interface). both work with the same configurations and handle the same port forwarding scenarios.
+Watch the kftray status — it briefly shows a reconnection attempt, then returns to green/running. No manual intervention needed.

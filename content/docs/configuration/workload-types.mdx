@@ -1,0 +1,109 @@
+---
+title: Workload Types
+description: The four forwarding modes — service, pod, proxy, and expose — and when to use each.
+---
+
+kftray supports four workload types for different forwarding scenarios.
+
+![Workload types overview](/img/workload-types.png)
+
+## Service
+
+```json
+{
+  "service": "postgres",
+  "workload_type": "service",
+  "local_port": 5432,
+  "remote_port": 5432,
+  "context": "dev"
+}
+```
+
+Forwards to a Kubernetes Service. Traffic routes through the service's load balancer to any healthy pod. Use this for most scenarios — it's resilient to pod restarts and scaling.
+
+## Pod
+
+```json
+{
+  "service": "debug-pod-abc123",
+  "workload_type": "pod",
+  "target": "app=myapp",
+  "local_port": 9229,
+  "remote_port": 9229,
+  "context": "dev"
+}
+```
+
+Forwards directly to a specific pod using a label selector or pod name. Use this when debugging a particular pod instance or when no service exists. The forward breaks if the pod restarts.
+
+## Proxy
+
+```json
+{
+  "service": "kftray-server",
+  "workload_type": "proxy",
+  "remote_address": "internal-api.company.com:443",
+  "local_port": 8443,
+  "remote_port": 8080,
+  "context": "prod-cluster",
+  "namespace": "default"
+}
+```
+
+Routes traffic through a kftray-server proxy pod in your cluster to reach services that aren't directly accessible from your local machine. Also required for UDP forwarding, since Kubernetes only supports TCP port-forward natively.
+
+See [Proxy Forwarding](/docs/configuration/proxy-forwarding) for deployment details and use cases.
+
+## Expose (reverse tunneling)
+
+```json
+{
+  "alias": "myapp.example.com",
+  "namespace": "production",
+  "local_port": 3000,
+  "local_address": "localhost",
+  "context": "my-k8s-cluster",
+  "workload_type": "expose",
+  "protocol": "tcp",
+  "domain_enabled": true,
+  "exposure_type": "public",
+  "cert_manager_enabled": true,
+  "cert_issuer": "letsencrypt-prod",
+  "cert_issuer_kind": "ClusterIssuer",
+  "ingress_class": "nginx"
+}
+```
+
+Reverse tunnels your local service into the Kubernetes cluster or the public internet. Traffic flows in the opposite direction: cluster (or internet) → kftray-server pod → your local machine.
+
+Use cases:
+
+- Testing webhooks from external services against your local development server
+- Sharing work-in-progress features with teammates through a cluster-accessible URL
+- Running local services that need to be reachable from other pods in the cluster
+
+Set `"exposure_type": "internal"` to make the service reachable only within the cluster, or `"public"` to create an ingress with optional TLS via cert-manager.
+
+```json
+{
+  "alias": "internal-api",
+  "namespace": "development",
+  "local_port": 8080,
+  "local_address": "localhost",
+  "context": "my-k8s-cluster",
+  "workload_type": "expose",
+  "protocol": "tcp",
+  "domain_enabled": true,
+  "exposure_type": "internal"
+}
+```
+
+### Expose configuration fields
+
+| Field | Description |
+|-------|-------------|
+| `exposure_type` | `"internal"` (cluster only) or `"public"` (internet via ingress) |
+| `cert_manager_enabled` | Enable automatic TLS certificates via cert-manager |
+| `cert_issuer` | cert-manager issuer name (e.g., `"letsencrypt-prod"`) |
+| `cert_issuer_kind` | `"Issuer"` or `"ClusterIssuer"` |
+| `ingress_class` | Ingress class for public exposure (e.g., `"nginx"`) |

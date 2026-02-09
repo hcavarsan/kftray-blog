@@ -6,6 +6,14 @@ const withMDX = createMDX()
 const config = {
 	reactStrictMode: true,
 	output: 'standalone',
+	async rewrites() {
+		return [
+			{
+				source: '/u/:path*',
+				destination: 'https://umami.cavarsa.app/:path*',
+			},
+		]
+	},
 	images: {
 		remotePatterns: [
 			{

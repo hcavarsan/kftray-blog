@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Script from 'next/script'
 import type { ReactNode } from 'react'
+import { UmamiTracker } from '@/components/common/umami-tracker'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
@@ -52,10 +53,17 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 					{children}
 				</RootProvider>
 				<Script
-					src="https://umami.cavarsa.app/script.js"
-					data-website-id="70662892-98e8-48ce-bde0-d360b7a0d0fc"
+					src="/u/script.js"
+					data-website-id={
+						process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID ?? '70662892-98e8-48ce-bde0-d360b7a0d0fc'
+					}
+					data-domains="kftray.app"
+					data-do-not-track="true"
+					data-exclude-search="true"
+					data-auto-track="false"
 					strategy="afterInteractive"
 				/>
+				<UmamiTracker />
 			</body>
 		</html>
 	)

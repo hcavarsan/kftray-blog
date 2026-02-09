@@ -1,0 +1,275 @@
+---
+title: GUI
+description: Visual port-forward management with system tray integration, HTTP logging, and GitHub sync.
+---
+
+The kftray desktop interface provides visual management of Kubernetes port forwards through a system tray application.
+
+![kftray desktop interface](/img/kftools.webp)
+
+## System tray integration
+
+The system tray icon provides quick access without opening the full interface.
+
+**macOS:**
+```
+Menu bar icon → Click for quick menu
+Right-click → Start All, Stop All, Open Main Window
+```
+
+**Windows:**
+```
+System tray → Click for quick menu
+Right-click → Start All, Stop All, Open Main Window
+```
+
+**Linux:**
+```
+AppIndicator → Click for quick menu
+Right-click → Start All, Stop All, Open Main Window
+```
+
+<Callout type="warn" title="Linux AppIndicator requirement">
+GNOME requires the AppIndicator extension installed and enabled. KDE, XFCE, and other desktop environments typically include AppIndicator support by default.
+</Callout>
+
+Status indicators on the tray icon show whether any forwards are active. The icon changes color based on overall state, making it easy to see at a glance if your forwards are running.
+
+## Main window
+
+The main window displays all configurations in a list format with status toggles for each forward.
+
+<Accordions>
+<Accordion title="Configuration list">
+Service name and alias, port mapping (local → remote), namespace and context, status indicator (green/red/yellow/error), and toggle switch for start/stop.
+</Accordion>
+<Accordion title="Search and sort">
+Search by alias, service name, or namespace. Sort by status, name, or port. Filter by context or namespace.
+</Accordion>
+<Accordion title="Drag-and-drop">
+Reorder configurations by dragging. Group related services together for visual organization of large configuration sets.
+</Accordion>
+</Accordions>
+
+## Configuration management
+
+<Tabs items={['Create', 'Edit', 'Duplicate', 'Delete']}>
+<Tab value="Create">
+
+Click the `+` button or press `Ctrl/Cmd + N` to create a new configuration.
+
+**Required fields:**
+```json
+{
+  "service": "api-gateway",
+  "namespace": "development",
+  "local_port": 8080,
+  "remote_port": 80,
+  "protocol": "tcp",
+  "alias": "gateway"
+}
+```
+
+**Optional fields:**
+- Custom kubeconfig path
+- Specific context
+- Workload type (service, pod, deployment)
+- Domain alias for local access
+
+The configuration dialog validates inputs and prevents saving invalid configurations.
+
+</Tab>
+<Tab value="Edit">
+
+Click the edit icon next to any configuration to modify it.
+
+Changes take effect immediately for stopped forwards. Active forwards need to be restarted to use new settings.
+
+**Common edits:**
+- Change local port to avoid conflicts
+- Update alias for clarity
+- Switch to different namespace
+- Modify protocol (TCP/UDP)
+
+</Tab>
+<Tab value="Duplicate">
+
+Click the duplicate icon next to any configuration to create a copy. This is useful when you need a similar forward with a different local port or namespace.
+
+</Tab>
+<Tab value="Delete">
+
+**Individual delete:**
+Click the delete icon next to a configuration. Confirmation prompt prevents accidental deletion.
+
+**Bulk delete:**
+1. Select multiple configurations with checkboxes
+2. Click bulk delete button
+3. Confirm deletion
+
+Active forwards are stopped before deletion.
+
+</Tab>
+</Tabs>
+
+## Port forward management
+
+**Start individual forwards:**
+Toggle the switch next to any configuration. Status changes from red (stopped) to yellow (connecting) to green (active).
+
+**Start all forwards:**
+Click "Start All" button or use the system tray menu. Useful for establishing complete development environments.
+
+**Stop forwards:**
+Toggle switches, "Stop All" button, or tray menu options. Only the interface that started a forward can stop it — this prevents conflicts when multiple interfaces access the same configuration.
+
+**Status indicators:**
+
+| Color | Meaning |
+|-------|---------|
+| Green | Active connection established |
+| Red | Stopped |
+| Yellow | Connecting or reconnecting |
+| Error icon | Failed to start or lost connection |
+
+Connection failures show error details in a tooltip. Click the error icon for troubleshooting information.
+
+## HTTP logging
+
+HTTP logging captures request and response details for debugging. See [HTTP Logging](/docs/configuration/http-logging) for complete documentation.
+
+**Enable logging:**
+
+<Steps>
+<Step>
+Right-click a configuration.
+</Step>
+<Step>
+Select "Enable HTTP Logging".
+</Step>
+<Step>
+Toggle switch appears next to configuration.
+</Step>
+</Steps>
+
+**View logs:**
+Click the log viewer icon next to configurations with logging enabled. Logs open in your system's default text editor.
+
+**Log location:**
+```bash
+~/.kftray/http_logs/
+```
+
+Each configuration creates a separate log file with format:
+```
+config-<id>-port-<local_port>.log
+```
+
+<Callout type="info" title="Disk usage">
+HTTP logging can generate large files for high-traffic services. Monitor disk usage and clean up logs regularly through the bulk cleanup option in the main menu.
+</Callout>
+
+## Log viewer
+
+Right-click the system tray icon and select "View Logs" to open the built-in log viewer window. The viewer shows application logs in real time with auto-refresh and supports:
+
+- Filtering by log level or module
+- Full-text search across log entries
+- Browsing older log files
+- Exporting logs or generating a diagnostic report for sharing
+
+Log retention is configurable — you can set how many files to keep and for how long. Old logs are cleaned up automatically on startup.
+
+## Server resources
+
+Click "Server Resources" in the main menu to see an overview of all Kubernetes resources kftray has deployed in your clusters (proxy pods, services, ingress objects for expose workloads). This helps you audit what kftray is running and clean up leftover resources if needed.
+
+## GitHub sync
+
+GitHub sync coordinates configuration sharing across teams. See [GitHub Sync](/docs/configuration/github-sync) for complete documentation.
+
+**Setup:**
+
+<Steps>
+<Step>
+Open Settings → GitHub Sync.
+</Step>
+<Step>
+Enter repository URL (e.g., `https://github.com/team/kftray-configs`).
+</Step>
+<Step>
+Add Personal Access Token with `repo` scope.
+</Step>
+<Step>
+Set sync interval (default: 5 minutes).
+</Step>
+<Step>
+Enable auto-sync toggle.
+</Step>
+</Steps>
+
+**Manual sync:**
+Click "Sync Now" button to trigger immediate synchronization, bypassing the interval timer.
+
+**Conflict resolution:**
+Repository configurations take precedence over local changes. Back up local configurations before enabling sync if you have custom settings.
+
+## Auto import
+
+Auto import discovers services in Kubernetes clusters and creates configuration suggestions. See [Auto Import](/docs/configuration/auto-import) for annotation details.
+
+**Workflow:**
+
+<Steps>
+<Step>
+Click "Auto Import" in main menu.
+</Step>
+<Step>
+Select kubeconfig and context.
+</Step>
+<Step>
+Choose target namespace (or scan all).
+</Step>
+<Step>
+Review discovered services with `kftray.app/enabled` annotation.
+</Step>
+<Step>
+Select services to import.
+</Step>
+<Step>
+Click "Import Selected".
+</Step>
+</Steps>
+
+Imported configurations merge with existing ones. Running auto import multiple times won't create duplicates.
+
+## Settings
+
+<Accordions>
+<Accordion title="General">
+Auto-start at system boot, minimize to tray on close, automatic update checking, and interface theme (dark mode default).
+</Accordion>
+<Accordion title="Kubernetes">
+Default context selection, custom kubeconfig file path, namespace filtering for auto-import, and connection timeout values (default: 30s).
+</Accordion>
+<Accordion title="GitHub integration">
+Repository URL, personal access token (stored in system keychain), sync interval timing, and auto-sync toggle.
+</Accordion>
+<Accordion title="HTTP logging">
+Default log directory, log rotation settings, and maximum log file size.
+</Accordion>
+</Accordions>
+
+## Keyboard shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl/Cmd + N` | New configuration |
+| `Ctrl/Cmd + F` | Search configurations |
+| `Ctrl/Cmd + A` | Select all |
+| `Ctrl/Cmd + ,` | Open settings |
+| `Space` | Toggle selected forward |
+| `Delete` | Delete selected configurations |
+| `Esc` | Close dialogs |
+
+

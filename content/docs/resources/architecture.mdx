@@ -1,0 +1,248 @@
+---
+title: Architecture
+description: Deep dive into kftray's internal component structure, proxy server, and security model.
+---
+
+This page covers kftray's internal component structure for contributors, advanced users, and anyone troubleshooting complex setups.
+
+## Component structure
+
+| Component | Role |
+|-----------|------|
+| `kftray-commons` | Shared types, configuration models, and utilities used across all components |
+| `kftray-portforward` | Core port-forwarding logic, Kubernetes API client, TCP/UDP protocol handling |
+| `kftray-tauri` | Desktop interface built with Tauri, system tray integration, GUI state management |
+| `kftui` | Terminal interface built with Ratatui, keyboard navigation, TUI rendering |
+| `kftray-helper` | Privilege escalation helper for low-port binding and hostfile modification |
+| `kftray-server` | UDP-to-TCP proxy server deployed in Kubernetes for UDP forwarding |
+| `kftray-http-logs` | HTTP request/response parser and logger for traffic inspection |
+
+All components share the same SQLite database for configuration storage, enabling seamless switching between [desktop](/docs/interfaces/desktop) and [terminal](/docs/interfaces/terminal) interfaces.
+
+## Shared state
+
+kftray stores all configuration in a SQLite database at `~/.kftray/kftray.db`:
+
+```sql
+-- Simplified schema
+CREATE TABLE configs (
+    id INTEGER PRIMARY KEY,
+    alias TEXT NOT NULL,
+    context TEXT NOT NULL,
+    namespace TEXT NOT NULL,
+    service TEXT,
+    pod TEXT,
+    local_port INTEGER NOT NULL,
+    remote_port INTEGER NOT NULL,
+    protocol TEXT DEFAULT 'tcp',
+    -- ... additional fields
+);
+```
+
+Both interfaces read and write to this database concurrently. SQLite's locking mechanism prevents corruption, but active port forwards are tracked in-memory by the process that started them. This is why you cannot stop a forward from a different interface than the one that started it.
+
+## TCP forwarding architecture
+
+Direct TCP forwarding uses the Kubernetes API's port-forward subprotocol:
+
+<Mermaid>
+{`sequenceDiagram
+    participant App as Local App
+    participant KF as kftray
+    participant API as K8s API Server
+    participant Pod as Target Pod
+    App->>KF: Connect to localhost:8080
+    KF->>API: Establish port-forward stream
+    API->>Pod: Forward traffic
+    Pod-->>API: Response
+    API-->>KF: Response data
+    KF-->>App: Response`}
+</Mermaid>
+
+This path is identical to `kubectl port-forward` and has comparable performance. The `kftray-portforward` component maintains a persistent WebSocket connection to the Kubernetes API server and multiplexes multiple TCP connections over it.
+
+See [port forwarding configuration](/docs/configuration/port-forwarding) for usage examples.
+
+## UDP forwarding architecture
+
+UDP forwarding requires protocol conversion because Kubernetes port-forward only supports TCP:
+
+<Mermaid>
+{`sequenceDiagram
+    participant App as Local App
+    participant KF as kftray
+    participant Proxy as kftray-server
+    participant Svc as Target Service
+    App->>KF: UDP packet
+    KF->>KF: Convert UDP to TCP
+    KF->>Proxy: TCP via K8s port-forward
+    Proxy->>Proxy: Convert TCP to UDP
+    Proxy->>Svc: UDP packet
+    Svc-->>Proxy: UDP response
+    Proxy-->>KF: TCP response
+    KF-->>App: UDP response`}
+</Mermaid>
+
+The `kftray-server` proxy runs as a deployment in the target namespace. kftray automatically deploys it when you create a UDP forward and removes it when no UDP forwards remain active.
+
+This architecture adds latency compared to native UDP (typically 5-20ms) due to the TCP conversion overhead. See [proxy forwarding](/docs/configuration/proxy-forwarding) for configuration details.
+
+## Proxy server deployment
+
+When you create a UDP forward, kftray:
+
+<Steps>
+<Step>
+Checks if `kftray-server` deployment exists in the target namespace.
+</Step>
+<Step>
+If not, creates deployment with minimal resource requests (10m CPU, 32Mi memory).
+</Step>
+<Step>
+Waits for pod to become ready (typically 2-5 seconds).
+</Step>
+<Step>
+Establishes TCP port-forward to the proxy pod.
+</Step>
+<Step>
+Begins UDP-to-TCP conversion.
+</Step>
+</Steps>
+
+The proxy server lifecycle:
+
+- **Auto-deployment**: created on first UDP forward in a namespace
+- **Shared**: multiple UDP forwards reuse the same proxy pod
+- **Cleanup**: deployment deleted when last UDP forward stops
+
+<Callout type="info" title="Proxy persistence">
+If kftray crashes or is killed forcefully, the proxy deployment may remain in the cluster. It consumes minimal resources but can be manually deleted with `kubectl delete deployment kftray-server -n <namespace>`.
+</Callout>
+
+## HTTP logging implementation
+
+[HTTP logging](/docs/configuration/http-logging) uses a streaming parser to extract requests and responses from TCP traffic:
+
+```
+TCP stream → HTTP parser → Request/Response objects → JSON log files
+```
+
+The `kftray-http-logs` component:
+
+<Steps>
+<Step>
+Intercepts TCP traffic between local app and Kubernetes API.
+</Step>
+<Step>
+Parses HTTP/1.1 requests and responses in real-time.
+</Step>
+<Step>
+Generates trace IDs to correlate requests with responses.
+</Step>
+<Step>
+Writes structured JSON logs to `~/.kftray/http_logs/`.
+</Step>
+</Steps>
+
+Log format:
+
+```json
+{
+  "timestamp": "2026-02-09T10:30:45.123Z",
+  "trace_id": "abc123",
+  "direction": "request",
+  "method": "GET",
+  "path": "/api/users",
+  "headers": {"Host": "api.example.com"},
+  "body": null
+}
+```
+
+HTTP logging adds 1-5ms latency per request due to parsing overhead. Disable it for performance-critical forwards.
+
+## Helper component
+
+The `kftray-helper` binary handles operations requiring elevated privileges:
+
+- **Low-port binding**: ports below 1024 on macOS/Linux require root
+- **Hostfile modification**: `/etc/hosts` updates for custom domain mapping
+
+When you bind to a port below 1024, kftray:
+
+<Steps>
+<Step>
+Prompts for administrator password (macOS/Linux) or UAC elevation (Windows).
+</Step>
+<Step>
+Launches `kftray-helper` with elevated privileges.
+</Step>
+<Step>
+Helper binds to the privileged port.
+</Step>
+<Step>
+Helper forwards traffic to kftray running as your user.
+</Step>
+<Step>
+Helper drops privileges after binding.
+</Step>
+</Steps>
+
+This privilege separation ensures kftray itself never runs as root, reducing security risk.
+
+## Security model
+
+### Credential management
+
+kftray uses the same kubeconfig files as `kubectl`:
+
+- **Default location**: `~/.kube/config`
+- **Custom location**: `KUBECONFIG` environment variable
+- **Multiple files**: colon-separated paths in `KUBECONFIG`
+
+Credentials are never stored in kftray's database. All authentication happens through the Kubernetes client library, which reads kubeconfig files at runtime.
+
+For cloud providers (GKE, EKS, AKS), kftray invokes the same credential helpers as `kubectl`:
+
+- **GKE**: `gcloud` CLI
+- **EKS**: `aws` CLI with `aws-iam-authenticator`
+- **AKS**: `az` CLI
+
+See [CLI reference](/docs/resources/cli-reference) for environment variable configuration.
+
+### Network security
+
+By default, kftray binds to `127.0.0.1`, making forwards accessible only from the local machine:
+
+```json
+{
+  "local_address": "127.0.0.1",
+  "local_port": 8080
+}
+```
+
+Binding to `0.0.0.0` exposes the forward to your entire network:
+
+```json
+{
+  "local_address": "0.0.0.0",
+  "local_port": 8080
+}
+```
+
+<Callout type="warn" title="Network exposure">
+Binding to `0.0.0.0` allows anyone on your network to access the forwarded service. Use this only when necessary and document the reason in your configuration.
+</Callout>
+
+Follow security best practices when configuring credential storage and network access.
+
+### Privilege separation
+
+kftray follows the principle of least privilege:
+
+- **Main process**: runs as your user, no elevated privileges
+- **Helper process**: runs with elevated privileges only when needed, drops privileges after binding
+- **Proxy server**: runs in Kubernetes with minimal RBAC permissions
+
+The helper binary is signed and verified on macOS to prevent tampering.
+
+

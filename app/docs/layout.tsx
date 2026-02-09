@@ -12,11 +12,9 @@ export default function Layout({ children }: { children: ReactNode }) {
 				title: navTitle,
 				component: <DocsNavbar />,
 			}}
-			links={[
-				{ text: 'Docs', url: '/docs', on: 'menu' },
-				{ text: 'Blog', url: '/blog', on: 'menu' },
-				{ text: 'Downloads', url: '/downloads', on: 'menu' },
-			]}
+			sidebar={{
+				defaultOpenLevel: 999,
+			}}
 			themeSwitch={{ enabled: false }}
 		>
 			{children}

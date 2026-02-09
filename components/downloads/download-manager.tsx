@@ -290,6 +290,7 @@ export function DownloadManager({ latestVersion }: { latestVersion: string }) {
 					href="https://github.com/hcavarsan/kftray/releases"
 					target="_blank"
 					rel="noopener noreferrer"
+					data-umami-event="github-releases-click"
 					className="cursor-pointer inline-flex items-center gap-2 rounded-md bg-dark-surface px-5 py-2 font-medium text-text-primary transition-colors hover:bg-dark-control"
 				>
 					<ExternalLink className="h-4 w-4" />

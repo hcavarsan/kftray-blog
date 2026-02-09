@@ -1,0 +1,139 @@
+---
+title: CLI
+description: Command-line flags, non-interactive mode, scripting, and CI/CD integration for kftui.
+---
+
+kftui accepts command-line flags for loading configurations, automating port forwards, and integrating with scripts and pipelines.
+
+## Command-line flags
+
+```bash
+# Load configs from a local JSON file
+kftui --configs-path config.json
+
+# Load and save configs to the local database
+kftui --configs-path config.json --save
+
+# Load from a GitHub repository
+kftui --github-url https://github.com/team/configs --configs-path env/dev.json
+
+# Auto-start all forwards on launch
+kftui --configs-path config.json --auto-start
+
+# Non-interactive mode (no TUI, forward and block)
+kftui --json '[{"service":"api","local_port":8080,"remote_port":80,"context":"dev","workload_type":"service","protocol":"tcp","namespace":"default"}]' --auto-start --non-interactive
+
+# Read configs from stdin
+echo '[...]' | kftui --stdin
+
+# Clear existing configs before importing
+kftui --configs-path config.json --flush
+```
+
+| Flag | Description |
+|------|-------------|
+| `--configs-path` | Path to JSON configuration file |
+| `--save` | Persist imported configs to local database |
+| `--github-url` | GitHub repository URL for config sync |
+| `--auto-start` | Start all forwards on launch |
+| `--non-interactive` | Run without TUI (forward and block) |
+| `--json` | Inline JSON configuration string |
+| `--stdin` | Read configuration from stdin |
+| `--flush` | Clear existing configs before importing |
+
+## Non-interactive mode
+
+Combine `--auto-start` and `--non-interactive` to run kftui as a headless forwarding daemon. The process starts all configured forwards and blocks until interrupted with `Ctrl+C`.
+
+```bash
+kftui --configs-path config.json --auto-start --non-interactive
+```
+
+This is useful for:
+
+- Running port forwards in the background on a server
+- Docker or container-based development environments
+- CI/CD pipelines that need port access during test execution
+
+## Stdin and JSON input
+
+Pipe configurations directly without creating files:
+
+```bash
+# Inline JSON
+kftui --json '[{"service":"api","local_port":8080,"remote_port":80,"context":"dev","workload_type":"service","protocol":"tcp","namespace":"default"}]' --auto-start
+
+# From another command
+kubectl get configmap kftray-config -o jsonpath='{.data.config}' | kftui --stdin --auto-start
+```
+
+## CI/CD integration
+
+Use kftui in continuous integration pipelines to forward ports during test execution:
+
+```yaml
+# GitHub Actions example
+- name: Start port forwards
+  run: |
+    tmux new-session -d -s kftray 'kftui --configs-path config.json --auto-start'
+    sleep 5
+
+- name: Run integration tests
+  run: npm test
+
+- name: Stop port forwards
+  if: always()
+  run: |
+    tmux send-keys -t kftray 'q' Enter
+    tmux kill-session -t kftray
+```
+
+For simpler setups, use non-interactive mode with background execution:
+
+```bash
+kftui --configs-path config.json --auto-start --non-interactive &
+KFTUI_PID=$!
+npm test
+kill $KFTUI_PID
+```
+
+## Automation with tmux and screen
+
+Run kftui in detached terminal sessions for long-running forwards:
+
+```bash
+# Start kftui in tmux, auto-forward all configs
+tmux new-session -d -s kftray 'kftui --configs-path config.json --auto-start'
+
+# Check if session is running
+tmux has-session -t kftray 2>/dev/null && echo "Running"
+
+# Attach to running session
+tmux attach -t kftray
+```
+
+```bash
+# Start in screen session
+screen -dmS kftray kftui --configs-path config.json --auto-start
+
+# Reattach
+screen -r kftray
+```
+
+<Callout type="warn" title="Process management">
+Port forwards started in a detached session remain active until you stop them from the same interface. To stop them, reattach to the session and quit kftui.
+</Callout>
+
+## Environment variables
+
+| Variable | Purpose | Example |
+|----------|---------|---------|
+| `RUST_LOG` | Log level and component filtering | `debug`, `kftray=debug,kube=info` |
+| `KUBECONFIG` | Custom kubeconfig path | `/path/to/config` |
+| `GITHUB_TOKEN` | GitHub token for private repo sync | `ghp_xxxxxxxxxxxx` |
+| `HTTPS_PROXY` | HTTPS proxy for K8s API | `http://proxy:8080` |
+| `HTTP_PROXY` | HTTP proxy for K8s API | `http://proxy:8080` |
+| `NO_PROXY` | Bypass proxy for hosts | `localhost,127.0.0.1` |
+| `TERM` | Terminal type for TUI rendering | `xterm-256color` |
+
+See [CLI Reference](/docs/resources/cli-reference) for debug logging examples and data directory paths.

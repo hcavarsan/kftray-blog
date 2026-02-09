@@ -57,12 +57,14 @@ export default function HomePage() {
 				<div className="flex flex-wrap items-center justify-center gap-4">
 					<Link
 						href="/docs"
+						data-umami-event="cta-get-started"
 						className="cursor-pointer rounded-lg bg-accent px-6 py-3 text-sm font-semibold text-dark-base transition-colors hover:bg-accent-hover"
 					>
 						Get started
 					</Link>
 					<Link
 						href="/downloads"
+						data-umami-event="cta-download"
 						className="rounded-lg border border-fd-border px-6 py-3 text-sm font-semibold transition-colors hover:bg-fd-accent"
 					>
 						Download

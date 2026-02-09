@@ -245,7 +245,7 @@ kftray-blog/
 ├── postcss.config.mjs            # PostCSS with @tailwindcss/postcss
 ├── .npmrc                        # pnpm hoisting config
 ├── pnpm-workspace.yaml           # pnpm workspace (onlyBuiltDependencies: esbuild, sharp)
-├── renovate.json                 # Renovate bot config (extends nuxt preset)
+├── renovate.json                 # Renovate bot config
 ├── Dockerfile                    # Multi-stage Docker build (deps → build → runtime)
 ├── docker-compose.yml            # Docker Compose for local/production container
 └── .dockerignore                 # Docker build exclusions

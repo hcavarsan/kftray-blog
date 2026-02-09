@@ -1,0 +1,93 @@
+---
+title: How It Works
+description: Understand the internal pipeline that kftray uses to forward traffic reliably.
+---
+
+# How It Works
+
+kftray's goal is to provide reliable, managed port forwarding for Kubernetes, ideally using sensible defaults that require minimal configuration.
+
+## The Forwarding Pipeline
+
+Every port forward goes through four phases:
+
+<Steps>
+<Step>
+**Configure** — You define a target service, ports, and protocol in JSON (or through the GUI). Configuration is stored in a local SQLite database.
+</Step>
+<Step>
+**Connect** — kftray authenticates with the Kubernetes API using your `kubeconfig` credentials and establishes a port-forward stream to the target pod or service.
+</Step>
+<Step>
+**Forward** — Local traffic on your chosen port flows through the Kubernetes API to the cluster service. For UDP, an in-cluster proxy handles protocol conversion.
+</Step>
+<Step>
+**Reconnect** — kftray monitors connection health. When pods restart, nodes cycle, or networks hiccup, it automatically re-establishes the forward with exponential backoff.
+</Step>
+</Steps>
+
+## TCP Forwarding
+
+For TCP services, kftray works similarly to `kubectl port-forward` but adds automatic reconnection and multi-forward management:
+
+<Mermaid>
+{`sequenceDiagram
+    participant App as Local App
+    participant KF as kftray
+    participant API as K8s API Server
+    participant Pod as Target Pod
+    App->>KF: Connect to localhost:8080
+    KF->>API: Establish port-forward stream
+    API->>Pod: Forward traffic
+    Pod-->>API: Response
+    API-->>KF: Response data
+    KF-->>App: Response`}
+</Mermaid>
+
+The key difference from `kubectl`: when that pod restarts, kftray detects the drop and reconnects to the replacement pod automatically.
+
+## UDP Forwarding
+
+Kubernetes doesn't support UDP port forwarding natively, so kftray uses a proxy architecture:
+
+<Mermaid>
+{`sequenceDiagram
+    participant App as Local App
+    participant KF as kftray
+    participant Proxy as kftray-server (in-cluster)
+    participant Svc as Target Service
+    App->>KF: UDP packet
+    KF->>KF: Convert UDP → TCP
+    KF->>Proxy: TCP via K8s port-forward
+    Proxy->>Proxy: Convert TCP → UDP
+    Proxy->>Svc: UDP packet
+    Svc-->>Proxy: UDP response
+    Proxy-->>KF: TCP response
+    KF-->>App: UDP response`}
+</Mermaid>
+
+kftray deploys a lightweight `kftray-server` pod in your cluster that acts as a UDP-to-TCP bridge. This adds one network hop but enables access to services like DNS, DHCP, and UDP-based message queues.
+
+See [Proxy Forwarding](/docs/configuration/proxy-forwarding) for deployment details and configuration.
+
+## Shared State Model
+
+Both the desktop and terminal interfaces share the same SQLite database at `~/.kftray/kftray.db`. This means:
+
+- Configurations created in one interface appear instantly in the other.
+- Runtime status (which forwards are active) is visible in both.
+- However, a forward started in one interface must be stopped from that same interface — each manages its own process lifecycle.
+
+## Core Components
+
+| Component | Role |
+|---|---|
+| **kftray-portforward** | Core forwarding logic, Kubernetes API integration, reconnection |
+| **kftray-tauri** | Desktop GUI (Tauri framework), system tray, HTTP log viewer |
+| **kftui** | Terminal interface, keyboard-driven management |
+| **kftray-server** | In-cluster proxy for UDP forwarding and proxy workloads |
+| **kftray-commons** | Shared config models, SQLite database access, utilities |
+| **kftray-helper** | Privileged operations (hostfile edits, low-port binding) |
+| **kftray-http-logs** | HTTP traffic interception and logging |
+
+For a deeper architectural dive, see [Architecture](/docs/resources/architecture).
