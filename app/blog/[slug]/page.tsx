@@ -23,7 +23,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
 	return (
 		<main className="pb-16">
-			<div className="relative mb-12 overflow-hidden">
+			<div className="relative mb-6 overflow-hidden">
 				{data.image && (
 					<div className="absolute inset-0">
 						<Image
@@ -38,7 +38,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 				)}
 				{!data.image && <div className="absolute inset-0 bg-dark-base" />}
 
-				<div className="relative z-10 mx-auto w-full max-w-7xl px-6 py-16 md:py-24 lg:px-8">
+				<div className="relative z-10 mx-auto w-full max-w-7xl px-6 py-10 md:py-16 lg:px-8">
 					<Link
 						href="/blog"
 						className="mb-8 inline-flex items-center gap-2 text-sm text-text-secondary transition-colors hover:text-text-primary"

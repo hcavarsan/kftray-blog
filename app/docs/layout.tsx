@@ -14,9 +14,15 @@ export default function Layout({ children }: { children: ReactNode }) {
 				url: '/',
 			}}
 			links={[
-				{ text: 'Home', url: '/' },
-				{ text: 'Blog', url: '/blog' },
-				{ text: 'Downloads', url: '/downloads' },
+				{
+					type: 'menu',
+					text: 'Navigate',
+					items: [
+						{ text: 'Home', description: 'Back to main site', url: '/' },
+						{ text: 'Blog', description: 'Articles and tutorials', url: '/blog' },
+						{ text: 'Downloads', description: 'Get kftray and kftui', url: '/downloads' },
+					],
+				},
 				{
 					type: 'custom',
 					secondary: true,
