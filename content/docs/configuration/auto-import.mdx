@@ -133,18 +133,26 @@ Discovered configurations appear in your port forward list immediately.
 </Tab>
 <Tab value="Terminal">
 
+Discover annotated services and start port-forwards immediately, without opening the TUI:
+
 ```bash
-# Discover services in current namespace
-kftray discover
+# Discover and start all annotated services
+kftui --auto-discover --context my-cluster --auto-start --non-interactive
 
-# Discover services in specific namespace
-kftray discover -n production
+# Save discovered configs to the database for later use
+kftui --auto-discover --context my-cluster --save
 
-# Discover services across all namespaces
-kftray discover --all-namespaces
+# Use a custom kubeconfig file
+kftui --auto-discover --context my-cluster --kubeconfig /path/to/kubeconfig --auto-start --non-interactive
 
-# Import discovered configurations
-kftray import --from-discovery
+# Enable alias-as-domain and auto loopback address for all discovered services
+kftui \
+  --auto-discover \
+  --context my-cluster \
+  --alias-as-domain \
+  --auto-loopback \
+  --auto-start \
+  --non-interactive
 ```
 
 </Tab>
