@@ -43,24 +43,24 @@ Share port-forward configurations via JSON files or GitHub repositories so new d
 <Card title="UDP services">
 Access DNS, DHCP, or other UDP-based services that `kubectl port-forward` can't reach.
 </Card>
-<Card title="MCP integration">
-Expose port-forwarding operations to external tools via the [MCP server](/docs/interfaces/mcp).
+<Card title="MCP server">
+Let external clients manage port-forwards through kftray via the [MCP server](/docs/configuration/mcp-server).
 </Card>
 </Cards>
 
-## Three Interfaces, One Configuration
+## Two Interfaces, One Configuration
 
-kftray comes in three flavors that share the same configuration database:
+kftray comes in two flavors that share the same configuration database:
 
-| | Desktop (`kftray`) | Terminal (`kftui`) | MCP (`kftray-mcp`) |
-|---|---|---|---|
-| **Best for** | Visual management, system tray convenience | Keyboard-driven workflows, SSH, low resources | External tool integration, automation |
-| **Memory** | ~100 MB | ~30 MB | ~20 MB |
-| **Exclusive features** | System tray integration | Request replay, SSH-compatible, tmux-friendly, non-interactive mode | Kubernetes resource discovery tools, JSON-RPC API |
-| **Shared features** | HTTP traffic logging, GitHub sync, auto import, auto-reconnection, TCP/UDP, expose (reverse tunneling) |||
-| **Platform** | macOS, Linux, Windows | macOS, Linux, Windows | macOS, Linux, Windows |
+| | Desktop (`kftray`) | Terminal (`kftui`) |
+|---|---|---|
+| **Best for** | Visual management, system tray convenience | Keyboard-driven workflows, SSH, low resources |
+| **Memory** | ~100 MB | ~30 MB |
+| **Exclusive features** | System tray integration | Request replay, SSH-compatible, tmux-friendly, non-interactive mode |
+| **Shared features** | HTTP traffic logging, GitHub sync, auto import, auto-reconnection, TCP/UDP, expose (reverse tunneling) ||
+| **Platform** | macOS, Linux, Windows | macOS, Linux, Windows |
 
-All three interfaces read from the same SQLite database (`~/.kftray/kftray.db`), so they can be used interchangeably. See the [Desktop Interface](/docs/interfaces/desktop), [Terminal Interface](/docs/interfaces/terminal), and [MCP Server](/docs/interfaces/mcp) pages for details.
+Both interfaces read from the same SQLite database (`~/.kftray/kftray.db`), so you can mix and match based on the situation. Check the [Desktop Interface](/docs/interfaces/desktop) and [Terminal Interface](/docs/interfaces/terminal) pages for details.
 
 ## Usage at a Glance
 

@@ -72,7 +72,7 @@ See [Proxy Forwarding](/docs/configuration/proxy-forwarding) for deployment deta
 
 ## Shared State Model
 
-All three interfaces (desktop, terminal, MCP) share the same SQLite database at `~/.kftray/kftray.db`. This means:
+Both the desktop and terminal interfaces share the same SQLite database at `~/.kftray/kftray.db`. The [MCP server](/docs/configuration/mcp-server) also reads from the same database when enabled. This means:
 
 - Configurations created in one interface appear instantly in the other.
 - Runtime status (which forwards are active) is visible in both.
@@ -85,7 +85,7 @@ All three interfaces (desktop, terminal, MCP) share the same SQLite database at 
 | **kftray-portforward** | Core forwarding logic, Kubernetes API integration, reconnection |
 | **kftray-tauri** | Desktop GUI (Tauri framework), system tray, HTTP log viewer |
 | **kftui** | Terminal interface, keyboard-driven management |
-| **kftray-mcp** | [MCP server](/docs/interfaces/mcp), exposes port-forwarding operations over HTTP |
+| **kftray-mcp** | [MCP server](/docs/configuration/mcp-server), exposes port-forwarding operations to external clients |
 | **kftray-server** | In-cluster proxy for UDP forwarding and proxy workloads |
 | **kftray-commons** | Shared config models, SQLite database access, utilities |
 | **kftray-helper** | Privileged operations (hostfile edits, low-port binding) |
