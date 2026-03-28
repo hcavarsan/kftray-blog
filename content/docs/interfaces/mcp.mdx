@@ -1,0 +1,157 @@
+---
+title: MCP server
+description: A built-in MCP server that exposes kftray port-forwarding operations over HTTP.
+---
+
+kftray includes a built-in MCP (Model Context Protocol) server. When enabled, it exposes port-forwarding operations as tools that MCP-compatible clients can call over HTTP using JSON-RPC 2.0.
+
+## Enabling the server
+
+<Steps>
+<Step>
+Open Settings in kftray.
+</Step>
+<Step>
+Find the MCP Server section.
+</Step>
+<Step>
+Toggle it on and set the port (default: 3000).
+</Step>
+</Steps>
+
+The server runs in the background as part of kftray. It stops when kftray closes and auto-starts on next launch if left enabled.
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| Enabled | `false` | Whether the MCP server starts with the app |
+| Port | `3000` | HTTP port the server listens on |
+
+## Connecting a client
+
+Any MCP client that supports the Streamable HTTP transport can connect. The endpoint is:
+
+```
+http://localhost:<port>/mcp
+```
+
+For clients that read MCP server definitions from a config file:
+
+```json
+{
+  "mcpServers": {
+    "kftray": {
+      "url": "http://localhost:3000/mcp"
+    }
+  }
+}
+```
+
+Check the documentation of the specific MCP client for where to place this.
+
+## Health check
+
+```bash
+curl http://localhost:3000/health
+```
+
+```json
+{
+  "status": "healthy",
+  "server": "kftray-mcp",
+  "version": "0.27.28",
+  "protocol_version": "2024-11-05"
+}
+```
+
+## Available tools
+
+### Kubernetes discovery
+
+| Tool | Required args | Description |
+|------|--------------|-------------|
+| `list_kube_contexts` | -- | Lists contexts from kubeconfig |
+| `list_namespaces` | `context` | Lists namespaces in a cluster |
+| `list_services` | `context`, `namespace` | Lists services in a namespace |
+| `list_pods` | `context`, `namespace` | Lists pods with status and labels. Optional `label_selector` to filter. |
+| `list_ports` | `context`, `namespace`, `service` | Lists ports for a service. Falls back to pod container ports if the service is not found. |
+
+All discovery tools accept an optional `kubeconfig` parameter for non-default kubeconfig files.
+
+### Port-forward management
+
+| Tool | Required args | Description |
+|------|--------------|-------------|
+| `list_active_port_forwards` | -- | Returns currently running forwards with config IDs, ports, and status |
+| `start_port_forward` | `config_id` **or** `namespace` + `remote_port` | Starts an existing config or creates and starts a new forward |
+| `stop_port_forward` | `config_id` | Stops a specific forward |
+| `stop_all_port_forwards` | -- | Stops all running forwards |
+
+When creating a new forward, `start_port_forward` also accepts:
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `context` | -- | Kubernetes context |
+| `service` | -- | Service name (required for `service` workload type) |
+| `target` | -- | Pod label selector (required for `pod` workload type) |
+| `local_port` | random | Local port to bind |
+| `protocol` | `tcp` | `tcp` or `udp` |
+| `workload_type` | `service` | `service`, `pod`, or `proxy` |
+| `kubeconfig` | -- | Custom kubeconfig path |
+| `alias` | -- | Friendly name |
+
+If the forward fails to start, the config created for it is automatically deleted.
+
+### Configuration management
+
+| Tool | Required args | Description |
+|------|--------------|-------------|
+| `list_configs` | -- | Lists saved configs with summary info |
+| `get_config` | `config_id` | Returns full config details |
+| `create_config` | `context`, `namespace`, `remote_port` | Saves a new config without starting it |
+| `update_config` | `config_id` | Partial update, only provided fields change |
+| `delete_config` | `config_id` | Stops the forward if running, then deletes the config |
+| `export_configs` | -- | Exports all configs as JSON |
+| `import_configs` | `configs_json` | Imports configs from a JSON string |
+
+## HTTP endpoints
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| `POST` | `/mcp` | JSON-RPC requests |
+| `GET` | `/mcp` | SSE event stream (requires `Mcp-Session-Id` header) |
+| `DELETE` | `/mcp` | Terminates a session |
+| `GET` | `/health` | Health check |
+
+CORS is enabled for all origins.
+
+## Architecture
+
+The MCP server is a thin wrapper around the same libraries used by the desktop and terminal interfaces:
+
+<Mermaid>
+{`sequenceDiagram
+    participant Client as MCP Client
+    participant KF as kftray (MCP server)
+    participant PF as kftray-portforward
+    participant K8s as Kubernetes API
+    Client->>KF: tools/call start_port_forward
+    KF->>PF: start_port_forward(config)
+    PF->>K8s: establish port-forward stream
+    K8s-->>PF: connection established
+    PF-->>KF: success + local port
+    KF-->>Client: JSON-RPC result`}
+</Mermaid>
+
+It uses `kftray-portforward` and `kftray-commons` directly, so forwards started through the MCP server have the same reconnection behavior, state tracking, and config storage as those started from the GUI or TUI.
+
+<Callout type="info" title="Shared state">
+All interfaces share the same SQLite database at `~/.kftray/kftray.db`. Configs and state created through the MCP server are visible in the desktop and terminal interfaces, and the other way around.
+</Callout>
+
+## Security
+
+<Callout type="warn" title="Local access only by default">
+The server binds to `127.0.0.1` by default. It is only accessible from the local machine.
+</Callout>
+
+The MCP server uses the same kubeconfig credentials as the rest of kftray. It does not store or transmit credentials separately.

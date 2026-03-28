@@ -13,11 +13,12 @@ This page covers kftray's internal component structure for contributors, advance
 | `kftray-portforward` | Core port-forwarding logic, Kubernetes API client, TCP/UDP protocol handling |
 | `kftray-tauri` | Desktop interface built with Tauri, system tray integration, GUI state management |
 | `kftui` | Terminal interface built with Ratatui, keyboard navigation, TUI rendering |
+| `kftray-mcp` | MCP server, exposes port-forwarding operations via JSON-RPC over HTTP |
 | `kftray-helper` | Privilege escalation helper for low-port binding and hostfile modification |
 | `kftray-server` | UDP-to-TCP proxy server deployed in Kubernetes for UDP forwarding |
 | `kftray-http-logs` | HTTP request/response parser and logger for traffic inspection |
 
-All components share the same SQLite database for configuration storage, enabling seamless switching between [desktop](/docs/interfaces/desktop) and [terminal](/docs/interfaces/terminal) interfaces.
+All components share the same SQLite database for configuration storage, enabling seamless switching between [desktop](/docs/interfaces/desktop), [terminal](/docs/interfaces/terminal), and [MCP](/docs/interfaces/mcp) interfaces.
 
 ## Shared state
 
@@ -234,6 +235,28 @@ Binding to `0.0.0.0` allows anyone on your network to access the forwarded servi
 </Callout>
 
 Follow security best practices when configuring credential storage and network access.
+
+## MCP server
+
+The [MCP server](/docs/interfaces/mcp) implements the MCP Streamable HTTP transport, exposing kftray operations over JSON-RPC 2.0:
+
+<Mermaid>
+{`sequenceDiagram
+    participant Client as MCP Client
+    participant MCP as kftray-mcp
+    participant PF as kftray-portforward
+    participant K8s as Kubernetes API
+    Client->>MCP: POST /mcp (tools/call)
+    MCP->>PF: execute tool
+    PF->>K8s: K8s API call
+    K8s-->>PF: response
+    PF-->>MCP: result
+    MCP-->>Client: JSON-RPC response`}
+</Mermaid>
+
+The server provides 16 tools across three categories: Kubernetes resource discovery, port-forward management, and configuration CRUD. It delegates all work to `kftray-portforward` and `kftray-commons`, so it behaves the same as the GUI and TUI.
+
+The server runs as part of the kftray desktop app. `kftray-tauri` manages its lifecycle based on the MCP settings.
 
 ### Privilege separation
 
