@@ -3,9 +3,9 @@ title: MCP server
 description: Enable and configure the built-in MCP server.
 ---
 
-kftray includes a built-in MCP (Model Context Protocol) server that exposes port-forwarding operations over HTTP. MCP-compatible clients can call these operations as tools using JSON-RPC 2.0.
+kftray includes a built-in MCP server that lets external clients browse clusters, manage port-forwards, and handle saved configurations through kftray.
 
-For the full tool reference, see the [MCP interface page](/docs/interfaces/mcp).
+For the full tool list and usage examples, see the [MCP interface page](/docs/interfaces/mcp).
 
 ## Enabling
 
@@ -14,7 +14,7 @@ Open Settings in kftray, find the MCP Server section, and toggle it on. Choose a
 | Setting | Default | Description |
 |---------|---------|-------------|
 | Enabled | `false` | Whether the MCP server starts with the app |
-| Port | `3000` | HTTP port for the MCP server |
+| Port | `3000` | Port the server listens on |
 
 ## Connecting a client
 
@@ -24,7 +24,7 @@ The server endpoint is:
 http://localhost:<port>/mcp
 ```
 
-For clients that read MCP server definitions from a config file:
+Clients that read server definitions from a config file typically need:
 
 ```json
 {
@@ -36,7 +36,7 @@ For clients that read MCP server definitions from a config file:
 }
 ```
 
-Refer to the MCP client's own documentation for where to place this.
+Where this file lives depends on the client. Check its documentation.
 
 ## Health check
 
@@ -48,21 +48,10 @@ curl http://localhost:3000/health
 {
   "status": "healthy",
   "server": "kftray-mcp",
-  "version": "0.27.28",
   "protocol_version": "2024-11-05"
 }
 ```
 
-## What the server exposes
-
-16 tools in three categories:
-
-- **Kubernetes discovery** -- list contexts, namespaces, services, pods, and ports
-- **Port-forward management** -- start, stop, and list active forwards
-- **Configuration management** -- create, read, update, delete, export, and import configs
-
-All operations use the same underlying engine as the desktop and terminal interfaces. Configs created through the MCP server appear in the GUI and TUI, and the other way around.
-
-<Callout type="warn" title="Local access only">
-The server binds to `127.0.0.1` by default. It is only accessible from the local machine.
+<Callout type="warn" title="Local only by default">
+The server binds to `127.0.0.1`. Only processes on the same machine can reach it.
 </Callout>

@@ -1,11 +1,11 @@
 ---
 title: MCP server
-description: A built-in MCP server that exposes kftray port-forwarding operations over HTTP.
+description: A built-in MCP server that exposes kftray port-forwarding operations to external clients.
 ---
 
-kftray includes a built-in MCP (Model Context Protocol) server. When enabled, it exposes port-forwarding operations as tools that MCP-compatible clients can call over HTTP using JSON-RPC 2.0.
+kftray includes a built-in MCP server. When enabled, MCP-compatible clients can browse Kubernetes clusters, start and stop port-forwards, and manage saved configurations -- all through kftray.
 
-## Enabling the server
+## Enabling
 
 <Steps>
 <Step>
@@ -21,20 +21,15 @@ Toggle it on and set the port (default: 3000).
 
 The server runs in the background as part of kftray. It stops when kftray closes and auto-starts on next launch if left enabled.
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| Enabled | `false` | Whether the MCP server starts with the app |
-| Port | `3000` | HTTP port the server listens on |
-
 ## Connecting a client
 
-Any MCP client that supports the Streamable HTTP transport can connect. The endpoint is:
+Point an MCP client at:
 
 ```
-http://localhost:<port>/mcp
+http://localhost:3000/mcp
 ```
 
-For clients that read MCP server definitions from a config file:
+Clients that read server definitions from a config file typically need an entry like:
 
 ```json
 {
@@ -46,292 +41,111 @@ For clients that read MCP server definitions from a config file:
 }
 ```
 
-Check the documentation of the specific MCP client for where to place this.
+Where this file lives depends on the client. Check its documentation.
 
-## Health check
+## What the server can do
 
-```bash
-curl http://localhost:3000/health
-```
+16 tools, grouped in three areas:
 
-```json
-{
-  "status": "healthy",
-  "server": "kftray-mcp",
-  "version": "0.27.28",
-  "protocol_version": "2024-11-05"
-}
-```
+**Cluster browsing** -- list available kubeconfig contexts, namespaces in a context, services in a namespace, pods in a namespace (with optional label filter), and ports exposed by a service.
 
-## Available tools
+**Port-forward control** -- start a forward (from a saved config or from scratch by specifying context, namespace, service, and port), stop a specific forward, stop all forwards, and list what is currently running.
 
-### Kubernetes discovery
+**Configuration management** -- list, get, create, update, and delete saved configs. Export all configs as JSON or import configs from JSON.
 
-| Tool | Required args | Description |
-|------|--------------|-------------|
-| `list_kube_contexts` | -- | Lists contexts from kubeconfig |
-| `list_namespaces` | `context` | Lists namespaces in a cluster |
-| `list_services` | `context`, `namespace` | Lists services in a namespace |
-| `list_pods` | `context`, `namespace` | Lists pods with status and labels. Optional `label_selector` to filter. |
-| `list_ports` | `context`, `namespace`, `service` | Lists ports for a service. Falls back to pod container ports if the service is not found. |
+All operations go through the same engine as the desktop and terminal interfaces. A config created through the MCP server shows up in the GUI and TUI, and a forward started through the MCP server is visible in those interfaces too.
 
-All discovery tools accept an optional `kubeconfig` parameter for non-default kubeconfig files.
+<Callout type="info" title="Shared state">
+All interfaces share the same database at `~/.kftray/kftray.db`.
+</Callout>
 
-### Port-forward management
+## Examples
 
-| Tool | Required args | Description |
-|------|--------------|-------------|
-| `list_active_port_forwards` | -- | Returns currently running forwards with config IDs, ports, and status |
-| `start_port_forward` | `config_id` **or** `namespace` + `remote_port` | Starts an existing config or creates and starts a new forward |
-| `stop_port_forward` | `config_id` | Stops a specific forward |
-| `stop_all_port_forwards` | -- | Stops all running forwards |
+These show what a user might ask an MCP client and what kftray does behind the scenes.
 
-When creating a new forward, `start_port_forward` also accepts:
+### "What clusters do I have access to?"
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `context` | -- | Kubernetes context |
-| `service` | -- | Service name (required for `service` workload type) |
-| `target` | -- | Pod label selector (required for `pod` workload type) |
-| `local_port` | random | Local port to bind |
-| `protocol` | `tcp` | `tcp` or `udp` |
-| `workload_type` | `service` | `service`, `pod`, or `proxy` |
-| `kubeconfig` | -- | Custom kubeconfig path |
-| `alias` | -- | Friendly name |
+The client calls `list_kube_contexts`. kftray reads the kubeconfig and returns the context names, for example: `dev-cluster`, `staging-cluster`, `prod-cluster`.
 
-If the forward fails to start, the config created for it is automatically deleted.
+### "What services are running in the payments namespace on dev?"
+
+The client calls `list_services` with the context and namespace. kftray queries the Kubernetes API and returns the service names, for example: `payments-api`, `payments-worker`, `payments-db`.
+
+### "Connect me to payments-api on port 8080"
+
+The client calls `start_port_forward` with the context, namespace, service name, and remote port. kftray creates a config, starts the forward, and returns the local port it picked (for example `localhost:54321`). If a specific local port was requested, it uses that instead.
+
+If the forward fails to start, kftray deletes the config it just created so nothing is left behind.
+
+### "Start config 3"
+
+The client calls `start_port_forward` with just the config ID. kftray looks up the saved config and starts the forward. It returns the local and remote ports.
+
+### "What's running right now?"
+
+The client calls `list_active_port_forwards`. kftray returns a list of all active forwards with their config ID, service name, namespace, local port, remote port, protocol, and alias.
+
+### "Stop the payments forward"
+
+The client calls `stop_port_forward` with the config ID. kftray stops that specific forward and confirms with the service name and namespace.
+
+### "Stop everything"
+
+The client calls `stop_all_port_forwards`. kftray stops all active forwards and returns how many were stopped.
+
+### "Save a config for grafana on port 3000 but don't start it yet"
+
+The client calls `create_config` with the context, namespace, service, and ports. kftray saves the config and returns its ID. The forward is not started. It can be started later using that ID.
+
+### "Forward to pods with label app=auth"
+
+The client calls `start_port_forward` with `workload_type` set to `pod` and `target` set to `app=auth`. kftray finds a matching pod and starts the forward.
+
+### "What ports does the redis service expose?"
+
+The client calls `list_ports` with the context, namespace, and service name. kftray returns each port's name, number, target port, and protocol. If the service is not found, it falls back to looking at container ports on pods matching that name as a label selector.
+
+## Tool reference
+
+### Cluster browsing
+
+| Tool | Required args | Returns |
+|------|--------------|---------|
+| `list_kube_contexts` | -- | list of context names |
+| `list_namespaces` | `context` | list of namespace names |
+| `list_services` | `context`, `namespace` | list of service names |
+| `list_pods` | `context`, `namespace` | list of pods with name, status, and labels |
+| `list_ports` | `context`, `namespace`, `service` | list of ports with name, port number, target port, and protocol |
+
+Optional `kubeconfig` and `label_selector` (for `list_pods`) parameters are accepted on all tools.
+
+### Port-forward control
+
+| Tool | Required args | Returns |
+|------|--------------|---------|
+| `start_port_forward` | `config_id` **or** `namespace` + `remote_port` | success status, local port, remote port, config ID |
+| `stop_port_forward` | `config_id` | success status, service name, namespace |
+| `stop_all_port_forwards` | -- | success status, count of stopped forwards |
+| `list_active_port_forwards` | -- | list of active forwards with config ID, service, namespace, ports, protocol, alias |
+
+When creating a new forward (no `config_id`), these additional parameters are accepted: `context`, `service`, `target`, `local_port`, `protocol` (tcp/udp), `workload_type` (service/pod/proxy), `kubeconfig`, `alias`.
 
 ### Configuration management
 
-| Tool | Required args | Description |
-|------|--------------|-------------|
-| `list_configs` | -- | Lists saved configs with summary info |
-| `get_config` | `config_id` | Returns full config details |
-| `create_config` | `context`, `namespace`, `remote_port` | Saves a new config without starting it |
-| `update_config` | `config_id` | Partial update, only provided fields change |
-| `delete_config` | `config_id` | Stops the forward if running, then deletes the config |
-| `export_configs` | -- | Exports all configs as JSON |
-| `import_configs` | `configs_json` | Imports configs from a JSON string |
-
-## HTTP endpoints
-
-| Method | Path | Purpose |
-|--------|------|---------|
-| `POST` | `/mcp` | JSON-RPC requests |
-| `GET` | `/mcp` | SSE event stream (requires `Mcp-Session-Id` header) |
-| `DELETE` | `/mcp` | Terminates a session |
-| `GET` | `/health` | Health check |
-
-CORS is enabled for all origins.
-
-## Architecture
-
-The MCP server is a thin wrapper around the same libraries used by the desktop and terminal interfaces:
-
-<Mermaid>
-{`sequenceDiagram
-    participant Client as MCP Client
-    participant KF as kftray (MCP server)
-    participant PF as kftray-portforward
-    participant K8s as Kubernetes API
-    Client->>KF: tools/call start_port_forward
-    KF->>PF: start_port_forward(config)
-    PF->>K8s: establish port-forward stream
-    K8s-->>PF: connection established
-    PF-->>KF: success + local port
-    KF-->>Client: JSON-RPC result`}
-</Mermaid>
-
-It uses `kftray-portforward` and `kftray-commons` directly, so forwards started through the MCP server have the same reconnection behavior, state tracking, and config storage as those started from the GUI or TUI.
-
-<Callout type="info" title="Shared state">
-All interfaces share the same SQLite database at `~/.kftray/kftray.db`. Configs and state created through the MCP server are visible in the desktop and terminal interfaces, and the other way around.
-</Callout>
-
-## Usage examples
-
-These examples show what tool calls an MCP client makes and what kftray returns. The exact way to trigger these depends on the client -- some accept typed commands, others work through prompts. The JSON below is what goes over the wire.
-
-### Discover services in a cluster
-
-Find what contexts are available, pick one, list its namespaces, then list services:
-
-```json
-// → list_kube_contexts()
-{
-  "contexts": ["dev-cluster", "staging-cluster", "prod-cluster"]
-}
-
-// → list_namespaces({ "context": "dev-cluster" })
-{
-  "namespaces": ["default", "backend", "monitoring", "payments"]
-}
-
-// → list_services({ "context": "dev-cluster", "namespace": "payments" })
-{
-  "services": ["payments-api", "payments-worker", "payments-db"]
-}
-
-// → list_ports({ "context": "dev-cluster", "namespace": "payments", "service": "payments-api" })
-{
-  "ports": [
-    { "name": "http", "port": 8080, "protocol": "TCP", "target_port": "8080" }
-  ]
-}
-```
-
-### Start a port-forward from scratch
-
-No saved config needed. Pass the parameters directly:
-
-```json
-// → start_port_forward({
-//     "context": "dev-cluster",
-//     "namespace": "payments",
-//     "service": "payments-api",
-//     "remote_port": 8080,
-//     "protocol": "tcp"
-//   })
-{
-  "success": true,
-  "message": "Port-forward started: 54321:payments-api -> payments:8080",
-  "config_id": 12,
-  "local_port": 54321,
-  "remote_port": 8080
-}
-```
-
-The service is now reachable at `localhost:54321`. Since `local_port` was omitted, kftray picked a random available port. The config was saved automatically with id `12`.
-
-### Start a port-forward from a saved config
-
-If there is already a saved config:
-
-```json
-// → start_port_forward({ "config_id": 3 })
-{
-  "success": true,
-  "message": "Port-forward started: 5432:postgres -> backend:5432",
-  "config_id": 3,
-  "local_port": 5432,
-  "remote_port": 5432
-}
-```
-
-### Check what is running
-
-```json
-// → list_active_port_forwards()
-{
-  "port_forwards": [
-    {
-      "config_id": "3",
-      "service": "postgres",
-      "namespace": "backend",
-      "local_port": 5432,
-      "remote_port": 5432,
-      "context": "dev-cluster",
-      "protocol": "tcp",
-      "workload_type": "service",
-      "alias": "dev-db"
-    },
-    {
-      "config_id": "12",
-      "service": "payments-api",
-      "namespace": "payments",
-      "local_port": 54321,
-      "remote_port": 8080,
-      "context": "dev-cluster",
-      "protocol": "tcp",
-      "workload_type": "service",
-      "alias": null
-    }
-  ],
-  "count": 2
-}
-```
-
-### Stop a specific forward
-
-```json
-// → stop_port_forward({ "config_id": 12 })
-{
-  "success": true,
-  "message": "Port-forward stopped for config 12"
-}
-```
-
-### Stop everything
-
-```json
-// → stop_all_port_forwards()
-{
-  "success": true,
-  "message": "Stopped 2 port-forwards successfully",
-  "stopped": 2,
-  "failed": 0
-}
-```
-
-### Save a config without starting it
-
-```json
-// → create_config({
-//     "context": "prod-cluster",
-//     "namespace": "monitoring",
-//     "service": "grafana",
-//     "remote_port": 3000,
-//     "local_port": 13000,
-//     "alias": "grafana-prod"
-//   })
-{
-  "success": true,
-  "message": "Configuration created successfully",
-  "config_id": 13
-}
-```
-
-The config is saved but not active. Start it later with `start_port_forward({ "config_id": 13 })`.
-
-### Export and import configs
-
-```json
-// → export_configs()
-{
-  "configs_json": "[{\"service\":\"postgres\",\"namespace\":\"backend\",...}]",
-  "count": 5
-}
-
-// → import_configs({ "configs_json": "[{\"service\":\"redis\",\"namespace\":\"cache\",...}]" })
-{
-  "success": true,
-  "message": "Configurations imported successfully"
-}
-```
-
-### Forward to a specific pod by label
-
-```json
-// → start_port_forward({
-//     "context": "dev-cluster",
-//     "namespace": "backend",
-//     "target": "app=auth",
-//     "remote_port": 8080,
-//     "workload_type": "pod"
-//   })
-{
-  "success": true,
-  "message": "Port-forward started: 62100:app=auth -> backend:8080",
-  "config_id": 14,
-  "local_port": 62100,
-  "remote_port": 8080
-}
-```
+| Tool | Required args | Returns |
+|------|--------------|---------|
+| `list_configs` | -- | list of configs with ID, alias, service, namespace, ports, protocol |
+| `get_config` | `config_id` | full config details |
+| `create_config` | `context`, `namespace`, `remote_port` | config ID |
+| `update_config` | `config_id` | success status |
+| `delete_config` | `config_id` | success status |
+| `export_configs` | -- | all configs as JSON, count |
+| `import_configs` | `configs_json` | success status |
 
 ## Security
 
-<Callout type="warn" title="Local access only by default">
-The server binds to `127.0.0.1` by default. It is only accessible from the local machine.
+<Callout type="warn" title="Local only by default">
+The server binds to `127.0.0.1`. Only processes on the same machine can reach it.
 </Callout>
 
 The MCP server uses the same kubeconfig credentials as the rest of kftray. It does not store or transmit credentials separately.
