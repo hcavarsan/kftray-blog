@@ -66,6 +66,9 @@ kftui --json '[{...}]' --auto-start --non-interactive
 # Read from stdin
 cat config.json | kftui --stdin
 
+# Discover annotated services and start forwards headlessly
+kftui --auto-discover --context my-cluster --auto-start --non-interactive
+
 # With custom terminal type
 TERM=xterm-256color kftui
 
@@ -88,6 +91,11 @@ screen -S kftray kftui
 | `--json` | Inline JSON configuration string |
 | `--stdin` | Read configuration from stdin |
 | `--flush` | Clear existing configs before importing |
+| `--auto-discover` | Discover services from Kubernetes annotations (requires `--context`) |
+| `--context` | Kubernetes context to use for auto-discovery |
+| `--kubeconfig` | Path to kubeconfig file for auto-discovery (default: system default) |
+| `--alias-as-domain` | Enable alias-as-domain for all discovered configs |
+| `--auto-loopback` | Enable auto loopback address for all discovered configs |
 
 ## Environment variables
 
@@ -203,5 +211,4 @@ The log output includes:
 | Configuration | Database operations |
 | Proxy server | Deployment events |
 | HTTP parsing | Request/response parsing (when [HTTP logging](/docs/configuration/http-logging) is enabled) |
-
 
