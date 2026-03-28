@@ -148,6 +148,186 @@ It uses `kftray-portforward` and `kftray-commons` directly, so forwards started 
 All interfaces share the same SQLite database at `~/.kftray/kftray.db`. Configs and state created through the MCP server are visible in the desktop and terminal interfaces, and the other way around.
 </Callout>
 
+## Usage examples
+
+These examples show what tool calls an MCP client makes and what kftray returns. The exact way to trigger these depends on the client -- some accept typed commands, others work through prompts. The JSON below is what goes over the wire.
+
+### Discover services in a cluster
+
+Find what contexts are available, pick one, list its namespaces, then list services:
+
+```json
+// → list_kube_contexts()
+{
+  "contexts": ["dev-cluster", "staging-cluster", "prod-cluster"]
+}
+
+// → list_namespaces({ "context": "dev-cluster" })
+{
+  "namespaces": ["default", "backend", "monitoring", "payments"]
+}
+
+// → list_services({ "context": "dev-cluster", "namespace": "payments" })
+{
+  "services": ["payments-api", "payments-worker", "payments-db"]
+}
+
+// → list_ports({ "context": "dev-cluster", "namespace": "payments", "service": "payments-api" })
+{
+  "ports": [
+    { "name": "http", "port": 8080, "protocol": "TCP", "target_port": "8080" }
+  ]
+}
+```
+
+### Start a port-forward from scratch
+
+No saved config needed. Pass the parameters directly:
+
+```json
+// → start_port_forward({
+//     "context": "dev-cluster",
+//     "namespace": "payments",
+//     "service": "payments-api",
+//     "remote_port": 8080,
+//     "protocol": "tcp"
+//   })
+{
+  "success": true,
+  "message": "Port-forward started: 54321:payments-api -> payments:8080",
+  "config_id": 12,
+  "local_port": 54321,
+  "remote_port": 8080
+}
+```
+
+The service is now reachable at `localhost:54321`. Since `local_port` was omitted, kftray picked a random available port. The config was saved automatically with id `12`.
+
+### Start a port-forward from a saved config
+
+If there is already a saved config:
+
+```json
+// → start_port_forward({ "config_id": 3 })
+{
+  "success": true,
+  "message": "Port-forward started: 5432:postgres -> backend:5432",
+  "config_id": 3,
+  "local_port": 5432,
+  "remote_port": 5432
+}
+```
+
+### Check what is running
+
+```json
+// → list_active_port_forwards()
+{
+  "port_forwards": [
+    {
+      "config_id": "3",
+      "service": "postgres",
+      "namespace": "backend",
+      "local_port": 5432,
+      "remote_port": 5432,
+      "context": "dev-cluster",
+      "protocol": "tcp",
+      "workload_type": "service",
+      "alias": "dev-db"
+    },
+    {
+      "config_id": "12",
+      "service": "payments-api",
+      "namespace": "payments",
+      "local_port": 54321,
+      "remote_port": 8080,
+      "context": "dev-cluster",
+      "protocol": "tcp",
+      "workload_type": "service",
+      "alias": null
+    }
+  ],
+  "count": 2
+}
+```
+
+### Stop a specific forward
+
+```json
+// → stop_port_forward({ "config_id": 12 })
+{
+  "success": true,
+  "message": "Port-forward stopped for config 12"
+}
+```
+
+### Stop everything
+
+```json
+// → stop_all_port_forwards()
+{
+  "success": true,
+  "message": "Stopped 2 port-forwards successfully",
+  "stopped": 2,
+  "failed": 0
+}
+```
+
+### Save a config without starting it
+
+```json
+// → create_config({
+//     "context": "prod-cluster",
+//     "namespace": "monitoring",
+//     "service": "grafana",
+//     "remote_port": 3000,
+//     "local_port": 13000,
+//     "alias": "grafana-prod"
+//   })
+{
+  "success": true,
+  "message": "Configuration created successfully",
+  "config_id": 13
+}
+```
+
+The config is saved but not active. Start it later with `start_port_forward({ "config_id": 13 })`.
+
+### Export and import configs
+
+```json
+// → export_configs()
+{
+  "configs_json": "[{\"service\":\"postgres\",\"namespace\":\"backend\",...}]",
+  "count": 5
+}
+
+// → import_configs({ "configs_json": "[{\"service\":\"redis\",\"namespace\":\"cache\",...}]" })
+{
+  "success": true,
+  "message": "Configurations imported successfully"
+}
+```
+
+### Forward to a specific pod by label
+
+```json
+// → start_port_forward({
+//     "context": "dev-cluster",
+//     "namespace": "backend",
+//     "target": "app=auth",
+//     "remote_port": 8080,
+//     "workload_type": "pod"
+//   })
+{
+  "success": true,
+  "message": "Port-forward started: 62100:app=auth -> backend:8080",
+  "config_id": 14,
+  "local_port": 62100,
+  "remote_port": 8080
+}
+```
+
 ## Security
 
 <Callout type="warn" title="Local access only by default">
