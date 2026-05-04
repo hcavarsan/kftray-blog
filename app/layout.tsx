@@ -53,15 +53,17 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 				>
 					{children}
 				</RootProvider>
-				<Script
-					src="https://umami.cavarsa.app/script.js"
-					data-website-id={
-						process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID ?? '70662892-98e8-48ce-bde0-d360b7a0d0fc'
-					}
-					data-domains="kftray.app"
-					data-exclude-search="true"
-					strategy="beforeInteractive"
-				/>
+				{process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
+					<Script
+						src="/u/script.js"
+						data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+						data-domains="kftray.app"
+						data-exclude-search="true"
+						data-exclude-hash="true"
+						data-do-not-track="true"
+						strategy="afterInteractive"
+					/>
+				)}
 			</body>
 		</html>
 	)

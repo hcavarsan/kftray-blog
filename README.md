@@ -1074,31 +1074,49 @@ docker inspect --format='{{.State.Health.Status}}' kftray-docs
 
 ## Environment Variables
 
-**No environment variables are required for local development.** The site works out of the box after `pnpm install` and `pnpm dev`.
+**No environment variables are required for local development.** The site works out of the box after `pnpm install` and `pnpm dev`. Analytics is opt-in via `NEXT_PUBLIC_UMAMI_WEBSITE_ID` (see below).
 
-### Hardcoded Integrations
+### Umami Analytics
 
-The following integrations are configured with hardcoded values in the codebase:
-
-#### Umami Analytics
-
-**Location:** `app/layout.tsx`
+**Locations:**
+- Script load: `app/layout.tsx`
+- Same-origin proxy: `app/u/[...path]/route.ts`
 
 ```typescript
-<Script
-  src="https://umami.cavarsa.app/script.js"
-  data-website-id="70662892-98e8-48ce-bde0-d360b7a0d0fc"
-  strategy="afterInteractive"
-/>
+{process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
+  <Script
+    src="/u/script.js"
+    data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+    data-domains="kftray.app"
+    data-exclude-search="true"
+    data-exclude-hash="true"
+    data-do-not-track="true"
+    strategy="afterInteractive"
+  />
+)}
 ```
 
 **Behavior:**
-- Loads after page becomes interactive (Next.js `afterInteractive` strategy)
-- Self-hosted Umami instance at `umami.cavarsa.app`
-- Fires in both development and production
-- No environment variable required
+- The script is fetched via `/u/script.js`, which proxies to `umami.cavarsa.app/script.js` from the same origin. The Umami tracker auto-derives the collect endpoint as `/u/api/send` from the script's `src` parent path.
+- The proxy forwards Cloudflare geo headers (`cf-connecting-ip`, `cf-ipcountry`, `cf-regioncode`, `cf-ipcity`) so self-hosted Umami records accurate visitor location.
+- The script response is cached for 1h client-side / 24h shared (CDN), so the upstream is hit at most once per CDN edge per day.
+- Loads after hydration via Next.js `afterInteractive` strategy — no impact on LCP/INP.
+- Tracks only on `kftray.app` (`data-domains`); Vercel preview / staging / localhost domains are silently ignored even if the env var is set.
+- Strips query strings (`data-exclude-search`) and hash fragments (`data-exclude-hash`) from tracked URLs.
+- Respects browser DNT setting (`data-do-not-track`).
+- The `<Script>` tag does not render at all if `NEXT_PUBLIC_UMAMI_WEBSITE_ID` is unset — analytics fully disabled in dev by default.
 
-**To disable:** Remove the `<Script>` tag from `app/layout.tsx`.
+**Configuration:**
+
+`NEXT_PUBLIC_UMAMI_WEBSITE_ID` is the only required value. Because Next.js inlines `NEXT_PUBLIC_*` variables at **build time**, it must be passed as a Docker build arg, not a runtime environment variable.
+
+- **Local dev:** create `.env.local` with `NEXT_PUBLIC_UMAMI_WEBSITE_ID=...` and run `pnpm dev`.
+- **Coolify / production:** set `NEXT_PUBLIC_UMAMI_WEBSITE_ID` in Coolify's environment settings. Coolify automatically forwards env vars to Docker build args via `docker-compose.yml` (already wired up).
+- **Manual Docker build:** `docker build --build-arg NEXT_PUBLIC_UMAMI_WEBSITE_ID=<your-id> -t kftray-docs .`
+
+**To disable analytics:** unset `NEXT_PUBLIC_UMAMI_WEBSITE_ID`. The `<Script>` tag won't render and the `/u/*` proxy will simply receive no requests.
+
+### Other Hardcoded Integrations
 
 #### Giscus Comments
 

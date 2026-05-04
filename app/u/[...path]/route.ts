@@ -33,6 +33,10 @@ async function proxy(request: Request, context: { params: Promise<{ path: string
 	const responseHeaders = new Headers(upstream.headers)
 	responseHeaders.delete('set-cookie')
 
+	if (request.method === 'GET' && path.at(-1) === 'script.js') {
+		responseHeaders.set('cache-control', 'public, max-age=3600, s-maxage=86400')
+	}
+
 	return new Response(upstream.body, {
 		status: upstream.status,
 		headers: responseHeaders,

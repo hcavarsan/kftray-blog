@@ -25,6 +25,12 @@ FROM deps AS build
 # Copy source (deps layer is fully cached if only source code changed)
 COPY . .
 
+# NEXT_PUBLIC_* values are inlined into the client bundle at build time.
+# Pass via `--build-arg NEXT_PUBLIC_UMAMI_WEBSITE_ID=...` (Coolify maps env vars to build args automatically).
+# Empty value disables analytics — the <Script> tag won't render.
+ARG NEXT_PUBLIC_UMAMI_WEBSITE_ID=""
+ENV NEXT_PUBLIC_UMAMI_WEBSITE_ID=$NEXT_PUBLIC_UMAMI_WEBSITE_ID
+
 # Build with Next.js telemetry disabled
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm run build
