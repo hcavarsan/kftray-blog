@@ -74,7 +74,7 @@ You might be asking yourself: "How does this actually work with VS Code?" That's
 When you enable HTTP logging for a port-forward configuration in KFtray, a series of events unfolds:
 
 
-<Mermaid>
+```mermaid
 sequenceDiagram
     participant Client
     participant KFtray as KFtray
@@ -85,7 +85,7 @@ sequenceDiagram
     Service->>KFtray: HTTP Response
     Note over KFtray: Log Response
     KFtray->>Client: Return Response
-</Mermaid>
+```
 
 
 1. Start a port forward with http logging option enabled

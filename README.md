@@ -1089,6 +1089,7 @@ docker inspect --format='{{.State.Health.Status}}' kftray-docs
     data-exclude-search="true"
     data-exclude-hash="true"
     data-do-not-track="true"
+    data-performance="true"
     strategy="afterInteractive"
   />
 )}
@@ -1100,6 +1101,7 @@ docker inspect --format='{{.State.Health.Status}}' kftray-docs
 - Tracks only on `kftray.app` (`data-domains`); preview / staging / localhost domains are silently ignored even if the env var is set.
 - Strips query strings (`data-exclude-search`) and hash fragments (`data-exclude-hash`) from tracked URLs.
 - Respects browser DNT setting (`data-do-not-track`).
+- Collects Core Web Vitals (LCP, INP, CLS, FCP, TTFB) via `data-performance="true"` — visible under the Performance view in the Umami dashboard. Requires Umami v3.1.0+ on the server.
 - The `<Script>` tag does not render at all if `NEXT_PUBLIC_UMAMI_WEBSITE_ID` is unset — analytics fully disabled in dev by default.
 
 **Configuration:**

@@ -1,4 +1,5 @@
-import { Github, Star } from 'lucide-react'
+import { Star } from 'lucide-react'
+import { SiGithub } from '@icons-pack/react-simple-icons'
 import { getGithubStars } from '@/lib/github'
 
 function formatStars(count: number): string {
@@ -21,7 +22,7 @@ export async function GithubStars({ compact }: { compact?: boolean }) {
 				data-umami-event="github-star-click"
 				className="inline-flex h-8 items-center gap-1 rounded-md px-1.5 text-fd-muted-foreground transition-colors hover:bg-fd-accent hover:text-fd-foreground"
 			>
-				<Github className="h-4 w-4" />
+				<SiGithub className="h-4 w-4" />
 				{stars !== null && <span className="text-xs">{formatStars(stars)}</span>}
 			</a>
 		)

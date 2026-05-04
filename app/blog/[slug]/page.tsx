@@ -4,9 +4,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { BlogComments } from '@/components/blog/blog-comments'
+import { DownloadMarkdown } from '@/components/common/download-markdown'
 import { FormatDate } from '@/components/common/format-date'
 import { blogSource } from '@/lib/source'
 import { getMDXComponents } from '@/mdx-components'
+import { MermaidZoom } from '@/components/mdx/mermaid-zoom'
 
 interface BlogPostPageProps {
 	params: Promise<{ slug: string }>
@@ -22,7 +24,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 	const Mdx = data.body
 
 	return (
-		<main className="pb-16">
+		<main className="bg-dark-base pb-16">
 			<div className="relative mb-6 overflow-hidden">
 				{data.image && (
 					<div className="absolute inset-0">
@@ -33,7 +35,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 							className="object-cover blur-sm scale-105"
 							priority
 						/>
-						<div className="absolute inset-0 bg-dark-base/80" />
+						<div className="absolute inset-0 bg-gradient-to-b from-dark-base/60 from-0% via-dark-base/80 via-40% to-dark-base to-100%" />
 					</div>
 				)}
 				{!data.image && <div className="absolute inset-0 bg-dark-base" />}
@@ -74,6 +76,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 						<time className="text-sm text-text-secondary">
 							<FormatDate date={new Date(data.date)} />
 						</time>
+						<span className="text-border">|</span>
+						<DownloadMarkdown contentPath={`blog/${slug}`} filename={slug} />
 					</div>
 				</div>
 			</div>
@@ -83,6 +87,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 					<Mdx components={getMDXComponents()} />
 				</div>
 			</article>
+
+			<MermaidZoom />
 
 			<div className="mx-auto mt-16 w-full max-w-7xl px-6 lg:px-8">
 				<BlogComments />

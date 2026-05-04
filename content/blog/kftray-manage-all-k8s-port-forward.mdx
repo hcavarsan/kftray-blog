@@ -128,7 +128,7 @@ the tool opens the specified local udp port on your machine and establishes a st
 
 
 
-<Mermaid>
+```mermaid
 sequenceDiagram
     App->>kftray Client: UDP Packet (to local port)
     kftray Client->>kftray-server (in K8s): UDP over TCP tunnel (via K8s port-forward)
@@ -139,7 +139,7 @@ sequenceDiagram
     kftray-server (in K8s)-->>kftray Client: UDP Response over TCP tunnel
     Note over kftray Client: Unwraps UDP
     kftray Client-->>App: UDP Response (from local port)
-</Mermaid>
+```
 
 so, `kftray-server` bridges the udp traffic over a reliable tcp tunnel provided by the native kubectl port-forward.
 
@@ -153,7 +153,7 @@ the `kftray-server` is also used for the "proxy" mode. this mode lets you connec
 when you set up a proxy configuration in `kftray` (like the `private-redis-proxy` example in the json above), you specify the final destination's address and port (e.g., `my-private-redis.internal:6379`) and the namespace where `kftray-server` is running. `kftray` on your machine connects to the `kftray-server` pod (via a standard tcp port-forward), and `kftray-server` then relays the traffic to that final external destination. it acts as a secure jump point using the cluster's network access. this works for both tcp and udp proxying.
 
 
-<Mermaid>
+```mermaid
 sequenceDiagram
     Local App->>kftray Client: Data (e.g., Redis command)
     kftray Client->>kftray-server (in K8s): Data via K8s port-forward (TCP tunnel)
@@ -163,7 +163,7 @@ sequenceDiagram
     Note over kftray-server (in K8s): Relaying response
     kftray-server (in K8s)-->>kftray Client: Response via K8s port-forward
     kftray Client-->>Local App: Response data
-</Mermaid>
+```
 
 
 ## managing configurations locally (json format)

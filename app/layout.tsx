@@ -61,6 +61,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 						data-exclude-search="true"
 						data-exclude-hash="true"
 						data-do-not-track="true"
+						data-performance="true"
 						strategy="afterInteractive"
 					/>
 				)}

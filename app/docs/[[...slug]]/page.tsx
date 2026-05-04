@@ -1,6 +1,7 @@
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/page'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { DownloadMarkdown } from '@/components/common/download-markdown'
 import { source } from '@/lib/source'
 import { getMDXComponents } from '@/mdx-components'
 
@@ -14,6 +15,7 @@ export default async function Page(props: PageProps) {
 	if (!page) notFound()
 
 	const Mdx = page.data.body
+	const slugPath = (params.slug ?? ['index']).join('/')
 
 	return (
 		<DocsPage
@@ -21,7 +23,13 @@ export default async function Page(props: PageProps) {
 			tableOfContent={{ enabled: false }}
 			footer={{ className: 'mt-12' }}
 		>
-			<DocsTitle>{page.data.title}</DocsTitle>
+			<div className="flex items-center justify-between">
+				<DocsTitle>{page.data.title}</DocsTitle>
+				<DownloadMarkdown
+					contentPath={`docs/${slugPath}`}
+					filename={params.slug ? params.slug[params.slug.length - 1] : 'index'}
+				/>
+			</div>
 			<DocsDescription>{page.data.description}</DocsDescription>
 			<DocsBody>
 				<Mdx components={getMDXComponents()} />

@@ -13,7 +13,7 @@ body {
 @theme {
 	/* === Dark UI Design System Tokens === */
 	/* Depth layers (shade-based elevation) */
-	--color-dark-base: #1a1a1a;
+	--color-dark-base: #121212;
 	--color-dark-surface: #2a2a2d;
 	--color-dark-control: #333333;
 
@@ -30,7 +30,7 @@ body {
 	--color-border: #3a3a3a;
 
 	/* Override fumadocs tokens to match guide */
-	--color-fd-background: #1a1a1a;
+	--color-fd-background: #121212;
 	--color-fd-foreground: #e0e0e0;
 	--color-fd-muted: #333333;
 	--color-fd-muted-foreground: #999999;
@@ -65,6 +65,103 @@ body {
 .prose table td:last-child {
 	white-space: normal;
 	min-width: 12rem;
+}
+
+/* Mermaid diagrams — container + responsive SVG + click-to-zoom hint */
+.prose .mermaid-diagram {
+	position: relative;
+	width: 100%;
+	margin: 1.5rem 0;
+	padding: 1.5rem 1rem;
+	border: 1px solid #2a2a2d;
+	border-radius: 0.5rem;
+	background: #121212;
+	display: flex;
+	justify-content: center;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	cursor: pointer;
+	transition: border-color 0.2s ease;
+}
+
+.prose .mermaid-diagram:hover {
+	border-color: #4a8af5;
+}
+
+.prose .mermaid-diagram::after {
+	content: "\2922";
+	position: absolute;
+	top: 0.5rem;
+	right: 0.5rem;
+	font-size: 1rem;
+	line-height: 1;
+	color: #999999;
+	background: #2a2a2d;
+	border-radius: 0.25rem;
+	padding: 0.2rem 0.35rem;
+	opacity: 0;
+	transition: opacity 0.2s ease;
+	pointer-events: none;
+}
+
+.prose .mermaid-diagram:hover::after {
+	opacity: 1;
+}
+
+.prose .mermaid-diagram svg[id] {
+	max-width: 100%;
+	height: auto;
+	display: block;
+	flex-shrink: 0;
+}
+
+/* Headings — accent dot */
+.prose h2::before {
+	content: "";
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--color-text-secondary);
+	margin-right: 0.5rem;
+	vertical-align: middle;
+}
+
+/* Steps — gray badge */
+.fd-step::before {
+	background-color: var(--color-dark-control);
+	color: var(--color-text-secondary);
+	font-weight: 500;
+}
+
+/* Inline code — darker, compact */
+.prose :not(pre) > code {
+	background-color: var(--color-dark-surface);
+	color: var(--color-text-primary);
+	padding: 0.1rem 0.4rem;
+	font-size: 0.8em;
+	border-radius: 0.375rem;
+}
+
+/* Code blocks — mobile-friendly horizontal scroll */
+.prose .shiki {
+	max-width: 100%;
+}
+
+.prose .shiki pre {
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 640px) {
+	.prose .shiki [role="region"] {
+		scrollbar-width: thin;
+		scrollbar-color: #333333 transparent;
+	}
+
+	.prose .shiki pre code {
+		font-size: 0.75rem;
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {

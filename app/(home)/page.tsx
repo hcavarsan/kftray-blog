@@ -1,10 +1,11 @@
-import { Code, Download, FileOutput, Github, RefreshCw, Users } from 'lucide-react'
+import { Code, Download, FileOutput, RefreshCw, Users } from 'lucide-react'
+import { SiGithub } from '@icons-pack/react-simple-icons'
 import Image from 'next/image'
 import Link from 'next/link'
 
 const features = [
 	{
-		icon: Github,
+		icon: SiGithub,
 		title: 'GitHub Sync',
 		description:
 			'Store and sync port-forward configurations via Git. Share setups across your entire team effortlessly.',

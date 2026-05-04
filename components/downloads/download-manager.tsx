@@ -1,6 +1,7 @@
 'use client'
 
-import { Apple, ExternalLink, Github, Loader2, Monitor } from 'lucide-react'
+import { Apple, ExternalLink, Loader2, Monitor } from 'lucide-react'
+import { SiGithub } from '@icons-pack/react-simple-icons'
 import { useState } from 'react'
 import { CodeBlock } from '@/components/common/code-block'
 import { LinuxIcon } from '@/components/common/linux-icon'
@@ -283,7 +284,7 @@ export function DownloadManager({ latestVersion }: { latestVersion: string }) {
 
 			<div className="rounded-lg border border-fd-border bg-fd-card p-8 text-center">
 				<h3 className="mb-4 flex items-center justify-center gap-2 text-xl font-bold text-fd-foreground">
-					<Github className="h-5 w-5" />
+					<SiGithub className="h-5 w-5" />
 					All Releases
 				</h3>
 				<p className="mx-auto mb-6 max-w-xl text-fd-muted-foreground">

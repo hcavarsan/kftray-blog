@@ -5,7 +5,8 @@ import * as TabsComponents from 'fumadocs-ui/components/tabs'
 import defaultMdxComponents from 'fumadocs-ui/mdx'
 import type { MDXComponents } from 'mdx/types'
 import { BlogImage } from '@/components/mdx/blog-image'
-import { Mermaid } from '@/components/mdx/mermaid'
+import { Compare, CompareLeft, CompareRight } from '@/components/mdx/compare'
+import { Timeline, TimelineItem } from '@/components/mdx/timeline'
 import { YouTubeEmbed } from '@/components/mdx/youtube-embed'
 
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
@@ -16,7 +17,11 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
 		...AccordionComponents,
 		...FilesComponents,
 		BlogImage,
-		Mermaid,
+		Compare,
+		CompareLeft,
+		CompareRight,
+		Timeline,
+		TimelineItem,
 		YouTubeEmbed,
 		...components,
 	}

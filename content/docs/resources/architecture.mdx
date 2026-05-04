@@ -46,8 +46,8 @@ Both interfaces read and write to this database concurrently. SQLite's locking m
 
 Direct TCP forwarding uses the Kubernetes API's port-forward subprotocol:
 
-<Mermaid>
-{`sequenceDiagram
+```mermaid
+sequenceDiagram
     participant App as Local App
     participant KF as kftray
     participant API as K8s API Server
@@ -57,8 +57,8 @@ Direct TCP forwarding uses the Kubernetes API's port-forward subprotocol:
     API->>Pod: Forward traffic
     Pod-->>API: Response
     API-->>KF: Response data
-    KF-->>App: Response`}
-</Mermaid>
+    KF-->>App: Response
+```
 
 This path is identical to `kubectl port-forward` and has comparable performance. The `kftray-portforward` component maintains a persistent WebSocket connection to the Kubernetes API server and multiplexes multiple TCP connections over it.
 
@@ -68,8 +68,8 @@ See [port forwarding configuration](/docs/configuration/port-forwarding) for usa
 
 UDP forwarding requires protocol conversion because Kubernetes port-forward only supports TCP:
 
-<Mermaid>
-{`sequenceDiagram
+```mermaid
+sequenceDiagram
     participant App as Local App
     participant KF as kftray
     participant Proxy as kftray-server
@@ -81,8 +81,8 @@ UDP forwarding requires protocol conversion because Kubernetes port-forward only
     Proxy->>Svc: UDP packet
     Svc-->>Proxy: UDP response
     Proxy-->>KF: TCP response
-    KF-->>App: UDP response`}
-</Mermaid>
+    KF-->>App: UDP response
+```
 
 The `kftray-server` proxy runs as a deployment in the target namespace. kftray automatically deploys it when you create a UDP forward and removes it when no UDP forwards remain active.
 
@@ -240,8 +240,8 @@ Follow security best practices when configuring credential storage and network a
 
 The [MCP server](/docs/configuration/mcp-server) exposes kftray operations to external clients over HTTP:
 
-<Mermaid>
-{`sequenceDiagram
+```mermaid
+sequenceDiagram
     participant Client as MCP Client
     participant MCP as kftray-mcp
     participant PF as kftray-portforward
@@ -251,8 +251,8 @@ The [MCP server](/docs/configuration/mcp-server) exposes kftray operations to ex
     PF->>K8s: K8s API call
     K8s-->>PF: response
     PF-->>MCP: result
-    MCP-->>Client: JSON-RPC response`}
-</Mermaid>
+    MCP-->>Client: JSON-RPC response
+```
 
 The server provides 16 tools across three categories: Kubernetes resource discovery, port-forward management, and configuration CRUD. It delegates all work to `kftray-portforward` and `kftray-commons`, so it behaves the same as the GUI and TUI.
 
