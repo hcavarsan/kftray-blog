@@ -1078,14 +1078,12 @@ docker inspect --format='{{.State.Health.Status}}' kftray-docs
 
 ### Umami Analytics
 
-**Locations:**
-- Script load: `app/layout.tsx`
-- Same-origin proxy: `app/u/[...path]/route.ts`
+**Location:** `app/layout.tsx`
 
 ```typescript
 {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
   <Script
-    src="/u/script.js"
+    src="https://umami.cavarsa.app/script.js"
     data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
     data-domains="kftray.app"
     data-exclude-search="true"
@@ -1097,11 +1095,9 @@ docker inspect --format='{{.State.Health.Status}}' kftray-docs
 ```
 
 **Behavior:**
-- The script is fetched via `/u/script.js`, which proxies to `umami.cavarsa.app/script.js` from the same origin. The Umami tracker auto-derives the collect endpoint as `/u/api/send` from the script's `src` parent path.
-- The proxy forwards Cloudflare geo headers (`cf-connecting-ip`, `cf-ipcountry`, `cf-regioncode`, `cf-ipcity`) so self-hosted Umami records accurate visitor location.
-- The script response is cached for 1h client-side / 24h shared (CDN), so the upstream is hit at most once per CDN edge per day.
+- The browser loads the tracker directly from the self-hosted Umami instance at `umami.cavarsa.app`. Each visitor's request hits Cloudflare in front of Umami with their own IP, so `cf-connecting-ip` (and country/region/city) is recorded accurately.
 - Loads after hydration via Next.js `afterInteractive` strategy — no impact on LCP/INP.
-- Tracks only on `kftray.app` (`data-domains`); Vercel preview / staging / localhost domains are silently ignored even if the env var is set.
+- Tracks only on `kftray.app` (`data-domains`); preview / staging / localhost domains are silently ignored even if the env var is set.
 - Strips query strings (`data-exclude-search`) and hash fragments (`data-exclude-hash`) from tracked URLs.
 - Respects browser DNT setting (`data-do-not-track`).
 - The `<Script>` tag does not render at all if `NEXT_PUBLIC_UMAMI_WEBSITE_ID` is unset — analytics fully disabled in dev by default.
@@ -1114,7 +1110,9 @@ docker inspect --format='{{.State.Health.Status}}' kftray-docs
 - **Coolify / production:** set `NEXT_PUBLIC_UMAMI_WEBSITE_ID` in Coolify's environment settings. Coolify automatically forwards env vars to Docker build args via `docker-compose.yml` (already wired up).
 - **Manual Docker build:** `docker build --build-arg NEXT_PUBLIC_UMAMI_WEBSITE_ID=<your-id> -t kftray-docs .`
 
-**To disable analytics:** unset `NEXT_PUBLIC_UMAMI_WEBSITE_ID`. The `<Script>` tag won't render and the `/u/*` proxy will simply receive no requests.
+**To disable analytics:** unset `NEXT_PUBLIC_UMAMI_WEBSITE_ID`. The `<Script>` tag won't render at all.
+
+**Why no same-origin proxy?** A `/u/*` proxy was tried but Cloudflare's loop protection (Error 1000: "DNS points to prohibited IP") blocks server-to-server requests from kftray.app's container to `umami.cavarsa.app` because both hostnames sit behind Cloudflare. Direct browser loading also produces more accurate geolocation: each visitor's request reaches Cloudflare-in-front-of-Umami with their own IP, whereas a proxy would mask all visitors as the Coolify server's IP.
 
 ### Other Hardcoded Integrations
 

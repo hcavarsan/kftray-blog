@@ -55,7 +55,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 				</RootProvider>
 				{process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
 					<Script
-						src="/u/script.js"
+						src="https://umami.cavarsa.app/script.js"
 						data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
 						data-domains="kftray.app"
 						data-exclude-search="true"
