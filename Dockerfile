@@ -24,7 +24,9 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
 FROM deps AS build
 
 # Playwright (used by rehype-mermaid inline-svg) needs Chromium for mermaid rendering
-RUN pnpm exec playwright install --with-deps chromium
+RUN apk add --no-cache chromium nss freetype harfbuzz ca-certificates ttf-freefont
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=0
+RUN pnpm exec playwright install chromium
 
 # Copy source (deps layer is fully cached if only source code changed)
 COPY . .
