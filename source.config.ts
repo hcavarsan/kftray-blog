@@ -20,6 +20,10 @@ export const blog = defineCollections({
 		avatar: z.string().optional(),
 		avatarLink: z.string().optional(),
 		published: z.boolean().default(true),
+		updated: z.string().date().or(z.date()).optional(),
+		canonical: z.string().url().optional(),
+		noindex: z.boolean().default(false),
+		tags: z.array(z.string()).default([]),
 	}),
 })
 
