@@ -4,7 +4,7 @@ FROM node:22-alpine AS deps
 # Enable corepack for pnpm (built into Node, no npm install needed)
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && corepack prepare pnpm@10 --activate
+RUN corepack enable && corepack prepare pnpm@11 --activate
 
 WORKDIR /app
 
@@ -49,7 +49,7 @@ WORKDIR /app
 
 # Install sharp for Next.js production image optimization (standalone needs it)
 RUN apk add --no-cache libc6-compat \
-    && npm i -g sharp@0.33.5 \
+    && npm i -g sharp@0.34.5 \
     && npm cache clean --force
 
 # Non-root user for security
