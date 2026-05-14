@@ -39,6 +39,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
 	return (
 		<html lang="en" className={`${inter.variable} dark`} style={{ colorScheme: 'dark' }}>
+			<head>
+				<link rel="dns-prefetch" href="https://umami.cavarsa.app" />
+				<link rel="preconnect" href="https://umami.cavarsa.app" crossOrigin="anonymous" />
+			</head>
 			<body className="flex min-h-screen flex-col">
 				<RootProvider
 					theme={{

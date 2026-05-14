@@ -11,12 +11,20 @@ const navExtras: LinkItemType[] = [
 	{
 		type: 'custom',
 		secondary: true,
-		children: <SbomLink />,
+		children: (
+			<li className="list-none">
+				<SbomLink />
+			</li>
+		),
 	},
 	{
 		type: 'custom',
 		secondary: true,
-		children: <GithubStars />,
+		children: (
+			<li className="list-none">
+				<GithubStars />
+			</li>
+		),
 	},
 ]
 

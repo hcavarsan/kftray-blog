@@ -75,13 +75,14 @@ export default function HomePage() {
 
 			<section className="-mt-14 mx-auto w-full max-w-7xl px-4 pb-20">
 				<Image
-					src="https://raw.githubusercontent.com/hcavarsan/kftray-blog/refs/heads/main/public/img/kftools.webp"
+					src="/img/kftools.webp"
 					alt="kftray and kftui tools overview"
 					width={1400}
 					height={788}
+					sizes="(max-width: 1280px) 100vw, 1280px"
 					className="w-full rounded-2xl border border-fd-border"
 					priority
-					unoptimized
+					fetchPriority="high"
 				/>
 			</section>
 
