@@ -75,7 +75,12 @@ export function buildJsonLd(page: BlogPageType, slug: string): object[] {
 		'@type': 'BlogPosting',
 		headline: data.title,
 		description,
-		image: ogImage,
+		image: {
+			'@type': 'ImageObject' as const,
+			url: ogImage,
+			width: 1200,
+			height: 630,
+		},
 		datePublished: publishedTime,
 		dateModified: modifiedTime,
 		author: {
