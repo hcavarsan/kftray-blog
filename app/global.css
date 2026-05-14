@@ -143,6 +143,12 @@ body {
 	border-radius: 0.375rem;
 }
 
+/* Code blocks — darken background for WCAG AA contrast with all Shiki tokens */
+.prose figure.shiki,
+.prose figure.shiki.bg-fd-card {
+	background-color: #1a1a1a;
+}
+
 /* Code blocks — mobile-friendly horizontal scroll */
 .prose .shiki {
 	max-width: 100%;

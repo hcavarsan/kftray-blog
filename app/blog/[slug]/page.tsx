@@ -44,8 +44,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 								src={data.image}
 								alt={data.title}
 								fill
+								sizes="100vw"
 								className="object-cover blur-sm scale-105"
 								priority
+								fetchPriority="high"
 							/>
 							<div className="absolute inset-0 bg-gradient-to-b from-dark-base/60 from-0% via-dark-base/80 via-40% to-dark-base to-100%" />
 						</div>
