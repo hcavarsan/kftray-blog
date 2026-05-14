@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { BlogCard } from '@/components/blog/blog-card'
 import type { BlogPageType } from '@/lib/source'
 import { blogSource } from '@/lib/source'
+import { site } from '@/lib/site'
 
 export const metadata: Metadata = {
 	title: 'Blog',
@@ -9,9 +10,18 @@ export const metadata: Metadata = {
 	openGraph: {
 		title: 'Blog | kftray',
 		description: 'Updates, tutorials, and insights about kftray and Kubernetes port forwarding.',
-		url: '/blog',
+		url: `${site.url}/blog`,
 		type: 'website',
-		images: [{ url: '/api/og?title=Blog' }],
+		images: [{ url: `${site.url}${site.ogImage}` }],
+	},
+	twitter: {
+		card: 'summary_large_image',
+		title: 'Blog | kftray',
+		description: 'Updates, tutorials, and insights about kftray and Kubernetes port forwarding.',
+		images: [`${site.url}${site.ogImage}`],
+	},
+	alternates: {
+		canonical: `${site.url}/blog`,
 	},
 }
 

@@ -2,6 +2,7 @@ import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/page
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { DownloadMarkdown } from '@/components/common/download-markdown'
+import { site } from '@/lib/site'
 import { source } from '@/lib/source'
 import { getMDXComponents } from '@/mdx-components'
 
@@ -53,9 +54,12 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
 		openGraph: {
 			title: page.data.title,
 			description: page.data.description,
-			url: `/docs/${(params.slug ?? []).join('/')}`,
+			url: `${site.url}/docs/${(params.slug ?? []).join('/')}`,
 			type: 'article',
-			images: [{ url: `/api/og?title=${encodeURIComponent(page.data.title)}` }],
+			images: [{ url: `${site.url}${site.ogImage}` }],
+		},
+		alternates: {
+			canonical: `${site.url}/docs/${(params.slug ?? []).join('/')}`,
 		},
 	}
 }

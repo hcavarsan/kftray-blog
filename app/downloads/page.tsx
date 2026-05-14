@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { DownloadManager } from '@/components/downloads/download-manager'
 import { getLatestVersion } from '@/lib/github'
+import { site } from '@/lib/site'
 
 export const metadata: Metadata = {
 	title: 'Downloads',
@@ -9,9 +10,18 @@ export const metadata: Metadata = {
 	openGraph: {
 		title: 'Downloads | kftray',
 		description: 'Download kftray and kftui for macOS, Linux, and Windows.',
-		url: '/downloads',
+		url: `${site.url}/downloads`,
 		type: 'website',
-		images: [{ url: '/api/og?title=Downloads' }],
+		images: [{ url: `${site.url}${site.ogImage}` }],
+	},
+	twitter: {
+		card: 'summary_large_image',
+		title: 'Downloads | kftray',
+		description: 'Download kftray and kftui for macOS, Linux, and Windows.',
+		images: [`${site.url}${site.ogImage}`],
+	},
+	alternates: {
+		canonical: `${site.url}/downloads`,
 	},
 }
 
