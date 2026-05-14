@@ -23,12 +23,8 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
 # ---- Build stage ----
 FROM deps AS build
 
-# Playwright (used by rehype-mermaid inline-svg) needs Chromium
-RUN apk add --no-cache chromium nss freetype harfbuzz ca-certificates ttf-freefont \
-    && ln -sf /usr/bin/chromium-browser /usr/bin/chromium
-ENV CHROME_BIN=/usr/bin/chromium-browser
-ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser
-ENV PLAYWRIGHT_BROWSERS_PATH=/usr/bin
+# Playwright (used by rehype-mermaid inline-svg) needs Chromium for mermaid rendering
+RUN pnpm exec playwright install --with-deps chromium
 
 # Copy source (deps layer is fully cached if only source code changed)
 COPY . .
