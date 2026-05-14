@@ -1,5 +1,5 @@
 # ---- Dependencies stage ----
-FROM node:20-alpine AS deps
+FROM node:22-alpine AS deps
 
 # Enable corepack for pnpm (built into Node, no npm install needed)
 ENV PNPM_HOME="/pnpm"
