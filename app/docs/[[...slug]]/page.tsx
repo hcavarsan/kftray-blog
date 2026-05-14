@@ -55,7 +55,8 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
 			title: page.data.title,
 			description: page.data.description,
 			url: `${site.url}/docs/${(params.slug ?? []).join('/')}`,
-			type: 'article',
+			type: 'website',
+			siteName: site.name,
 			images: [{ url: `${site.url}${site.ogImage}` }],
 		},
 		alternates: {

@@ -4,30 +4,30 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Script from 'next/script'
 import type { ReactNode } from 'react'
+import { site } from '@/lib/site'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export const metadata: Metadata = {
 	title: {
 		template: '%s | kftray',
-		default: 'kftray - kubectl port-forward on steroids',
+		default: site.title,
 	},
-	description:
-		'Manage and share multiple kubectl port-forward configurations with ease. A cross-platform system tray app and CLI for Kubernetes port forwarding.',
-	metadataBase: new URL('https://kftray.app'),
+	description: site.description,
+	metadataBase: new URL(site.url),
 	openGraph: {
-		title: 'kftray - kubectl port-forward on steroids',
-		description: 'Manage and share multiple kubectl port-forward configurations with ease.',
-		url: 'https://kftray.app',
-		siteName: 'kftray',
+		title: site.title,
+		description: site.description,
+		url: site.url,
+		siteName: site.name,
 		type: 'website',
-		images: [{ url: '/img/kftray-head.png', width: 1200, height: 630 }],
+		images: [{ url: site.ogImage, width: 1200, height: 630 }],
 	},
 	twitter: {
 		card: 'summary_large_image',
-		title: 'kftray - kubectl port-forward on steroids',
-		description: 'Manage and share multiple kubectl port-forward configurations with ease.',
-		images: ['/img/kftray-head.png'],
+		title: site.title,
+		description: site.description,
+		images: [site.ogImage],
 	},
 	alternates: {
 		types: {

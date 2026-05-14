@@ -7,6 +7,6 @@ export const site = {
 	ogImage: '/img/kftray-head.png',
 	author: 'Henrique Cavarsan',
 	ogImageUrl(slugs: string[]): string {
-		return `https://kftray.app/og/${slugs.join('/')}/image.png`
+		return `${this.url}/og/${slugs.join('/')}/image.png`
 	},
 }

@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 		description: 'Updates, tutorials, and insights about kftray and Kubernetes port forwarding.',
 		url: `${site.url}/blog`,
 		type: 'website',
+		siteName: site.name,
 		images: [{ url: `${site.url}${site.ogImage}` }],
 	},
 	twitter: {

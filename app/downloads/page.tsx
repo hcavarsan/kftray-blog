@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 		description: 'Download kftray and kftui for macOS, Linux, and Windows.',
 		url: `${site.url}/downloads`,
 		type: 'website',
+		siteName: site.name,
 		images: [{ url: `${site.url}${site.ogImage}` }],
 	},
 	twitter: {
