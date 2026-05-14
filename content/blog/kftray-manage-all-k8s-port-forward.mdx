@@ -1,6 +1,6 @@
 ---
-title: Manage all your kubernetes port-forwards in one place with kftray
-description: a look at kftray, a tool with gui and tui options for managing kubernetes tcp and udp port-forwards, including its connection handling, proxy feature, and config sharing via github.
+title: Manage All Kubernetes Port-Forwards with kftray
+description: How kftray manages Kubernetes TCP and UDP port-forwards with GUI and TUI, proxy forwarding, and GitHub config sync.
 image: /img/cover6.png
 date: 2025-04-17
 author: Henrique Cavarsan
@@ -40,7 +40,7 @@ these are the kinds of daily friction points that `kftray` aims to smooth out.
 
 ![KFtui Demo](/img/kftools.webp)
 
-[kftui blog post](https://kftray.app/blog/posts/7-kftui-port-forward)
+[kftui blog post](/blog/kftui-port-forward)
 
 
 ## how it works day-to-day
@@ -49,7 +49,9 @@ setting up a forward involves telling `kftray` the usual details: which kubernet
 
 all your saved configurations show up in the app's list. from there, you can easily turn the port-forwards on or off with a click. if you need to connect to multiple services for your project, you can often start them all together.
 
-![Adding Config GUI](/img/adding-config.gif)
+<video autoPlay loop muted playsInline className="my-6 w-full rounded-xl border border-fd-border">
+  <source src="/img/adding-config.mp4" type="video/mp4" />
+</video>
 
 ## introducing the `kftray-server`
 
@@ -245,7 +247,7 @@ spec:
 
 when you run the auto-import for the corresponding context, `kftray` will create a configuration targeting the `grafana` service in the `monitoring` namespace, using the alias `grafana` (from the service name), mapping local port `13080` to the service's port `3000`, based on the `kftray.app/configs` annotation format `${config.alias}-${config.local_port}-${config.target_port}`.
 
-[auto import blog post](https://kftray.app/blog/posts/8-kubectl-port-forward-auto-import)
+[auto import blog post](/blog/kubectl-port-forward-auto-import)
 
 ![Annotation Auto Import](/img/auto-import-gui.gif)
 
@@ -263,7 +265,9 @@ you can also easily export all your current configurations into a single json fi
 
 while local export/import is useful, sharing setups often needs a more automated approach, especially for teams. `kftray` handles this through git integration. it uses that same json format described above.
 
-![Git Sync](/img/git-sync.gif)
+<video autoPlay loop muted playsInline className="my-6 w-full rounded-xl border border-fd-border">
+  <source src="/img/git-sync.mp4" type="video/mp4" />
+</video>
 
 once this git sync is set up, you can configure `kftray` to periodically check the repository (e.g., every 5 minutes). if it detects changes in the shared json file, it automatically fetches the updates and applies them to your local configuration list. this keeps everyone on the team synchronized with the latest standard port-forward settings automatically.
 
@@ -294,9 +298,11 @@ the workflow is straightforward: find the configuration row in the `kftray` gui,
 
 these log files are formatted specifically to be compatible with the popular [rest client extension](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) for visual studio code. if you open the log file in vs code with this extension installed, you won't just see the captured interactions (headers, bodies, status codes, timing) – you can actually click a "send request" link directly above each logged request to replay it instantly. this is incredibly useful for debugging, as you can tweak and resend requests right from the log file without needing to manually reconstruct `curl` commands or other client setups.
 
-[blog post](https://kftray.app/blog/posts/12-kftray-http-logs-vscode)
+[http logging blog post](/blog/kftray-http-logs-vscode)
 
-![HTTP Log demo](/img/http-logs-vscode.gif)
+<video autoPlay loop muted playsInline className="my-6 w-full rounded-xl border border-fd-border">
+  <source src="/img/http-logs-vscode.mp4" type="video/mp4" />
+</video>
 
 ## summing up
 

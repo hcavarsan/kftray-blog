@@ -42,7 +42,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 						<div className="absolute inset-0">
 							<Image
 								src={data.image}
-								alt={`Cover image for ${data.title}`}
+								alt={data.title}
 								fill
 								className="object-cover blur-sm scale-105"
 								priority

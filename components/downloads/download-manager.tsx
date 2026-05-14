@@ -20,10 +20,10 @@ function OsSection({
 	return (
 		<div className="overflow-hidden rounded-lg border border-fd-border">
 			<div className="flex items-center justify-center border-b border-fd-border bg-fd-muted p-3">
-				<h4 className="flex items-center gap-2 text-lg font-medium text-fd-foreground">
+				<h3 className="flex items-center gap-2 text-lg font-medium text-fd-foreground">
 					{icon}
 					{title}
-				</h4>
+				</h3>
 			</div>
 			<div className="bg-fd-card p-4">{children}</div>
 		</div>
@@ -118,18 +118,18 @@ export function DownloadManager({ latestVersion }: { latestVersion: string }) {
 						<OsSection icon={<Apple className="h-5 w-5" />} title="macOS">
 							<div className="grid gap-6 md:grid-cols-2">
 								<div>
-									<h5 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
+									<h4 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
 										Via Homebrew
-									</h5>
+									</h4>
 									<CodeBlock>
 										<div>brew tap hcavarsan/kftray</div>
 										<div>brew install --cask kftray</div>
 									</CodeBlock>
 								</div>
 								<div>
-									<h5 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
+									<h4 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
 										Direct Download
-									</h5>
+									</h4>
 									<div className="flex justify-center">
 										<DownloadButton app="kftray" os="darwin" arch="amd64" version={latestVersion} />
 									</div>
@@ -140,18 +140,18 @@ export function DownloadManager({ latestVersion }: { latestVersion: string }) {
 						<OsSection icon={<LinuxIcon className="h-5 w-5" />} title="Linux">
 							<div className="grid gap-6 md:grid-cols-2">
 								<div>
-									<h5 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
+									<h4 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
 										Via Homebrew
-									</h5>
+									</h4>
 									<CodeBlock>
 										<div>brew tap hcavarsan/kftray</div>
 										<div>brew install kftray-linux</div>
 									</CodeBlock>
 								</div>
 								<div>
-									<h5 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
+									<h4 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
 										Direct Download
-									</h5>
+									</h4>
 									<div className="flex flex-col items-center space-y-4">
 										<DownloadButton
 											app="kftray"
@@ -173,9 +173,9 @@ export function DownloadManager({ latestVersion }: { latestVersion: string }) {
 						</OsSection>
 
 						<OsSection icon={<Monitor className="h-5 w-5" />} title="Windows">
-							<h5 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
+							<h4 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
 								Direct Download
-							</h5>
+							</h4>
 							<div className="flex flex-col items-center space-y-4">
 								<DownloadButton app="kftray" os="windows" arch="amd64" version={latestVersion} />
 								<DownloadButton app="kftray" os="windows" arch="arm64" version={latestVersion} />
@@ -194,9 +194,9 @@ export function DownloadManager({ latestVersion }: { latestVersion: string }) {
 						<OsSection icon={<Apple className="h-5 w-5" />} title="macOS">
 							<div className="grid gap-6 md:grid-cols-2">
 								<div>
-									<h5 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
+									<h4 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
 										Script Installation
-									</h5>
+									</h4>
 									<CodeBlock>
 										<div>
 											bash &lt;(curl -s
@@ -205,9 +205,9 @@ export function DownloadManager({ latestVersion }: { latestVersion: string }) {
 									</CodeBlock>
 								</div>
 								<div>
-									<h5 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
+									<h4 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
 										Direct Download
-									</h5>
+									</h4>
 									<div className="flex justify-center">
 										<DownloadButton app="kftui" os="darwin" arch="amd64" version={latestVersion} />
 									</div>
@@ -218,9 +218,9 @@ export function DownloadManager({ latestVersion }: { latestVersion: string }) {
 						<OsSection icon={<LinuxIcon className="h-5 w-5" />} title="Linux">
 							<div className="grid gap-6 md:grid-cols-2">
 								<div>
-									<h5 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
+									<h4 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
 										Script Installation
-									</h5>
+									</h4>
 									<CodeBlock>
 										<div>
 											bash &lt;(curl -s
@@ -234,9 +234,9 @@ export function DownloadManager({ latestVersion }: { latestVersion: string }) {
 									</CodeBlock>
 								</div>
 								<div>
-									<h5 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
+									<h4 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
 										Direct Download
-									</h5>
+									</h4>
 									<div className="flex flex-col items-center space-y-4">
 										<DownloadButton app="kftui" os="linux" arch="amd64" version={latestVersion} />
 										<DownloadButton app="kftui" os="linux" arch="arm64" version={latestVersion} />
@@ -248,9 +248,9 @@ export function DownloadManager({ latestVersion }: { latestVersion: string }) {
 						<OsSection icon={<Monitor className="h-5 w-5" />} title="Windows">
 							<div className="grid gap-6 md:grid-cols-2">
 								<div>
-									<h5 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
+									<h4 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
 										PowerShell Script
-									</h5>
+									</h4>
 									<CodeBlock>
 										<div>
 											Invoke-Expression ((New-Object
@@ -259,9 +259,9 @@ export function DownloadManager({ latestVersion }: { latestVersion: string }) {
 									</CodeBlock>
 								</div>
 								<div>
-									<h5 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
+									<h4 className="mb-3 text-center text-sm font-medium text-fd-muted-foreground">
 										Direct Download
-									</h5>
+									</h4>
 									<div className="flex flex-col items-center space-y-4">
 										<DownloadButton app="kftui" os="windows" arch="amd64" version={latestVersion} />
 										<DownloadButton app="kftui" os="windows" arch="386" version={latestVersion} />

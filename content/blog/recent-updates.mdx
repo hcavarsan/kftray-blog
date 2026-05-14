@@ -1,6 +1,6 @@
 ---
 title: Better github sync and new refactored frontend in kftray
-description: A look at recent updates ~ github sync and new frontend ~ in kftray, an open source tool that helps developers manage kubectl port-forwards through a simple system tray app
+description: Recent kftray updates covering improved GitHub sync for team config sharing and a fully refactored React frontend.
 image: /img/github-post.png
 date: 2024-11-22
 author: Henrique Cavarsan
@@ -23,13 +23,13 @@ kftray is an open source tool that helps developers manage kubectl port-forwards
 
 
 
-### Configuration Management
+## Configuration Management
 
 >You're working on a project that requires specific port-forward setups. You've got it all configured perfectly on your machine, but now your teammate needs the same setup. Without a proper way to share these configurations, they'd need to manually recreate everything.
 
 This was one of the most common pain points I heard from users. Sure, you could share your config file through Slack or email, but that gets messy quickly. What happens when configurations change? How do you keep everyone in sync?
 
-### Why Another Port-Forward Tool?
+## Why Another Port-Forward Tool?
 
 We've all been there - multiple terminal windows open, trying to remember which port maps to which service, and then everything breaks when your laptop goes to sleep. That's exactly why I built kftray. It sits quietly in your system tray, managing all your port-forwards and automatically reconnecting them when needed.
 
@@ -43,7 +43,7 @@ Here's a common scenario where kftray makes a difference with github sync featur
 4. Keep personal modifications in separate config files if needed
 
 
-### Github Sync Integration
+## Github Sync Integration
 
 The previous version of kftray had basic GitHub integration, but it was limited. You could only use public repositories or manage separate access tokens. This worked for some cases, but it wasn't ideal for many real-world scenarios. Here's what the old workflow looked like:
 
@@ -52,7 +52,7 @@ The previous version of kftray had basic GitHub integration, but it was limited.
 - Hope you don't accidentally share the token with others
 - Manually sync when configs changed
 
-### The New Approach - Using Your Existing Git Setup
+## The New Approach - Using Your Existing Git Setup
 
 >Think about how you normally interact with Git repositories. You probably have SSH keys or credentials already configured. Why not use those same credentials for kftray?
 
@@ -66,11 +66,13 @@ This means no more separate credential management. If you can clone a repository
 
 >This is a simple example of the new github sync feature using this configuration file [configs.json](https://github.com/hcavarsan/kftray/blob/main/examples/configs.json):
 
-<BlogImage src="/img/github.gif" alt="Kftray github" />
+<video autoPlay loop muted playsInline className="my-6 w-full rounded-xl border border-fd-border">
+  <source src="/img/github.mp4" type="video/mp4" />
+</video>
 
 
 
-### Performance Matters - The UI Overhaul
+## Performance Matters - The UI Overhaul
 
 While working on the git integration, we noticed another issue. The UI would sometimes get sluggish, especially when running multiple port-forwards. This wasn't just about aesthetics - it impacted the usability of the tool.
 
@@ -81,17 +83,17 @@ The solution was a complete frontend refactor, moving from Chakra UI v2 to v3. T
 
 
 
-### Core Improvements
+## Core Improvements
 
 Beyond the UI changes, we've made substantial improvements to how kftray handles connections. The port-forward operations are now more reliable, with smarter error recovery for network issues and better handling of system sleep/wake cycles. One of the most requested improvements was better background operation - kftray now maintains connections more reliably when minimized, so you don't have to worry about losing your port-forwards when your system goes to sleep.
 
 
 
-### Getting Started
+## Getting Started
 
 If you're interested in trying out kftray, you can find it on [GitHub](https://github.com/hcavarsan/kftray). The new features are available in the latest release [v0.15.2](https://github.com/hcavarsan/kftray/releases/tag/v0.15.2), and the documentation includes examples for different setup scenarios.
 
-### Community Feedback
+## Community Feedback
 
 I built kftray to scratch my own itch, but it's grown through feedback and suggestions from users. These recent changes came directly from user feedback, and I'm always looking to hear how people are using the tool and what could make it better.
 

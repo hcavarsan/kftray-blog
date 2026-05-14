@@ -1,5 +1,5 @@
 ---
-title: Debugging Kubernetes Services with KFtray's HTTP Logs and VS Code REST Client Extension
+title: Debug Kubernetes with HTTP Logs and VS Code
 description: Learn how to debug Kubernetes services using KFtray's HTTP logging with VS Code's REST Client extension to capture and replay requests.
 image: /img/blog-http-logs-vscode.png
 date: 2025-03-05
@@ -102,7 +102,9 @@ And these logs are formatted in a way that works seamlessly with VS Code.
 
 Setting up HTTP logging in KFtray is an simple process that begins with downloading and installing KFtray v0.16.1 or later from the [GitHub releases page](https://github.com/hcavarsan/kftray/releases). Once you have KFtray installed, you'll need to configure your port-forward settings.
 
-![Adding Config](/img/adding-config.gif)
+<video autoPlay loop muted playsInline className="my-6 w-full rounded-xl border border-fd-border">
+  <source src="/img/adding-config.mp4" type="video/mp4" />
+</video>
 
 Start by launching KFtray and creating a new port-forward configuration. You'll need to specify your Kubernetes environment details, including your desired context and the namespace where your service runs. Make sure to enter the correct service name – this is the Kubernetes service you want to monitor.
 
@@ -184,7 +186,9 @@ This format is what makes the logs directly usable with VS Code's REST Client.
 
 The REST Client extension for VS Code is a powerful tool for testing HTTP requests. When combined with KFtray's logs, it creates a workflow for debugging Kubernetes services.
 
-![HTTP Log demo](/img/http-logs-vscode.gif)
+<video autoPlay loop muted playsInline className="my-6 w-full rounded-xl border border-fd-border">
+  <source src="/img/http-logs-vscode.mp4" type="video/mp4" />
+</video>
 
 To use this integration:
 

@@ -1,6 +1,6 @@
 ---
-title: Debugging HTTP Traffic in kubectl port-forward with KFtray v0.11.7
-description: A additional feature has joined recently, one that can make HTTP traffic traces logs; this is an new method that simplifies debugging. This article provides a short guide on how to get started with the new feature.
+title: Debug HTTP Traffic in kubectl port-forward
+description: How to capture and inspect HTTP request and response logs from kubectl port-forward sessions using KFtray v0.11.7.
 image: /img/htttpraffic.webp
 date: 2024-06-13
 
@@ -50,7 +50,9 @@ Launch KFtray by clicking its icon or typing `kftray` in the terminal if you ins
 2. **Open Logs:** To view the logs, click the log icon button next to your configuration. This will open the log file in your default text editor, allowing you to inspect the HTTP requests and responses.
 3. **Trace IDs:** Each request and response in the log has the same trace ID, making it easier to identify linked requests and responses when handling multiple parallel requests.
 
-![Access HTTP Logs](/img/httptraffic2.gif)
+<video autoPlay loop muted playsInline className="my-6 w-full rounded-xl border border-fd-border">
+  <source src="/img/httptraffic2.mp4" type="video/mp4" />
+</video>
 
 #### HTTP Logs Sample
 

@@ -1,5 +1,5 @@
 ---
-title: Kubernetes is migrating from SPDY to WebSockets (until the next one)
+title: Kubernetes SPDY to WebSockets Migration Explained
 description: the protocol migration behind kubectl exec, attach, cp, and port-forward
 image: /img/4-kubernetes-to-websockets-kep.webp
 date: 2026-05-12
@@ -11,7 +11,7 @@ published: true
 ---
 
 
-i maintain an [app](https://github.com/hcavarsan/kftray) that builds on top of kubernetes port forwarding, so i track [KEP-4006](https://github.com/kubernetes/enhancements/issues/4006) because the streaming protocol underneath keeps changing. i [wrote about this](https://blog.devops.dev/kubernetes-1-30-spdy-to-websockets-transition-83ef274324a2) back in april 2024 around Kubernetes 1.30, and six releases later it's changed enough to be worth another look, most of what follows comes from the [KEP design doc](https://github.com/kubernetes/enhancements/tree/master/keps/sig-api-machinery/4006-transition-spdy-to-websockets),  some GitHub issues, and a few wire traces against a kube cluster… the rest is just my read on it.
+i maintain an [app](https://github.com/hcavarsan/kftray) that builds on top of kubernetes port forwarding, so i track [KEP-4006](https://github.com/kubernetes/enhancements/issues/4006) because the streaming protocol underneath keeps changing. i wrote about this back in april 2024 around Kubernetes 1.30, and six releases later it's changed enough to be worth another look, most of what follows comes from the [KEP design doc](https://github.com/kubernetes/enhancements/tree/master/keps/sig-api-machinery/4006-transition-spdy-to-websockets),  some GitHub issues, and a few wire traces against a kube cluster… the rest is just my read on it.
 
 ## Short subprotocol timeline
 ---
@@ -204,10 +204,10 @@ the proxy ecosystem moved on from SPDY faster than Kubernetes did:
 the original experiment, a multiplexed protocol over TCP that eventually influenced HTTP/2.
 </TimelineItem>
 <TimelineItem version="2015 feb" title="Google announces SPDY deprecation">
-on the Chromium blog, Google said it'd drop SPDY from Chrome once [HTTP/2](https://www.RFC-editor.org/RFC/RFC7540) was deployed.
+on the Chromium blog, Google said it'd drop SPDY from Chrome once [HTTP/2](https://www.rfc-editor.org/rfc/rfc7540) was deployed.
 </TimelineItem>
 <TimelineItem version="2015 may" title="HTTP/2 published">
-the IETF published [RFC 7540](https://www.RFC-editor.org/RFC/RFC7540), built on SPDY's ideas but replacing it as a standard.
+the IETF published [RFC 7540](https://www.rfc-editor.org/rfc/rfc7540), built on SPDY's ideas but replacing it as a standard.
 </TimelineItem>
 <TimelineItem version="2015 sep" title="NGINX drops SPDY">
 NGINX removed its SPDY module and replaced it with the HTTP/2 module.
@@ -224,7 +224,7 @@ Over TLS, HTTP/2 negotiates with ALPN rather than HTTP `Upgrade`, so the streami
 
 and Go's `net/http` doesn't expose the HTTP/2 upgrade path in either form, Kubernetes would have to maintain its own HTTP/2 server, and the result still wouldn't survive a proxy that only knew HTTP/1.1 plus WebSocket upgrades. pretty complex.
 
-so that left [websockets](https://www.RFC-editor.org/RFC/RFC6455) published in december 2011, before HTTP/2 and before QUIC, and it uses the same HTTP `Upgrade` handshake the rest of the streaming stack already relies on. proxies and load balancers already speak it because browsers have been using it for years, so the team picked WebSockets because deployed proxies already understand it and the migration exists to get traffic through proxies. that's basically it.
+so that left [websockets](https://www.rfc-editor.org/rfc/rfc6455) published in december 2011, before HTTP/2 and before QUIC, and it uses the same HTTP `Upgrade` handshake the rest of the streaming stack already relies on. proxies and load balancers already speak it because browsers have been using it for years, so the team picked WebSockets because deployed proxies already understand it and the migration exists to get traffic through proxies. that's basically it.
 
 Kubernetes kept SPDY for almost a decade after Google deprecated it, the proxy ecosystem moved on within a couple years of that. a streaming protocol's just hard to migrate in a distributed system, the existing code worked, and nothing was urgent enough to make somebody do the work sooner.
 
@@ -372,7 +372,7 @@ i'm watching my app move onto a protocol from 2011, older than HTTP/2, a lot old
 
 
 <Callout type="info">
-[RFC 9220](https://www.RFC-editor.org/RFC/RFC9220) defines WebSockets over HTTP/3, but it reads like a compatibility shim to me.
+[RFC 9220](https://www.rfc-editor.org/rfc/rfc9220) defines WebSockets over HTTP/3, but it reads like a compatibility shim to me.
 </Callout>
 
 
@@ -381,10 +381,10 @@ i'm watching my app move onto a protocol from 2011, older than HTTP/2, a lot old
 Google built SPDY as a multiplexed protocol over TCP.
 </Card>
 <Card title="2015 — HTTP/2">
-the IETF absorbed SPDY's ideas into [RFC 7540](https://www.RFC-editor.org/RFC/RFC7540). [RFC 9113](https://www.RFC-editor.org/RFC/RFC9113) obsoleted that in june 2022.
+the IETF absorbed SPDY's ideas into [RFC 7540](https://www.rfc-editor.org/rfc/rfc7540). [RFC 9113](https://www.rfc-editor.org/rfc/rfc9113) obsoleted that in june 2022.
 </Card>
 <Card title="2022 — HTTP/3">
-Google's follow-on, QUIC, became HTTP/3 as [RFC 9114](https://www.RFC-editor.org/RFC/RFC9114). what started with SPDY now sits on UDP and ALPN rather than TCP and HTTP `Upgrade`.
+Google's follow-on, QUIC, became HTTP/3 as [RFC 9114](https://www.rfc-editor.org/rfc/rfc9114). what started with SPDY now sits on UDP and ALPN rather than TCP and HTTP `Upgrade`.
 </Card>
 <Card title="2026 — WebTransport (draft)">
 the IETF drafted [webtransport](https://www.w3.org/TR/webtransport/) for bidirectional streaming over HTTP/3. the [drafts](https://datatracker.ietf.org/group/webtrans/documents/) are still open, but Chrome, Firefox, and Safari shipped browser support by march 2026.

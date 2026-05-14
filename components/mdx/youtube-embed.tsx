@@ -4,25 +4,25 @@ import Image from 'next/image'
 import { useCallback, useState } from 'react'
 
 interface YouTubeEmbedProps {
-	id: string
+	videoId: string
 	title?: string
 }
 
-export function YouTubeEmbed({ id, title = 'YouTube video' }: YouTubeEmbedProps) {
+export function YouTubeEmbed({ videoId, title = 'YouTube video' }: YouTubeEmbedProps) {
 	const [isLoaded, setIsLoaded] = useState(false)
 
 	const handleLoad = useCallback(() => {
 		setIsLoaded(true)
 	}, [])
 
-	const thumbnailUrl = `https://img.youtube.com/vi/${id}/maxresdefault.jpg`
+	const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
 
 	return (
 		<div className="not-prose relative my-6 overflow-hidden rounded-xl border border-fd-border">
 			<div className="relative aspect-video w-full">
 				{isLoaded ? (
 					<iframe
-						src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`}
+						src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`}
 						title={title}
 						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 						allowFullScreen
