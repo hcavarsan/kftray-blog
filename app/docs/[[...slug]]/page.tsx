@@ -57,7 +57,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
 			url: `${site.url}/docs/${(params.slug ?? []).join('/')}`,
 			type: 'website',
 			siteName: site.name,
-			images: [{ url: `${site.url}${site.ogImage}` }],
+			images: [{ url: `${site.url}${site.ogImage}`, width: 1102, height: 584 }],
 		},
 		alternates: {
 			canonical: `${site.url}/docs/${(params.slug ?? []).join('/')}`,

@@ -3,20 +3,19 @@ import { site } from './site'
 import type { BlogPageType } from './source'
 
 /**
- * Resolves the OG image URL for a blog post to an absolute URL.
+ * Resolves the OG image URL for a blog post.
  *
- * Priority:
- * 1. If `data.image` starts with 'http' → use as-is (already absolute)
- * 2. If `data.image` is truthy (relative path) → prepend site.url
- * 3. Otherwise → use dynamic OG route via site.ogImageUrl
+ * Always returns the dynamic OG route (/og/blog/{slug}/image.png) which:
+ * - Is generated at exactly 1200×630 by fumadocs-ui/og
+ * - Renders the post title as a visible headline
+ * - Shows the site name
+ *
+ * The frontmatter `image` field is intentionally NOT used here — it serves
+ * as the visual cover image displayed on the post page, not the social card.
+ * Keeping them separate ensures every post has a properly sized, branded
+ * OG image regardless of what cover image the author uploads.
  */
-export function resolveOgImage(data: BlogPageType['data'], slug: string): string {
-	if (data.image?.startsWith('http')) {
-		return data.image
-	}
-	if (data.image) {
-		return `${site.url}${data.image}`
-	}
+export function resolveOgImage(_data: BlogPageType['data'], slug: string): string {
 	return site.ogImageUrl(['blog', slug])
 }
 
@@ -41,7 +40,7 @@ export function buildPostMetadata(page: BlogPageType, slug: string): Metadata {
 			description,
 			url: `${site.url}/blog/${slug}`,
 			siteName: site.name,
-			images: [{ url: ogImage }],
+			images: [{ url: ogImage, width: 1200, height: 630 }],
 			publishedTime,
 			modifiedTime,
 		},

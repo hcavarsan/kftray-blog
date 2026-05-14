@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 		url: `${site.url}/blog`,
 		type: 'website',
 		siteName: site.name,
-		images: [{ url: `${site.url}${site.ogImage}` }],
+		images: [{ url: `${site.url}${site.ogImage}`, width: 1102, height: 584 }],
 	},
 	twitter: {
 		card: 'summary_large_image',
