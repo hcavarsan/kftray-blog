@@ -5,11 +5,13 @@ import type { BlogPageType } from '@/lib/source'
 import { blogSource } from '@/lib/source'
 
 export const metadata: Metadata = {
-	title: 'Blog',
-	description: 'Updates, tutorials, and insights about kftray and Kubernetes port forwarding.',
+	title: 'Blog — Articles and Updates',
+	description:
+		'Technical articles on Kubernetes port forwarding, kubectl debugging, HTTP traffic logging, and kftray release updates.',
 	openGraph: {
 		title: 'Blog | kftray',
-		description: 'Updates, tutorials, and insights about kftray and Kubernetes port forwarding.',
+		description:
+			'Technical articles on Kubernetes port forwarding, kubectl debugging, HTTP traffic logging, and kftray release updates.',
 		url: `${site.url}/blog`,
 		type: 'website',
 		siteName: site.name,
@@ -18,7 +20,8 @@ export const metadata: Metadata = {
 	twitter: {
 		card: 'summary_large_image',
 		title: 'Blog | kftray',
-		description: 'Updates, tutorials, and insights about kftray and Kubernetes port forwarding.',
+		description:
+			'Technical articles on Kubernetes port forwarding, kubectl debugging, HTTP traffic logging, and kftray release updates.',
 		images: [`${site.url}${site.ogImage}`],
 	},
 	alternates: {
@@ -43,7 +46,8 @@ export default function BlogPage() {
 					Blog
 				</h1>
 				<p className="mx-auto max-w-2xl text-lg text-fd-muted-foreground">
-					Updates, tutorials, and insights about kftray and Kubernetes port forwarding.
+					Technical articles on Kubernetes port forwarding, kubectl debugging, HTTP traffic logging,
+					and kftray release updates.
 				</p>
 			</div>
 

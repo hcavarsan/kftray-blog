@@ -4,7 +4,7 @@ import { getLatestVersion } from '@/lib/github'
 import { site } from '@/lib/site'
 
 export const metadata: Metadata = {
-	title: 'Downloads',
+	title: 'Downloads — kftray and kftui',
 	description:
 		'Download kftray and kftui for macOS, Linux, and Windows. System tray app and CLI for Kubernetes port forwarding.',
 	openGraph: {

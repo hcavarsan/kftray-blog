@@ -10,12 +10,17 @@ interface YouTubeEmbedProps {
 
 export function YouTubeEmbed({ videoId, title = 'YouTube video' }: YouTubeEmbedProps) {
 	const [isLoaded, setIsLoaded] = useState(false)
+	const [thumbnailUrl, setThumbnailUrl] = useState(
+		`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+	)
 
 	const handleLoad = useCallback(() => {
 		setIsLoaded(true)
 	}, [])
 
-	const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+	const handleThumbnailError = useCallback(() => {
+		setThumbnailUrl(`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`)
+	}, [videoId])
 
 	return (
 		<div className="not-prose relative my-6 overflow-hidden rounded-xl border border-fd-border">
@@ -43,6 +48,7 @@ export function YouTubeEmbed({ videoId, title = 'YouTube video' }: YouTubeEmbedP
 							className="object-cover transition-opacity group-hover:opacity-80"
 							loading="lazy"
 							unoptimized
+							onError={handleThumbnailError}
 						/>
 						<div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-red-600 transition-opacity group-hover:opacity-80">
 							<svg viewBox="0 0 24 24" fill="white" className="ml-1 h-7 w-7" aria-hidden="true">
