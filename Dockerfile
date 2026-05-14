@@ -4,7 +4,7 @@ FROM node:22-alpine AS deps
 # Enable corepack for pnpm (built into Node, no npm install needed)
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@10 --activate
 
 WORKDIR /app
 
