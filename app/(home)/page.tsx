@@ -1,5 +1,5 @@
-import { Code, Download, FileOutput, RefreshCw, Users } from 'lucide-react'
 import { SiGithub } from '@icons-pack/react-simple-icons'
+import { Code, Download, FileOutput, RefreshCw, Users } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 

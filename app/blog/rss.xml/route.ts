@@ -1,5 +1,5 @@
-import { blogSource } from '@/lib/source'
 import { site } from '@/lib/site'
+import { blogSource } from '@/lib/source'
 
 export function GET() {
 	const pages = blogSource

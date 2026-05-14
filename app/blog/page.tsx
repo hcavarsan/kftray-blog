@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { BlogCard } from '@/components/blog/blog-card'
+import { site } from '@/lib/site'
 import type { BlogPageType } from '@/lib/source'
 import { blogSource } from '@/lib/source'
-import { site } from '@/lib/site'
 
 export const metadata: Metadata = {
 	title: 'Blog',

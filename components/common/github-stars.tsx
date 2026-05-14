@@ -1,5 +1,5 @@
-import { Star } from 'lucide-react'
 import { SiGithub } from '@icons-pack/react-simple-icons'
+import { Star } from 'lucide-react'
 import { getGithubStars } from '@/lib/github'
 
 function formatStars(count: number): string {

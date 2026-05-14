@@ -1,7 +1,7 @@
 'use client'
 
-import { Apple, ExternalLink, Loader2, Monitor } from 'lucide-react'
 import { SiGithub } from '@icons-pack/react-simple-icons'
+import { Apple, ExternalLink, Loader2, Monitor } from 'lucide-react'
 import { useState } from 'react'
 import { CodeBlock } from '@/components/common/code-block'
 import { LinuxIcon } from '@/components/common/linux-icon'

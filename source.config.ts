@@ -31,13 +31,13 @@ export default defineConfig({
 	mdxOptions: {
 		rehypePlugins: (v) => [
 			[
-			rehypeMermaid,
-			{
-				strategy: 'inline-svg',
-				launchOptions: process.env.CHROMIUM_PATH
-					? { executablePath: process.env.CHROMIUM_PATH }
-					: undefined,
-				mermaidConfig: {
+				rehypeMermaid,
+				{
+					strategy: 'inline-svg',
+					launchOptions: process.env.CHROMIUM_PATH
+						? { executablePath: process.env.CHROMIUM_PATH }
+						: undefined,
+					mermaidConfig: {
 						theme: 'base',
 						themeVariables: {
 							background: '#1a1a1a',

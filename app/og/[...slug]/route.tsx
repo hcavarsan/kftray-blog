@@ -1,9 +1,9 @@
 import { generateOGImage } from 'fumadocs-ui/og'
 import { type NextRequest, NextResponse } from 'next/server'
-import { blogSource } from '@/lib/source'
 import { site } from '@/lib/site'
+import { blogSource } from '@/lib/source'
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
 
 interface RouteParams {
 	params: Promise<{ slug: string[] }>

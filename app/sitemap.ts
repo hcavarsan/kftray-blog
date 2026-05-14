@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
-import { blogSource, source } from '@/lib/source'
 import { site } from '@/lib/site'
+import { blogSource, source } from '@/lib/source'
 
 export default function sitemap(): MetadataRoute.Sitemap {
 	const docPages = source.getPages().map((page) => ({
