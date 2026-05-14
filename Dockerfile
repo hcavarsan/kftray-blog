@@ -13,6 +13,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Copy files required by fumadocs-mdx postinstall hook
 COPY source.config.ts ./
+COPY lib/rehype-mermaid-wrapper.ts ./lib/
 COPY content/ ./content/
 
 # Install with BuildKit mount cache — reuses the pnpm store across builds
