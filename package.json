@@ -43,7 +43,7 @@
 		"@types/react": "^19.2.18",
 		"@types/react-dom": "^19.2.7",
 		"postcss": "^8.5.28",
-		"sharp": "^0.34.5",
+		"sharp": "^0.35.4",
 		"tailwindcss": "^4.3.3",
 		"typescript": "^6.0.3",
 		"unified": "^11.0.5",
