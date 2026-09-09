@@ -25,6 +25,8 @@ Or download `kftray_universal.dmg` from the [latest release](https://github.com/
 </Tab>
 <Tab value="Linux">
 
+Debian, Ubuntu, Fedora, and openSUSE users can install the `kftray` package from the [package repositories](#linux-packages) below.
+
 Install via Homebrew:
 
 ```bash
@@ -63,7 +65,7 @@ The installer configures PATH and creates Start Menu entries automatically.
 
 ## Terminal Interface (kftui)
 
-<Tabs items={['Homebrew', 'Cargo', 'Installer Script', 'Windows']}>
+<Tabs items={['Homebrew', 'Cargo', 'Linux Packages', 'Installer Script', 'Windows']}>
 <Tab value="Homebrew">
 
 ```bash
@@ -79,6 +81,17 @@ cargo install kftui
 ```
 
 Requires a working Rust toolchain. See [rustup.rs](https://rustup.rs) if you don't have one.
+
+</Tab>
+<Tab value="Linux Packages">
+
+Add the [package repository](#linux-packages) for your distribution, then:
+
+```bash
+sudo apt install kftui     # Debian and Ubuntu
+sudo dnf install kftui     # Fedora
+sudo zypper install kftui  # openSUSE
+```
 
 </Tab>
 <Tab value="Installer Script">
@@ -118,6 +131,49 @@ If the installer scripts don't work in your environment (corporate firewalls, re
 | Linux ARM64 | `kftray_aarch64.AppImage` | `kftui_arm64` |
 | Windows x64 | `kftray_x64-setup.exe` | `kftui_x86_64.exe` |
 | Windows ARM64 | `kftray_arm64-setup.exe` | — |
+
+## Linux Packages
+
+Every release publishes `kftray` and `kftui` packages for Debian, Ubuntu, Fedora, and openSUSE through the [openSUSE Build Service](https://build.opensuse.org/project/show/home:hencavarsan:kftray). Add the repository once, then install either package with your package manager; updates arrive with the regular system upgrade. The commands below install `kftui`; replace it with `kftray` for the desktop app.
+
+<Tabs items={['Debian / Ubuntu', 'Fedora', 'openSUSE']}>
+<Tab value="Debian / Ubuntu">
+
+Replace `Debian_12` with `Debian_13`, `Ubuntu_22.04`, `Ubuntu_24.04`, or `Ubuntu_26.04`:
+
+```bash
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.opensuse.org/repositories/home:/hencavarsan:/kftray/Debian_12/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kftray.gpg
+echo "deb [signed-by=/etc/apt/keyrings/kftray.gpg] https://download.opensuse.org/repositories/home:/hencavarsan:/kftray/Debian_12/ /" | sudo tee /etc/apt/sources.list.d/kftray.list
+sudo apt update
+sudo apt install kftui
+```
+
+</Tab>
+<Tab value="Fedora">
+
+Replace `Fedora_44` with `Fedora_43` if needed:
+
+```bash
+sudo dnf config-manager addrepo --from-repofile=https://download.opensuse.org/repositories/home:/hencavarsan:/kftray/Fedora_44/home:hencavarsan:kftray.repo
+sudo dnf install kftui
+```
+
+</Tab>
+<Tab value="openSUSE">
+
+Replace `openSUSE_Tumbleweed` with `openSUSE_Leap_16.0` for Leap:
+
+```bash
+sudo zypper addrepo https://download.opensuse.org/repositories/home:/hencavarsan:/kftray/openSUSE_Tumbleweed/home:hencavarsan:kftray.repo
+sudo zypper --gpg-auto-import-keys refresh
+sudo zypper install kftui
+```
+
+</Tab>
+</Tabs>
+
+Packages are signed with the project key of `home:hencavarsan:kftray`; the `.repo` files reference it and the apt source pins it with `signed-by`. The `kftray` package ships the AppImage and depends on `fuse3`; `kftui` depends on `libdbus-1`.
 
 ## Verifying the Installation
 

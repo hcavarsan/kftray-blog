@@ -2,6 +2,7 @@
 
 import { SiGithub } from '@icons-pack/react-simple-icons'
 import { Apple, ExternalLink, Loader2, Monitor } from 'lucide-react'
+import Link from 'next/link'
 import { useState } from 'react'
 import { CodeBlock } from '@/components/common/code-block'
 import { LinuxIcon } from '@/components/common/linux-icon'
@@ -27,6 +28,23 @@ function OsSection({
 			</div>
 			<div className="bg-fd-card p-4">{children}</div>
 		</div>
+	)
+}
+
+function LinuxPackagesNote({ app }: { app: 'kftray' | 'kftui' }) {
+	return (
+		<p className="mt-4 text-center text-sm text-fd-muted-foreground">
+			Debian, Ubuntu, Fedora, and openSUSE users can install the <code>{app}</code> package from the{' '}
+			<Link
+				href="/docs/getting-started/installation#linux-packages"
+				data-umami-event="linux-packages-click"
+				data-umami-event-app={app}
+				className="text-accent underline-offset-4 hover:underline"
+			>
+				package repositories
+			</Link>
+			.
+		</p>
 	)
 }
 
@@ -170,6 +188,7 @@ export function DownloadManager({ latestVersion }: { latestVersion: string }) {
 									</div>
 								</div>
 							</div>
+							<LinuxPackagesNote app="kftray" />
 						</OsSection>
 
 						<OsSection icon={<Monitor className="h-5 w-5" />} title="Windows">
@@ -243,6 +262,7 @@ export function DownloadManager({ latestVersion }: { latestVersion: string }) {
 									</div>
 								</div>
 							</div>
+							<LinuxPackagesNote app="kftui" />
 						</OsSection>
 
 						<OsSection icon={<Monitor className="h-5 w-5" />} title="Windows">
