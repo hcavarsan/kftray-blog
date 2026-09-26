@@ -4,6 +4,7 @@
 		"workload-types",
 		"index",
 		"port-forwarding",
+		"tags-and-views",
 		"proxy-forwarding",
 		"http-logging",
 		"github-sync",

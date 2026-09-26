@@ -28,7 +28,8 @@ kftray configurations are JSON objects that describe which Kubernetes services t
   "cert_manager_enabled": false,
   "cert_issuer": "letsencrypt-prod",
   "cert_issuer_kind": "ClusterIssuer",
-  "ingress_class": "nginx"
+  "ingress_class": "nginx",
+  "tags": { "team": "payments", "env": "prod" }
 }
 ```
 
@@ -56,6 +57,7 @@ Every configuration defines a single port forward. You can create multiple confi
 | `cert_issuer` | string | — | No | cert-manager issuer name (e.g., `"letsencrypt-prod"`) |
 | `cert_issuer_kind` | string | — | No | cert-manager issuer kind: `"Issuer"` or `"ClusterIssuer"` |
 | `ingress_class` | string | — | No | Ingress class for public expose workloads (e.g., `"nginx"`) |
+| `tags` | object | — | No | Labels as `"key": "value"` pairs, or `"key": ""` for a key without a value. Used to group and filter configurations (see [tags, filters and group by](/docs/configuration/tags-and-views)) |
 
 ## Minimal configuration
 

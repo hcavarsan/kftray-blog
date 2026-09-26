@@ -28,6 +28,9 @@ echo '[...]' | kftui --stdin
 
 # Clear existing configs before importing
 kftui --configs-path config.json --flush
+
+# Only start configs tagged team=payments
+kftui --auto-start --non-interactive --filter tag:team=payments
 ```
 
 | Flag | Description |
@@ -40,6 +43,8 @@ kftui --configs-path config.json --flush
 | `--json` | Inline JSON configuration string |
 | `--stdin` | Read configuration from stdin |
 | `--flush` | Clear existing configs before importing |
+| `--filter` | Only show and start configs that match, e.g. `tag:env=dev` or `namespace=api,web`. Repeatable, all conditions must match |
+| `--group-by` | Group the TUI by `context`, `namespace`, `kubeconfig`, `workload_type`, `protocol`, `tag:<key>`, or `none` for this session |
 
 ## Non-interactive mode
 

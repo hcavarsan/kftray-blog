@@ -69,6 +69,9 @@ cat config.json | kftui --stdin
 # Discover annotated services and start forwards headlessly
 kftui --auto-discover --context my-cluster --auto-start --non-interactive
 
+# Start only the configs that match a filter
+kftui --auto-start --non-interactive --filter tag:env=dev
+
 # With custom terminal type
 TERM=xterm-256color kftui
 
@@ -91,6 +94,8 @@ screen -S kftray kftui
 | `--json` | Inline JSON configuration string |
 | `--stdin` | Read configuration from stdin |
 | `--flush` | Clear existing configs before importing |
+| `--filter` | Only show and start configs that match, e.g. `tag:env=dev` or `namespace=api,web`. Repeatable, all conditions must match |
+| `--group-by` | Group the TUI by `context`, `namespace`, `kubeconfig`, `workload_type`, `protocol`, `tag:<key>`, or `none` for this session |
 | `--auto-discover` | Discover services from Kubernetes annotations (requires `--context`) |
 | `--context` | Kubernetes context to use for auto-discovery |
 | `--kubeconfig` | Path to kubeconfig file for auto-discovery (default: system default) |
