@@ -1,7 +1,7 @@
 import { SiGithub } from '@icons-pack/react-simple-icons'
 import { Code, Download, FileOutput, RefreshCw, Users } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
+import { HeroVideo } from '@/components/common/hero-video'
 
 const features = [
 	{
@@ -74,16 +74,7 @@ export default function HomePage() {
 			</section>
 
 			<section className="-mt-14 mx-auto w-full max-w-7xl px-4 pb-20">
-				<Image
-					src="/img/kftools.webp"
-					alt="kftray and kftui tools overview"
-					width={1400}
-					height={788}
-					sizes="(max-width: 1280px) 100vw, 1280px"
-					className="w-full rounded-2xl border border-fd-border"
-					priority
-					fetchPriority="high"
-				/>
+				<HeroVideo />
 			</section>
 
 			<section className="mx-auto w-full max-w-6xl px-6 pb-24">

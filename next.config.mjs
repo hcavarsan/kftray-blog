@@ -88,6 +88,7 @@ const config = {
 							"style-src 'self' 'unsafe-inline' https://giscus.app",
 							"img-src 'self' data: blob: https://avatars.githubusercontent.com https://raw.githubusercontent.com https://img.youtube.com https://cdn.hashnode.com https://dev-to-uploads.s3.amazonaws.com https://github.com",
 							"font-src 'self'",
+							"media-src 'self'",
 							"connect-src 'self' https://umami.cavarsa.app https://api.github.com https://giscus.app",
 							'frame-src https://www.youtube-nocookie.com https://giscus.app',
 							"object-src 'none'",
@@ -96,6 +97,10 @@ const config = {
 						].join('; '),
 					},
 				],
+			},
+			{
+				source: '/video/:path*',
+				headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
 			},
 		]
 	},
