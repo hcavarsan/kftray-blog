@@ -96,6 +96,15 @@ export default function HomePage() {
 					))}
 				</div>
 			</section>
+
+			<footer className="flex justify-center gap-6 pb-10 text-sm text-fd-muted-foreground">
+				<Link href="/privacy" className="hover:text-fd-foreground">
+					Privacy
+				</Link>
+				<Link href="/terms" className="hover:text-fd-foreground">
+					Terms
+				</Link>
+			</footer>
 		</main>
 	)
 }
