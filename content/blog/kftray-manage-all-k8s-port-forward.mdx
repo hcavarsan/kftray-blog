@@ -18,7 +18,7 @@ that's basically why `kftray` exists. it's a tool meant to manage these port-for
 
 for those interested in the tech stack, `kftray` is built using rust for the core backend logic, typescript with react for the gui frontend packaged with the tauri framework, and rust again using the ratatui framework for the terminal ui `kftui`.
 
->  `kftray` runs completely locally and includes no tracking or telemetry (like sentry or google analytics)
+>  `kftray` runs locally. the only data it can send is crash reports and port-forward timings, and it asks on first start before sending anything. see [crash reports](https://github.com/hcavarsan/kftray/blob/main/docs/kftray/USAGE.md#crash-reports) for what a report contains.
 
 
 ## the standard `kubectl port-forward` way
