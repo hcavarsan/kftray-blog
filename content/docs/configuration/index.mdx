@@ -1,72 +1,93 @@
 ---
 title: Configuration
-description: Look up config fields, storage paths and ways to share configs.
+description: Look up config fields, validation rules, storage paths and ways to share configs.
 ---
 
-A kftray config is a JSON object that defines a port forward and its target.
+A kftray config is a JSON object that defines one port forward and its target. kftray and kftui use the same format and the same database, so a config saved in one app shows up in the other.
 
 ## Full configuration reference
 
 ```json
 {
-  "service": "my-service",
-  "namespace": "production",
-  "local_port": 8080,
-  "remote_port": 80,
-  "context": "prod-cluster",
+  "alias": "argocd",
+  "context": "kind-kftray-cluster",
+  "kubeconfig": "/Users/henrique/.kube/kind-config-kftray-cluster",
+  "namespace": "argocd",
   "workload_type": "service",
+  "service": "argocd-server",
   "protocol": "tcp",
-  "alias": "Production API",
-  "remote_address": "internal-api.company.com:443",
+  "local_port": 16080,
+  "remote_port": 8080,
   "local_address": "127.0.0.1",
   "auto_loopback_address": false,
   "domain_enabled": false,
-  "kubeconfig": "/custom/path/to/kubeconfig",
-  "target": "specific-pod-name",
-  "http_logs_enabled": false,
-  "exposure_type": "internal",
-  "cert_manager_enabled": false,
-  "cert_issuer": "letsencrypt-prod",
-  "cert_issuer_kind": "ClusterIssuer",
-  "ingress_class": "nginx",
-  "tags": { "team": "payments", "env": "prod" }
+  "http_logs_enabled": true,
+  "tags": { "team": "platform", "env": "dev" }
 }
 ```
 
-Each configuration defines one port forward. To forward several services, create one configuration per service.
+Each configuration defines one port forward. To forward several services, create one configuration per service. A file holds either one object or an array of objects.
 
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `service` | string | None | Yes | Name of the Kubernetes service or pod to forward |
-| `namespace` | string | `"default"` | No | Kubernetes namespace of the workload |
-| `local_port` | number | None | Yes | Port on your local machine |
-| `remote_port` | number | None | Yes | Port on the Kubernetes service or pod |
-| `context` | string | None | Yes | Kubernetes context from your kubeconfig |
-| `workload_type` | string | `"service"` | No | Workload type: `"service"`, `"pod"`, `"proxy"` or `"expose"` |
-| `protocol` | string | `"tcp"` | No | Network protocol: `"tcp"` or `"udp"` |
-| `alias` | string | None | No | Name shown in the interface |
-| `remote_address` | string | None | No | Target address for proxy workloads (see [proxy forwarding](/docs/configuration/proxy-forwarding)) |
-| `local_address` | string | `"127.0.0.1"` | No | Local bind address. Use `127.0.0.1` for localhost only and `0.0.0.0` for all interfaces |
-| `auto_loopback_address` | boolean | `false` | No | Adds entries to the hosts file for local domains automatically |
-| `domain_enabled` | boolean | `false` | No | Turns on local domain resolution |
-| `kubeconfig` | string | None | No | Path to a custom kubeconfig file, used instead of the default |
-| `target` | string | None | No | Label selector or pod name for pod workloads |
-| `http_logs_enabled` | boolean | `false` | No | Turns on HTTP traffic logging for this forward |
-| `exposure_type` | string | None | No | For expose workloads: `"internal"` (cluster only) or `"public"` (internet via ingress) |
-| `cert_manager_enabled` | boolean | `false` | No | Turns on automatic TLS certificates through cert-manager (expose workloads) |
-| `cert_issuer` | string | None | No | cert-manager issuer name, e.g. `"letsencrypt-prod"` |
-| `cert_issuer_kind` | string | None | No | cert-manager issuer kind: `"Issuer"` or `"ClusterIssuer"` |
-| `ingress_class` | string | None | No | Ingress class for public expose workloads, e.g. `"nginx"` |
-| `tags` | object | None | No | Labels as `"key": "value"` pairs, or `"key": ""` for a key without a value. They group and filter configurations (see [tags, filters and group by](/docs/configuration/tags-and-views)) |
+| Field | Type | When omitted | Description |
+|-------|------|--------------|-------------|
+| `alias` | string | None | Name shown in the interface. Required for `expose`. If you save a config without one, the desktop app sets `<workload type>-<protocol>-<local port>`. With `domain_enabled`, the alias is also the local domain name |
+| `context` | string | None | Kubernetes context from your kubeconfig. Import doesn't check it, so set it explicitly |
+| `kubeconfig` | string | System default | Path to a custom kubeconfig file |
+| `namespace` | string | None | Kubernetes namespace of the workload. Required and can't be empty |
+| `workload_type` | string | None | `"service"`, `"pod"`, `"proxy"` or `"expose"`. Required. See [workload types](/docs/configuration/workload-types) |
+| `service` | string | None | Service name. Required for `service` workloads |
+| `target` | string | None | Pod label selector, for example `app=nginx,tier=frontend`. Required for `pod` workloads |
+| `protocol` | string | None | `"tcp"` or `"udp"`, in lowercase. Import doesn't check it, but a forward with any other value fails to start |
+| `local_port` | number | A free port | Port on your local machine. If you leave it blank or `0` when you save, kftray picks a free port and stores it |
+| `remote_port` | number | None | Container port on the target. Service and pod forwards use the selected pod's container port (see [forwarding behavior](/docs/configuration/port-forwarding#forwarding-behavior)) |
+| `remote_address` | string | None | Destination host or IP for `proxy` workloads, reached from the cluster. Required for `proxy`. Put the port in `remote_port` |
+| `local_address` | string | `127.0.0.1` | Local bind address. See [local addresses](/docs/configuration/port-forwarding#local-addresses-and-domains) |
+| `auto_loopback_address` | boolean | `false` | Gives the config its own address in `127.0.0.2` to `127.0.0.254`. It overrides `local_address` |
+| `domain_enabled` | boolean | `false` | Writes the alias to the hosts file as a local domain for the forward |
+| `http_logs_enabled` | boolean | `false` | Turns on [HTTP logging](/docs/configuration/http-logging) for this forward |
+| `http_logs_max_file_size` | number | 10 MiB | Saved size setting in bytes. See [logging limitations](/docs/configuration/http-logging#config-fields) |
+| `http_logs_retention_days` | number | 7 | Saved retention preference in days |
+| `http_logs_auto_cleanup` | boolean | `true` | Saved cleanup preference, not currently applied by the HTTP logger |
+| `exposure_type` | string | None | For `expose`: `"internal"` (cluster only) or `"public"` (internet through an ingress) |
+| `cert_manager_enabled` | boolean | None | For public `expose`: requests a TLS certificate through cert-manager |
+| `cert_issuer` | string | None | cert-manager issuer name, for example `"letsencrypt-prod"`. Required when `exposure_type` is `public` and `cert_manager_enabled` is `true` |
+| `cert_issuer_kind` | string | None | cert-manager issuer kind: `"Issuer"` or `"ClusterIssuer"` |
+| `ingress_class` | string | None | Ingress class for public `expose`, for example `"nginx"` |
+| `ingress_annotations` | string | None | Extra ingress annotations as a JSON object written inside a string, for example `"{\"nginx.ingress.kubernetes.io/ssl-redirect\":\"true\"}"` |
+| `tags` | object | `{}` | Labels as `"key": "value"` pairs, or `"key": ""` for a key without a value. They group and filter configurations (see [tags, filters and group by](/docs/configuration/tags-and-views)) |
+
+kftray ignores fields it doesn't know. The boolean fields `domain_enabled`, `http_logs_enabled`, `http_logs_auto_cleanup` and `cert_manager_enabled` also accept the strings `"true"` and `"false"`.
+
+`ssl`, the disconnect timeout and the network monitor aren't config fields. They are app settings, stored in the database (see [settings](/docs/interfaces/terminal#application-settings)).
+
+## Required fields
+
+Import checks these rules for each config:
+
+| Workload | Required |
+|----------|----------|
+| All | `namespace` (not empty) and `workload_type` (one of the four values) |
+| `service` | `service` |
+| `pod` | `target` |
+| `proxy` | `remote_address` (no `service` needed) |
+| `expose` | `alias` and `local_port`. With `exposure_type` `public` and `cert_manager_enabled` set to `true`, also `cert_issuer` |
+
+Import also checks that tags are valid, that `http_logs_max_file_size` is between 1 byte and 100 MiB, and that `http_logs_retention_days` is between 1 and 365.
+
+Import doesn't check `protocol`, `context`, `kubeconfig`, `remote_port`, addresses or the ingress fields. Set them anyway, because a bad value fails when you start the forward, not when you import.
 
 ## Minimal configuration
 
 ```json
 {
+  "alias": "postgres",
+  "context": "dev-cluster",
+  "namespace": "default",
+  "workload_type": "service",
   "service": "postgres",
+  "protocol": "tcp",
   "local_port": 5432,
-  "remote_port": 5432,
-  "context": "dev-cluster"
+  "remote_port": 5432
 }
 ```
 
@@ -74,40 +95,128 @@ This creates a TCP forward from `localhost:5432` to the `postgres` service in th
 
 ## Storage location
 
-kftray stores all configurations in a SQLite database at `~/.kftray/kftray.db`. The database keeps your port forwards, connection history and settings across restarts.
+kftray, kftui and the MCP server read their files from one configuration directory. kftray picks the first match:
 
-You don't need to edit this file. The [desktop interface](/docs/interfaces/desktop) and the [terminal interface](/docs/interfaces/terminal) manage configurations for you.
+1. The `KFTRAY_CONFIG` environment variable, used as is.
+2. `$XDG_CONFIG_HOME/kftray`, if `XDG_CONFIG_HOME` is set.
+3. `~/.kftray` in your home directory (`%USERPROFILE%\.kftray` on Windows).
 
-## Sharing configurations
+The same lookup applies on macOS, Linux and Windows. Files in that directory:
 
-### File export and import
+| Path | Content |
+|------|---------|
+| `configs.db` | SQLite database with your configs, settings and view preferences |
+| `http_logs/` | [HTTP logs](/docs/configuration/http-logging), one file per config |
+| `kftray_<date>_<time>.log` | Desktop app logs. A separate `logger-errors.log` collects logger errors |
+| `app.log` | kftui log file, written only with `--logs-to-file` |
 
-Export configurations as JSON files to share with teammates or back up your setup:
+kftray stores the GitHub token in the system keyring, never in a file. It uses the Keychain on macOS. If you set `KFTRAY_CONFIG`, the keyring entry belongs to that directory.
 
-```bash
-# Export from desktop interface: File → Export Configurations
-# Import from desktop interface: File → Import Configurations
-```
+You don't need to edit the database. The [desktop interface](/docs/interfaces/desktop) and the [terminal interface](/docs/interfaces/terminal) manage configurations for you.
 
-The exported JSON is an array of configuration objects:
+<Callout type="info" title="kftui can skip the database">
+When you load configs with `--configs-path`, `--json`, `--stdin`, `--github-url` or `--auto-discover` and you don't pass `--save`, kftui keeps them in an in-memory database. They disappear when kftui exits, and that run never sends crash reports. See [kftui flags](/docs/interfaces/cli).
+</Callout>
+
+## Import and export
+
+### Export to a JSON file
+
+<Tabs items={['Desktop', 'Terminal']}>
+<Tab value="Desktop">
+
+<Steps>
+<Step>
+Open the main menu in the footer.
+</Step>
+<Step>
+Select `Export Local File`.
+</Step>
+<Step>
+Choose a file name and location.
+</Step>
+</Steps>
+
+The file contains all your current configurations.
+
+</Tab>
+<Tab value="Terminal">
+
+Press `e`, pick a folder in the file browser (it opens in the current working directory), type a file name and press `Enter`.
+
+</Tab>
+</Tabs>
+
+The exported JSON is an array of configuration objects. Exports leave out `tags` when it is empty.
 
 ```json
 [
   {
-    "service": "api",
+    "alias": "service-tcp-8080",
+    "context": "kind",
+    "kubeconfig": "/Users/henrique/.kube/config.bkp",
     "local_port": 8080,
-    "remote_port": 80,
-    "context": "prod"
+    "namespace": "argocd",
+    "protocol": "tcp",
+    "remote_port": 8080,
+    "service": "argocd-server",
+    "workload_type": "service"
   },
   {
-    "service": "database",
-    "local_port": 5432,
-    "remote_port": 5432,
-    "context": "prod"
+    "alias": "pod-tcp-8083",
+    "context": "kind",
+    "kubeconfig": "/Users/henrique/.kube/config.bkp",
+    "local_port": 8083,
+    "namespace": "argocd",
+    "protocol": "tcp",
+    "remote_port": 8083,
+    "target": "app.kubernetes.io/component=server",
+    "workload_type": "pod"
+  },
+  {
+    "alias": "proxy-udp-5353",
+    "context": "kind",
+    "kubeconfig": "/Users/henrique/.kube/config.bkp",
+    "local_port": 5353,
+    "namespace": "argocd",
+    "protocol": "udp",
+    "remote_address": "coredns.cluster.local.internal",
+    "remote_port": 5353,
+    "workload_type": "proxy"
+  },
+  {
+    "alias": "proxy-tcp-6443",
+    "context": "kind",
+    "kubeconfig": "/Users/henrique/.kube/config.bkp",
+    "local_port": 8777,
+    "namespace": "argocd",
+    "protocol": "tcp",
+    "remote_address": "test.homelab.cluster.internal",
+    "remote_port": 80,
+    "workload_type": "proxy"
   }
 ]
 ```
 
-### GitHub sync
+### Import from a JSON file
 
-[GitHub sync](/docs/configuration/github-sync) pulls configs from a repository automatically, so your team can share updates without exchanging files.
+Import the file at any time to restore your configurations.
+
+- Desktop: main menu in the footer, then `Import Local File`. The item is disabled while GitHub sync credentials are configured.
+- Terminal: press `i` and pick the file in the browser, or use `--configs-path`, `--json` or `--stdin` (see [kftui flags](/docs/interfaces/cli)).
+
+For ready-made files, see the [examples](/docs/configuration/examples).
+
+### Validation and atomicity
+
+kftray parses and validates every config in the input before it writes anything. Entries with the same identity and remote port are merged first, and the remaining ones are then checked. A missing file, malformed JSON or an invalid config stops the import with nothing changed.
+
+The write step is not one database transaction. Configs are merged one at a time, so a database error part way through can leave some of them imported. Existing configs that match an incoming one are updated in place and keep their ID.
+
+With `kftui --flush`, kftui loads and validates the source first and clears your existing configs only after that succeeds. The clear and the import are separate steps. If a database error hits after the clear, you can end up with an empty or partial set. Back up with an export before you flush.
+
+The TUI import dialog (`i`) merges into your existing configs and has no clear step.
+
+## Sharing configurations
+
+[GitHub sync](/docs/configuration/github-sync) pulls configs from a repository automatically, so your team can share updates without exchanging files. [Auto import](/docs/configuration/auto-import) builds configs from Kubernetes service annotations. The [MCP server](/docs/configuration/mcp-server) can list, create, update, export and import configs for AI clients.

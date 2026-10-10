@@ -27,18 +27,20 @@ kubectl get services -n default
 Launch kftray. The main window opens on start. If it is hidden, click the system tray icon to open it again.
 </Step>
 <Step>
-Click the `+` button or press `Ctrl+N` / `Cmd+N`.
+Click the `+` button in the footer.
 </Step>
 <Step>
 Fill in the configuration form:
 
 | Field | Value |
 |---|---|
-| Service | `my-service` |
+| Workload type | `service` |
+| Context | `my-cluster` |
 | Namespace | `default` |
+| Service | `my-service` |
+| Protocol | `tcp` |
 | Local Port | `8080` |
 | Remote Port | `80` |
-| Protocol | `tcp` |
 | Alias | `web` |
 </Step>
 <Step>
@@ -54,31 +56,25 @@ Create a JSON configuration file:
 ```json
 [
   {
-    "service": "my-service",
+    "alias": "web",
+    "context": "my-cluster",
     "namespace": "default",
+    "service": "my-service",
     "local_port": 8080,
     "remote_port": 80,
-    "context": "my-cluster",
-    "workload_type": "service",
     "protocol": "tcp",
-    "alias": "web"
+    "workload_type": "service"
   }
 ]
 ```
 
-Save it as `config.json`, then import it in kftui:
+Save it as `config.json`, then launch kftui with it:
 
-<Steps>
-<Step>
-Launch `kftui`.
-</Step>
-<Step>
-Press `i` to open the import dialog.
-</Step>
-<Step>
-Navigate to your `config.json` file and press `Enter`.
-</Step>
-</Steps>
+```bash
+kftui --configs-path config.json
+```
+
+The config shows in the "Stopped" table. To keep it for later runs, add `--save`. Then `kftui` with no arguments opens your stored configs. You can also press `i` inside kftui to import a file with the file browser.
 
 </Tab>
 </Tabs>
@@ -100,14 +96,11 @@ A green status indicator means the connection is active.
 Use the arrow keys to move to the `web` config.
 </Step>
 <Step>
-Press `Space` to select it.
-</Step>
-<Step>
 Press `f` to start forwarding.
 </Step>
 </Steps>
 
-The status column changes to "Running".
+The config moves to the "Running" table. Press `f` again to stop it.
 
 </Tab>
 </Tabs>
@@ -131,3 +124,7 @@ kubectl rollout restart deployment/my-service -n default
 ```
 
 kftray briefly shows a reconnection attempt before the status returns to green (running).
+
+If a start doesn't finish within 60 seconds, for example because no pod becomes Ready, it fails. See [port forwarding](/docs/configuration/port-forwarding#troubleshooting) for common problems.
+
+On first start, the desktop app also asks whether it may send crash reports and performance data. Nothing is sent before you answer. See [crash reports](/docs/interfaces/desktop#crash-reports).

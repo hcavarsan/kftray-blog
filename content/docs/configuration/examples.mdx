@@ -1,0 +1,223 @@
+---
+title: Configuration Examples
+description: Ready-to-import configs for service, pod, proxy and expose workloads, with the commands to load them.
+---
+
+These configs cover every [workload type](/docs/configuration/workload-types). Each file in the [examples directory](https://github.com/hcavarsan/kftray/tree/main/examples) holds a JSON array, so you can import it as is. The [configuration reference](/docs/configuration) describes every field.
+
+## Service
+
+### TCP
+
+Forwards `localhost:8080` to `api-service:80` in the `production` namespace.
+
+```json
+[
+  {
+    "alias": "my-api",
+    "service": "api-service",
+    "namespace": "production",
+    "local_port": 8080,
+    "remote_port": 80,
+    "context": "my-k8s-cluster",
+    "workload_type": "service",
+    "protocol": "tcp"
+  }
+]
+```
+
+### UDP
+
+Forwards UDP traffic from `localhost:5353` to `coredns:53` in the `kube-system` namespace.
+
+```json
+[
+  {
+    "alias": "dns-server",
+    "service": "coredns",
+    "namespace": "kube-system",
+    "local_port": 5353,
+    "remote_port": 53,
+    "context": "my-k8s-cluster",
+    "workload_type": "service",
+    "protocol": "udp"
+  }
+]
+```
+
+## Pod
+
+### TCP
+
+Forwards `localhost:8080` to port `80` of a pod that matches the labels `app=nginx,tier=frontend`.
+
+```json
+[
+  {
+    "alias": "app-pod",
+    "target": "app=nginx,tier=frontend",
+    "namespace": "default",
+    "local_port": 8080,
+    "remote_port": 80,
+    "context": "my-k8s-cluster",
+    "workload_type": "pod",
+    "protocol": "tcp"
+  }
+]
+```
+
+### TCP with HTTP logs
+
+Turns on HTTP logging and saves a 20 MiB size setting, 14-day retention and automatic-cleanup preference.
+The current logger doesn't apply those limits. See [HTTP logging](/docs/configuration/http-logging#config-fields) before relying on them.
+
+```json
+[
+  {
+    "alias": "api-debug",
+    "target": "app=backend,version=v2",
+    "namespace": "staging",
+    "local_port": 3000,
+    "remote_port": 8080,
+    "context": "my-k8s-cluster",
+    "workload_type": "pod",
+    "protocol": "tcp",
+    "http_logs_enabled": true,
+    "http_logs_max_file_size": 20971520,
+    "http_logs_retention_days": 14,
+    "http_logs_auto_cleanup": true
+  }
+]
+```
+
+## Proxy
+
+A proxy config needs `remote_address` and `remote_port`. It doesn't need a `service`.
+
+### TCP
+
+Creates a tunnel through the cluster to `postgresql.external.example.com:5432`, reachable on `localhost:5432`.
+
+```json
+[
+  {
+    "alias": "external-db",
+    "remote_address": "postgresql.external.example.com",
+    "namespace": "default",
+    "local_port": 5432,
+    "remote_port": 5432,
+    "context": "my-k8s-cluster",
+    "workload_type": "proxy",
+    "protocol": "tcp"
+  }
+]
+```
+
+### UDP
+
+Tunnels UDP DNS queries from `localhost:5353` to `8.8.8.8:53` through the cluster.
+
+```json
+[
+  {
+    "alias": "dns-proxy",
+    "remote_address": "8.8.8.8",
+    "namespace": "default",
+    "local_port": 5353,
+    "remote_port": 53,
+    "context": "my-k8s-cluster",
+    "workload_type": "proxy",
+    "protocol": "udp"
+  }
+]
+```
+
+## Expose
+
+### Public, with a TLS certificate
+
+Makes the service on `localhost:3000` reachable at `myapp.example.com` through an ingress, with a Let's Encrypt certificate from cert-manager.
+
+```json
+[
+  {
+    "alias": "myapp.example.com",
+    "namespace": "production",
+    "local_port": 3000,
+    "local_address": "localhost",
+    "context": "my-k8s-cluster",
+    "workload_type": "expose",
+    "protocol": "tcp",
+    "domain_enabled": true,
+    "exposure_type": "public",
+    "cert_manager_enabled": true,
+    "cert_issuer": "letsencrypt-prod",
+    "cert_issuer_kind": "ClusterIssuer",
+    "ingress_class": "nginx",
+    "ingress_annotations": "{\"nginx.ingress.kubernetes.io/ssl-redirect\":\"true\"}"
+  }
+]
+```
+
+### Internal, cluster only
+
+Makes the service on `localhost:8080` reachable inside the cluster. kftray creates no public ingress.
+
+```json
+[
+  {
+    "alias": "internal-api",
+    "namespace": "development",
+    "local_port": 8080,
+    "local_address": "localhost",
+    "context": "my-k8s-cluster",
+    "workload_type": "expose",
+    "protocol": "tcp",
+    "domain_enabled": true,
+    "exposure_type": "internal"
+  }
+]
+```
+
+## Several services in one file
+
+The repository also has an `examples/configs.json` file that forwards five tools in a `kind` cluster: Argo CD, Grafana, Alertmanager, Prometheus and Jaeger. Each entry is a `service` workload with its own local port, for example:
+
+```json
+{
+  "alias": "grafana",
+  "context": "kind-kftray-cluster",
+  "kubeconfig": "/Users/henrique/.kube/kind-config-kftray-cluster",
+  "local_port": 13080,
+  "namespace": "monitoring",
+  "protocol": "tcp",
+  "remote_port": 3000,
+  "service": "grafana",
+  "workload_type": "service"
+}
+```
+
+## Load an example
+
+<Tabs items={['Desktop', 'Terminal']}>
+<Tab value="Desktop">
+
+Open the main menu in the footer, select `Import Local File` and pick the JSON file.
+
+</Tab>
+<Tab value="Terminal">
+
+```bash
+# From a local file
+kftui --configs-path /path/to/example.json
+
+# From a GitHub repository (the path is relative to the repository root)
+kftui --github-url https://github.com/hcavarsan/kftray --configs-path examples/service-tcp.json
+```
+
+Add `--save` to keep the configs in the database. Without it, kftui keeps them in memory for that run. See [kftui flags](/docs/interfaces/cli) for every option.
+
+</Tab>
+</Tabs>
+
+Before you start an example, change `context`, `namespace` and the target names to match your cluster.

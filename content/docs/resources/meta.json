@@ -1,4 +1,14 @@
 {
 	"title": "Resources",
-	"pages": ["cli-reference", "architecture"]
+	"pages": [
+		"cli-reference",
+		"architecture",
+		"relay-server",
+		"development",
+		"building-from-source",
+		"contributing",
+		"security",
+		"linux-packaging",
+		"code-of-conduct"
+	]
 }

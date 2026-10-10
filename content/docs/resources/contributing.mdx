@@ -1,0 +1,88 @@
+---
+title: Contributing
+description: Report bugs, suggest features, ask questions and open pull requests for kftray.
+---
+
+Open an issue to report a bug or request a feature. Send code changes through a pull request, or use [GitHub Discussions](https://github.com/hcavarsan/kftray/discussions) for ideas and questions.
+
+## Report bugs or issues
+
+- Check the [Issues](https://github.com/hcavarsan/kftray/issues) page to make sure nobody has reported it already.
+- Click "New Issue" and choose the appropriate template.
+- Fill out all necessary fields with as much information as possible. The more you provide, the more likely the maintainers can help.
+
+For security vulnerabilities, don't open a public issue. Follow [Security](/docs/resources/security#report-a-vulnerability) instead.
+
+## Suggest enhancements
+
+- Look through the [Issues](https://github.com/hcavarsan/kftray/issues) to make sure your suggestion doesn't exist yet.
+- Create a new issue, select the feature request template and describe your idea.
+
+## Pull requests
+
+- Fork the repository and create your branch from `main`.
+- If you add code that should be tested, add tests.
+- Format and lint your code with `mise run format` and `mise run lint`.
+- Write clear, descriptive commit messages.
+- Open a pull request with a clear title and description.
+
+Once the pull request is approved and green, a maintainer adds the `ready-to-merge` label. Mergify then tests the change against the latest `main` and squash merges it. You don't need to rebase your branch unless it conflicts.
+
+## Set up your development environment
+
+KFtray uses [mise](https://mise.jdx.dev) to manage the development environment, so all contributors use the same tool versions.
+
+<Steps>
+<Step>
+Install mise:
+
+```bash
+curl https://mise.run | sh
+```
+
+</Step>
+<Step>
+Clone the repository and set up:
+
+```bash
+git clone https://github.com/hcavarsan/kftray.git
+cd kftray
+mise install        # Install Node.js, pnpm, syft and grype
+mise run setup      # Set up system dependencies
+```
+
+</Step>
+<Step>
+Start developing:
+
+```bash
+mise run dev        # Launch development mode
+```
+
+</Step>
+</Steps>
+
+mise doesn't install Rust. Install the stable toolchain with [rustup](https://rustup.rs). [Development](/docs/resources/development#rust) lists the nightly `rustfmt` and the cargo test tools you also need.
+
+### Common commands
+
+- `mise run dev`: start development mode
+- `mise run build`: build the production app
+- `mise run format`: format all code
+- `mise run lint`: lint with auto-fix
+- `mise run test:back`: run the backend tests
+- `mise run precommit`: run all checks (format, lint, SBOM scan, test)
+
+Run `mise tasks` to see all available commands. The [Development](/docs/resources/development) page documents the full task list and the troubleshooting steps. For build instructions, see [Building from Source](/docs/resources/building-from-source).
+
+## Code of conduct
+
+Participation in the KFtray community is governed by the [Code of Conduct](/docs/resources/code-of-conduct). Read it before you contribute.
+
+## Ask questions
+
+Any developer can ask questions and get help from the community. Create an issue with the `question` tag and the maintainers will get back to you as soon as they can.
+
+## License
+
+KFtray is distributed under the [GPL 3.0 License](https://github.com/hcavarsan/kftray/blob/main/LICENSE).

@@ -54,6 +54,15 @@ To check that the server is running:
 curl http://localhost:3000/health
 ```
 
+The server listens on `127.0.0.1` only and uses these routes:
+
+| Route | Purpose |
+|-------|---------|
+| `POST /mcp` | JSON-RPC requests from the client |
+| `GET /mcp` | Server-sent events stream |
+| `DELETE /mcp` | Ends a session |
+| `GET /health` | Health check |
+
 ## What it can do
 
 The server exposes 16 tools in three areas.
@@ -61,7 +70,7 @@ The server exposes 16 tools in three areas.
 Clients can browse clusters, control port forwards and manage the same saved configs as the desktop and terminal apps. The [examples](#examples) show tool calls for each task.
 
 <Callout type="info" title="Shared state">
-The MCP server, desktop app and terminal app share `~/.kftray/kftray.db`. Each interface shows configs and forwards created through the others.
+The MCP server, desktop app and terminal app share one database, `configs.db` in the [configuration directory](/docs/configuration#storage-location) (`~/.kftray` by default). Each interface shows configs and forwards created through the others.
 </Callout>
 
 ## Examples
@@ -150,14 +159,13 @@ Every tool accepts an optional `kubeconfig` parameter. `list_pods` also accepts 
 
 | Tool | Required args | Returns |
 |------|--------------|---------|
-| `start_port_forward` | `config_id`, or `namespace` + `remote_port` | local port, remote port, config ID |
+| `start_port_forward` | `config_id`, or `context` + `namespace` + `remote_port` for a new forward | local port, remote port, config ID |
 | `stop_port_forward` | `config_id` | service name, namespace |
 | `stop_all_port_forwards` | | count of stopped forwards |
 | `list_active_port_forwards` | | list of active forwards with config ID, service, namespace, ports, protocol, alias |
 
-Without `config_id`, a new forward also accepts:
+Without `config_id`, a new forward also needs `service` for a service workload or `target` (a label selector) for a pod workload. It also accepts:
 
-- `context`, `service` and `target`.
 - `local_port` and `protocol` (`tcp` or `udp`).
 - `workload_type` (`service`, `pod` or `proxy`).
 - `kubeconfig` and `alias`.
@@ -166,13 +174,17 @@ Without `config_id`, a new forward also accepts:
 
 | Tool | Required args | Returns |
 |------|--------------|---------|
-| `list_configs` | | configs with ID, alias, service, namespace, ports, protocol |
+| `list_configs` | | configs with ID, alias, service, namespace, ports, protocol. Takes an optional `filters` list |
 | `get_config` | `config_id` | full config details |
-| `create_config` | `context`, `namespace`, `remote_port` | config ID |
+| `create_config` | `context`, `namespace`, `remote_port`, plus `service`, `target` or `remote_address` for a service, pod or proxy workload | config ID |
 | `update_config` | `config_id` | success status |
 | `delete_config` | `config_id` | success status |
 | `export_configs` | | all configs as JSON |
 | `import_configs` | `configs_json` | success status |
+
+`list_configs` takes `filters`, a list of conditions that must all match. Each condition is `field=value[,value...]`, or a bare `field` for "is set". The fields are `context`, `namespace`, `kubeconfig`, `workload_type`, `protocol` and `tag:<key>`. For example, `["tag:team=payments"]`, `["namespace=api,web"]` or `["tag:pinned"]`.
+
+`create_config` and `update_config` take a `tags` object. Tag keys use lowercase letters, digits, `.`, `_`, `-` and `/`, and an empty string value makes a key-only tag. `update_config` replaces the whole tag map, and `{}` removes all tags. See [tags, filters and group by](/docs/configuration/tags-and-views).
 
 ## Security
 

@@ -1,0 +1,134 @@
+---
+title: Building from Source
+description: Build the kftray desktop app or kftui terminal app from the repository.
+---
+
+kftray uses Tauri with a Rust backend and a React frontend. kftui uses Rust and Ratatui and can be built without the frontend.
+
+## Requirements
+
+Install [Git](https://git-scm.com/) and the stable Rust toolchain through [rustup](https://rustup.rs/).
+For desktop builds, install [mise](https://mise.jdx.dev) to manage the frontend tools and build tasks:
+
+```bash
+curl https://mise.run | sh
+rustup toolchain install stable
+```
+
+Clone the repository:
+
+```bash
+git clone https://github.com/hcavarsan/kftray.git
+cd kftray
+```
+
+## Desktop app
+
+From the repository root, install the tools and dependencies:
+
+```bash
+mise install
+mise run setup
+```
+
+`mise install` installs Node.js 26, pnpm 12 and the Syft and Grype security tools. It does not install Rust.
+`mise run setup` installs platform dependencies and pnpm packages, including the Tauri CLI.
+
+Start the development app:
+
+```bash
+mise run dev
+```
+
+Build the production app:
+
+```bash
+mise run build
+```
+
+### Platform dependencies
+
+The setup task detects Linux, macOS or Windows and installs the dependencies for that platform.
+
+| Platform | Dependencies |
+|---|---|
+| Linux | WebKitGTK 4.1, build tools, OpenSSL, Ayatana AppIndicator and librsvg development packages |
+| macOS | Xcode Command Line Tools and Homebrew |
+| Windows | Microsoft C++ Build Tools and WebView2 Runtime |
+
+Linux setup supports Debian, Ubuntu, Fedora, Arch and openSUSE. Package names differ by distribution.
+See [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/) for manual platform setup.
+
+### Without mise
+
+Install Node.js 26 and the platform prerequisites, then run:
+
+```bash
+npm install -g pnpm@12
+pnpm install
+pnpm tauri dev
+```
+
+For a production build:
+
+```bash
+pnpm tauri build
+```
+
+### Standalone Cargo build
+
+Build the frontend before compiling a desktop binary directly with Cargo:
+
+```bash
+pnpm install
+pnpm build
+cargo build --release --bin kftray-helper
+cargo build --release --bin kftray
+./target/release/kftray
+```
+
+The Rust build script can create an empty `frontend/dist` so Rust checks can run without frontend assets.
+A working desktop binary needs the built assets, including `index.html` and `logs.html`.
+
+## Terminal app
+
+From the repository root:
+
+```bash
+cargo build --release --bin kftui
+./target/release/kftui
+```
+
+For a development build:
+
+```bash
+cargo run --bin kftui
+```
+
+The release binary is in `target/release/`. On Windows, it is `target/release/kftui.exe`.
+If a build reports an unsupported Rust version, update the stable toolchain with `rustup update stable`.
+
+## Checks and build tasks
+
+Install nightly `rustfmt` for `mise run format:back`. Backend coverage tests also need `cargo-llvm-cov` and `cargo-nextest`:
+
+```bash
+rustup toolchain install nightly --profile minimal --component rustfmt
+cargo install --locked cargo-llvm-cov cargo-nextest
+```
+
+| Command | Purpose |
+|---|---|
+| `mise run build:ui` | Build the frontend only |
+| `mise run build:analyze` | Build with bundle analysis |
+| `mise run format` | Format frontend and backend code |
+| `mise run lint` | Run lint checks with automatic fixes |
+| `mise run check` | Check TypeScript types |
+| `mise run test:back` | Run backend tests |
+| `mise run test:server` | Run Docker proxy tests |
+| `mise run precommit` | Run formatting, lint, SBOM scans and backend tests |
+| `mise run precommit:hook` | Format, run `cargo check` and stage tracked changes |
+| `mise run generate-icons` | Generate app icons |
+| `mise run knip` | Find unused frontend files, exports and dependencies |
+
+Run `mise tasks` for the current task list. See [development](/docs/resources/development) for the daily workflow and troubleshooting.

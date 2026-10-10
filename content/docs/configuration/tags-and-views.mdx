@@ -5,6 +5,8 @@ description: Use tags, grouping and filters to organize port forwards in the des
 
 Tags let you label configs by team, environment or another value you choose. Use grouping and filters to organize the list and choose which configs appear.
 
+Watch the [tags walkthrough video](https://www.youtube.com/watch?v=bG-o1ZK6gRs) for these features in the app.
+
 kftray saves the view settings, so the desktop app and kftui use the same grouping and filters. By default, they group configs by context without filters.
 
 ## Tags
@@ -142,3 +144,10 @@ kftui --group-by tag:team
 With `--auto-start`, kftui starts only matching configurations. When configs come from `--configs-path`, `--json`, `--stdin` or `--github-url`, it starts only the imported configurations that match.
 
 The flags apply to that session only and leave the saved view unchanged. kftui rejects an invalid field or tag key before it starts.
+
+## MCP server
+
+The [MCP server](/docs/configuration/mcp-server) uses the same tags and filter syntax:
+
+- `create_config` and `update_config` take a `tags` map. `update_config` replaces the whole map, and an empty map `{}` removes all tags.
+- `list_configs` takes `filters`, a list of conditions in the `--filter` syntax, for example `["tag:env=dev"]` or `["namespace=api,web"]`. All conditions must match.

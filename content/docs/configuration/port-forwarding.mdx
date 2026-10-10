@@ -1,63 +1,121 @@
 ---
 title: Port Forwarding
-description: Configure TCP and UDP port forwards with automatic reconnection, custom local addresses and workload targeting for Kubernetes services.
+description: Configure TCP and UDP port forwards with automatic reconnection, local addresses, domains, TLS and bulk actions for Kubernetes workloads.
 ---
 
-Port forwarding lets apps on your machine connect to Kubernetes services. kftray manages the connections and reconnects when they drop.
+Port forwarding lets apps on your machine connect to Kubernetes workloads. kftray manages the connections and reconnects when they drop.
 
 ## TCP forwarding
 
 ```json
 {
+  "alias": "Production API",
   "service": "api-gateway",
   "namespace": "production",
   "local_port": 8080,
   "remote_port": 80,
   "context": "prod-cluster",
-  "alias": "Production API"
+  "workload_type": "service",
+  "protocol": "tcp"
 }
 ```
 
 This forwards `localhost:8080` to port `80` on the `api-gateway` service in the `production` namespace. You can reach the service at `http://localhost:8080`.
 
-TCP is the default protocol. It works for HTTP, databases, gRPC and most other services.
+TCP works for HTTP, databases, gRPC and most other services. `service` and `pod` forwards talk to the workload directly through the Kubernetes API, so you don't need `kubectl`.
 
 ## UDP forwarding
 
 ```json
 {
-  "service": "dns-service",
+  "alias": "dns-server",
+  "service": "coredns",
   "namespace": "kube-system",
   "local_port": 5353,
   "remote_port": 53,
   "context": "dev-cluster",
-  "protocol": "udp",
-  "workload_type": "proxy"
+  "workload_type": "service",
+  "protocol": "udp"
 }
 ```
 
-UDP forwarding needs the `kftray-server` proxy component running in your cluster. See [proxy forwarding](/docs/configuration/proxy-forwarding) for setup details.
+Kubernetes port-forward only carries TCP, so kftray sends every UDP forward, and every `proxy` forward, through a `kftray-server` relay pod in your cluster. kftray deploys the relay when you start the forward and removes it when you stop. See [proxy forwarding](/docs/configuration/proxy-forwarding) for details.
 
-<Callout type="info" title="UDP requires proxy mode">
-UDP port forwards must use `"workload_type": "proxy"`, because `kubectl port-forward` only supports TCP. The proxy component routes the UDP traffic.
-</Callout>
+## Forwarding behavior
+
+- Service and pod configurations use the selected pod's container port as `remote_port`. kftray doesn't translate a Service's exposed port a second time. For a pod label target, the desktop app lists each port name and number once, even when several replicas match the label.
+- Service and pod startup waits for a Ready pod during pod recreation. Readiness, named-port resolution and the first connection share a 60-second deadline. If the forward can't connect in that time, the start fails.
+- Proxy configurations use `remote_address` and `remote_port` for the destination reached from the cluster. They don't need a `service` field.
+- Proxy startup waits for the relay's TCP listener instead of using a fixed delay. kftray keeps existing startup probes. An unready sidecar doesn't stop a started relay from forwarding.
+- Expose waits for its server and the reverse WebSocket handshake before it reports success. Kubernetes Service routing can still take time to converge after the Service exists.
+- If you leave the local port blank, kftray picks a free port when you save and stores it. When you edit a running configuration, kftray stops it, saves it and restarts it on the stored port.
+- A busy configuration can't start another operation until its current one finishes. Pressing start twice doesn't send a duplicate operation.
+- Stopping a configuration cancels its recovery first, then releases its listeners and Kubernetes resources.
 
 ## Automatic reconnection
 
-kftray monitors all active port forwards and reconnects automatically when:
+kftray follows the target pods through the Kubernetes watch API. When the connected pod goes away, kftray reconnects to a healthy pod without polling. It recovers from:
 
-- Network connectivity drops
-- Pods restart or Kubernetes reschedules them
-- The Kubernetes API server is briefly unavailable
-- The forwarded service scales or updates
+- Pods that restart or that Kubernetes reschedules
+- Scaling or updates of the forwarded workload
+- Network drops, sleep and wake. The network monitor setting controls this, and it is on by default
 
-Reconnection uses exponential backoff. The wait starts at 1 second and doubles up to 30 seconds between attempts. The interface shows connection status while it reconnects.
+The interface shows which pod you are connected to and the connection status while kftray reconnects.
 
-See [Workload Types](/docs/configuration/workload-types) to choose between service, pod, proxy and expose modes.
+Relay-backed forwards (UDP and proxy) recover on their own schedule. kftray makes up to five attempts, waiting 2, 4, 8, 16 and 32 seconds between them.
+
+## Local addresses and domains
+
+By default a forward binds to `127.0.0.1`. Set `local_address` to bind another address. Use `0.0.0.0` to accept connections on all interfaces.
+
+- `auto_loopback_address` gives each forward its own address between `127.0.0.2` and `127.0.0.254`, so several forwards can use the same local port. It overrides `local_address`.
+- `domain_enabled` writes the alias to the system hosts file, so you can reach the forward by name.
+
+An explicit `local_address` must be available for binding on your machine. With automatic allocation off, startup binds that address directly.
+
+Hosts-file changes and loopback setup can need administrator access. In the desktop app, kftray asks first when a start needs it and `kftray-helper` isn't running:
+
+- Install helper: one administrator prompt installs `kftray-helper`, and later starts need none. You can also install or remove the helper from the footer menu.
+- Continue without: the system asks for administrator access for each change. It uses `pkexec` on Linux, an admin prompt on macOS or UAC on Windows. Tick `Don't ask again` to always take this path. kftray stops asking once the helper is installed.
+- Cancel: nothing starts.
+
+If a start fails because administrator access was refused, the same dialog shows the error. `Retry without` repeats the start.
+
+In kftui, use `--alias-as-domain` and `--auto-loopback` with `--auto-discover` to turn these on for discovered configs. Hosts file updates vary by operating system.
+
+## Automatic TLS
+
+Turn on SSL/TLS in the settings to serve your forwards over HTTPS on their local ports. In the desktop app, use `Settings > SSL/HTTPS`. In kftui, press `s` and use the `SSL/TLS` row. For one kftui run, pass `--ssl`. That flag also turns the setting on and installs the certificate authority (CA).
+
+- kftray creates a local CA and a certificate signed by it. The certificate covers `localhost`, `127.0.0.1`, `::1`, your configured local addresses and your aliases (as `alias` and `alias.local`).
+- The certificate validity is 365 days by default. In kftui you can set 1 to 3650 days. The CA itself is valid for 10 years.
+- Install the CA into the system trust store so browsers accept the certificate. You may need to restart your browser afterward. If automatic installation fails, trust the certificate manually.
+- kftray regenerates a certificate that is missing, expired or doesn't cover a domain. It also regenerates after you add, update or import configs.
+- TLS ends at the local listener, then traffic goes to Kubernetes. Plain HTTP on the same port redirects to HTTPS. UDP forwards get no TLS.
+
+TLS for the [expose](/docs/configuration/workload-types#expose-reverse-tunneling) workload on a public ingress is separate. It uses cert-manager.
+
+## Automatic disconnect
+
+The disconnect timeout is an app setting. Set it in `Settings > Auto-disconnect Timeout` in the desktop app, or in the `Timeout` and `Minutes` rows of the kftui settings. The default of `0` turns it off. When it is set, kftray stops each forward that many minutes after it starts.
+
+## Bulk actions
+
+- With rows selected, the desktop toolbar shows `Start Selected` and `Stop Selected`. They act only on selected rows that the current search and filters show.
+- `Start All` starts the shown configurations. `Stop All` stops every running configuration, shown or not, and also stops expose tunnels.
+- Bulk actions run independent configurations concurrently in bounded batches. A failed configuration is reported and doesn't block the rest of the batch.
+- During a bulk action, the cancel button discards queued operations. Operations already in progress finish normally.
+- In kftui, quitting cancels queued operations, waits for active ones and stops the forwards before it exits.
+
+## Troubleshooting
 
 <Callout type="warn" title="Port conflicts">
-If the local port is already in use, kftray won't start the forward. Find the conflicting process with `lsof -i :PORT` on macOS or Linux, or `netstat -ano | findstr :PORT` on Windows.
+If the local port is already in use, kftray won't start the forward. Find the conflicting process with `lsof -i :PORT` on macOS or Linux, or `netstat -ano | findstr :PORT` on Windows. Or leave the local port blank to let kftray choose one.
 </Callout>
+
+- A start that times out after 60 seconds usually means no pod became Ready, or a named port doesn't resolve on the selected pods. Check the pod status with `kubectl get pods -n NAMESPACE`.
+- A start that fails with an administrator access error needs the helper or an approval in the system prompt (see [local addresses](#local-addresses-and-domains)).
+- A start that you cancel and whose rollback can't finish is reported as `cleanup_incomplete`. It can leave a relay pod, a loopback alias or a hosts entry behind. Check the [server resources](/docs/interfaces/desktop#server-resources) view and your hosts file.
 
 ## Practical examples
 
@@ -65,11 +123,14 @@ If the local port is already in use, kftray won't start the forward. Find the co
 
 ```json
 {
+  "alias": "Staging Frontend",
   "service": "frontend",
+  "namespace": "default",
   "local_port": 3000,
   "remote_port": 3000,
   "context": "staging",
-  "alias": "Staging Frontend"
+  "workload_type": "service",
+  "protocol": "tcp"
 }
 ```
 
@@ -79,12 +140,14 @@ Open `http://localhost:3000` to test changes against staging before they reach p
 
 ```json
 {
+  "alias": "Production MySQL",
   "service": "mysql",
   "namespace": "databases",
   "local_port": 3306,
   "remote_port": 3306,
   "context": "prod-cluster",
-  "alias": "Production MySQL"
+  "workload_type": "service",
+  "protocol": "tcp"
 }
 ```
 
@@ -95,24 +158,36 @@ Point your local database client at `localhost:3306` to query production data. U
 ```json
 [
   {
+    "alias": "auth",
     "service": "auth-service",
+    "namespace": "default",
     "local_port": 8001,
     "remote_port": 8080,
-    "context": "dev"
+    "context": "dev",
+    "workload_type": "service",
+    "protocol": "tcp"
   },
   {
+    "alias": "users",
     "service": "user-service",
+    "namespace": "default",
     "local_port": 8002,
     "remote_port": 8080,
-    "context": "dev"
+    "context": "dev",
+    "workload_type": "service",
+    "protocol": "tcp"
   },
   {
+    "alias": "payments",
     "service": "payment-service",
+    "namespace": "default",
     "local_port": 8003,
     "remote_port": 8080,
-    "context": "dev"
+    "context": "dev",
+    "workload_type": "service",
+    "protocol": "tcp"
   }
 ]
 ```
 
-Forward several services at once to debug how they talk to each other. Give each service its own local port.
+Forward several services at once to debug how they talk to each other. Give each service its own local port. See [examples](/docs/configuration/examples) for more configs and [workload types](/docs/configuration/workload-types) to choose between service, pod, proxy and expose modes.

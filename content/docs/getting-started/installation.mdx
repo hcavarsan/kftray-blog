@@ -17,12 +17,12 @@ brew tap hcavarsan/kftray
 brew install --cask kftray
 ```
 
-Or download `kftray_universal.dmg` from the [latest release](https://github.com/hcavarsan/kftray/releases/latest). The universal binary runs on both Intel and Apple Silicon.
+Or download the versioned `.dmg` from the [downloads page](/downloads). The universal binary runs on Intel and Apple Silicon.
 
 </Tab>
 <Tab value="Linux">
 
-On Debian, Ubuntu, Fedora and openSUSE, you can install the `kftray` package from the [package repositories](#linux-packages) below.
+On Debian, Ubuntu, Fedora, openSUSE and Arch Linux, install the `kftray` package from the [package repositories](#linux-packages) below.
 
 To install with Homebrew:
 
@@ -31,31 +31,29 @@ brew tap hcavarsan/kftray
 brew install kftray-linux
 ```
 
-Or download the AppImage from the [latest release](https://github.com/hcavarsan/kftray/releases/latest):
+Homebrew prints caveats with instructions for making the app available in your applications menu.
 
-- `kftray_amd64.AppImage` for x86_64 systems
-- `kftray_aarch64.AppImage` for ARM64 systems
+Or download an AppImage from the [downloads page](/downloads). Choose `amd64` for x86_64 or `aarch64` for ARM64.
+For Ubuntu 24.04 and newer distributions, use the `newer-glibc` build.
 
-Make it executable, then run it:
+Make the downloaded file executable and run it, replacing the filename with the one you downloaded:
 
 ```bash
-chmod +x kftray_amd64.AppImage
-./kftray_amd64.AppImage
+chmod +x ./kftray_0.30.3_amd64.AppImage
+./kftray_0.30.3_amd64.AppImage
 ```
 
-<Callout type="warn" title="GNOME Users">
-The system tray icon needs AppIndicator support. Install the [AppIndicator extension](https://extensions.gnome.org/extension/615/appindicator-support/) so the icon appears. KDE, XFCE and i3 include tray support by default.
-</Callout>
+kftray uses StatusNotifierItem (SNI) for the Linux tray. KDE, Cinnamon, MATE, XFCE, LXQt and Unity provide an SNI host.
+On GNOME, install the [AppIndicator and KStatusNotifierItem Support extension](https://extensions.gnome.org/extension/615/appindicator-support/).
+Without an SNI host, kftray opens as a regular window and switches to the tray when a host becomes available.
+See [app mode](/docs/interfaces/desktop#app-mode) for window behavior.
+
+AppImage updates restart from the updated file. If an older version repeats the update prompt, quit it completely and reopen the AppImage once.
 
 </Tab>
 <Tab value="Windows">
 
-Download the installer from the [latest release](https://github.com/hcavarsan/kftray/releases/latest):
-
-- `kftray_x64-setup.exe` for standard x86_64 systems
-- `kftray_arm64-setup.exe` for ARM64 devices, such as Surface Pro X
-
-The installer sets up `PATH` and creates Start Menu entries automatically.
+Download the Windows installer from the [downloads page](/downloads). Choose `x64`, `arm64` or `x86` to match your system.
 
 </Tab>
 </Tabs>
@@ -82,16 +80,12 @@ This needs a working Rust toolchain. If you don't have one, see [rustup.rs](http
 </Tab>
 <Tab value="Linux Packages">
 
-Add the [package repository](#linux-packages) for your distribution, then run:
-
-```bash
-sudo apt install kftui     # Debian and Ubuntu
-sudo dnf install kftui     # Fedora
-sudo zypper install kftui  # openSUSE
-```
+Add the [package repository](#linux-packages) for your distribution. That section includes the install command for each package manager.
 
 </Tab>
 <Tab value="Installer Script">
+
+The installer needs `curl` or `wget`. On Linux, macOS or WSL, run it from Bash:
 
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/hcavarsan/kftray/main/hacks/kftui_installer.sh)
@@ -101,6 +95,18 @@ Or with `wget`:
 
 ```bash
 bash <(wget -qO- https://raw.githubusercontent.com/hcavarsan/kftray/main/hacks/kftui_installer.sh)
+```
+
+From Fish, pipe the script to Bash:
+
+```fish
+curl -s https://raw.githubusercontent.com/hcavarsan/kftray/main/hacks/kftui_installer.sh | bash
+```
+
+Or use `wget`:
+
+```fish
+wget -qO- https://raw.githubusercontent.com/hcavarsan/kftray/main/hacks/kftui_installer.sh | bash
 ```
 
 The script installs `kftui` to `/usr/local/bin/`, which needs `sudo` for the system-wide install.
@@ -119,23 +125,27 @@ Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw
 
 ### Manual Binary Downloads
 
-If your network blocks the installer scripts, download the binaries from the [latest release](https://github.com/hcavarsan/kftray/releases/latest):
+Use the [downloads page](/downloads) to select an app, operating system and CPU architecture.
+The [release page](https://github.com/hcavarsan/kftray/releases/latest) also lists the downloadable files.
 
-| Platform | Desktop | Terminal |
-|---|---|---|
-| macOS (Universal) | `kftray_universal.dmg` | `kftui_macos_universal` |
-| Linux x86_64 | `kftray_amd64.AppImage` | `kftui_amd64` |
-| Linux ARM64 | `kftray_aarch64.AppImage` | `kftui_arm64` |
-| Windows x64 | `kftray_x64-setup.exe` | `kftui_x86_64.exe` |
-| Windows ARM64 | `kftray_arm64-setup.exe` | None |
+Desktop filenames include the release version. Terminal binaries use these names:
+
+| Platform | Terminal binary |
+|---|---|
+| macOS (Universal) | `kftui_macos_universal` |
+| Linux x86_64 | `kftui_linux_amd64` |
+| Linux ARM64 | `kftui_linux_arm64` |
+| Windows x64 | `kftui_windows_x86_64.exe` |
+| Windows x86 | `kftui_windows_x86.exe` |
+| Windows ARM64 | `kftui_windows_arm64.exe` |
 
 ## Linux Packages
 
-Each release publishes `kftray` and `kftui` packages for Debian, Ubuntu, Fedora and openSUSE through the [openSUSE Build Service](https://build.opensuse.org/project/show/home:hencavarsan:kftray). Add the repository once and install either package with your package manager. Updates arrive with regular system upgrades.
+Each release publishes `kftray` and `kftui` packages for Debian, Ubuntu, Fedora, openSUSE and Arch Linux through the [openSUSE Build Service](https://build.opensuse.org/project/show/home:hencavarsan:kftray). Add the repository once and install either package with your package manager. Updates arrive with regular system upgrades.
 
 The commands below install `kftui`. Replace it with `kftray` for the desktop app.
 
-<Tabs items={['Debian / Ubuntu', 'Fedora', 'openSUSE']}>
+<Tabs items={['Debian / Ubuntu', 'Fedora', 'openSUSE', 'Arch Linux']}>
 <Tab value="Debian / Ubuntu">
 
 Replace `Debian_12` with `Debian_13`, `Ubuntu_22.04`, `Ubuntu_24.04` or `Ubuntu_26.04` as needed:
@@ -170,9 +180,22 @@ sudo zypper install kftui
 ```
 
 </Tab>
+<Tab value="Arch Linux">
+
+The Arch repository supports x86_64:
+
+```bash
+curl -fsSL https://download.opensuse.org/repositories/home:/hencavarsan:/kftray/Arch/x86_64/home_hencavarsan_kftray_Arch.key -o /tmp/kftray.key
+sudo pacman-key --add /tmp/kftray.key
+sudo pacman-key --lsign-key "$(gpg --with-colons --show-keys /tmp/kftray.key | awk -F: '$1 == "fpr" { print $10; exit }')"
+printf '\n[home_hencavarsan_kftray_Arch]\nServer = https://download.opensuse.org/repositories/home:/hencavarsan:/kftray/Arch/$arch\n' | sudo tee -a /etc/pacman.conf
+sudo pacman -Syu kftui
+```
+
+</Tab>
 </Tabs>
 
-The packages use the signing key for `home:hencavarsan:kftray`. The `.repo` files reference that key, and the apt source pins it with `signed-by`.
+The packages use the signing key for `home:hencavarsan:kftray`. The `.repo` files reference it, apt pins it with `signed-by` and pacman trusts it after `pacman-key --lsign-key`.
 
 The `kftray` package ships the AppImage and depends on `fuse3`. The `kftui` package depends on `libdbus-1`.
 
@@ -181,7 +204,7 @@ The `kftray` package ships the AppImage and depends on `fuse3`. The `kftui` pack
 <Tabs items={['Desktop', 'Terminal']}>
 <Tab value="Desktop">
 
-Launch kftray from your applications menu. The main window opens and a system tray icon (a small Kubernetes logo) appears. The window hides when it loses focus, so click the icon to open it again.
+Launch kftray from your applications menu or open the AppImage. Check [app mode](/docs/interfaces/desktop#app-mode) if the tray icon is unavailable or you prefer a regular window.
 
 </Tab>
 <Tab value="Terminal">
@@ -190,19 +213,16 @@ Launch kftray from your applications menu. The main window opens and a system tr
 kftui
 ```
 
-You should see a text-based interface with an empty configuration list and keyboard shortcuts at the bottom. Press `Ctrl+C` to exit.
+Restart your terminal after installation and run `kftui`. The configuration list and keyboard shortcuts appear. Press `Ctrl+C` to exit.
 
 </Tab>
 </Tabs>
 
 ## Configuration Storage
 
-Both interfaces store data in `~/.kftray/`:
+Both apps use the same SQLite configuration database. See [configuration storage](/docs/configuration#storage-location) for database and log paths, including `KFTRAY_CONFIG` and `XDG_CONFIG_HOME` overrides.
 
-| File | Purpose |
-|---|---|
-| `kftray.db` | SQLite database with all configurations and state |
-| `app.log` | Application logs |
-| `http_logs/` | HTTP traffic captures (when enabled) |
+## Building from source
 
-Both interfaces share this directory, so configurations created in one appear instantly in the other.
+See [building from source](/docs/resources/building-from-source) for desktop and terminal build commands.
+To verify downloaded artifacts, follow the [security guide](/docs/resources/security).

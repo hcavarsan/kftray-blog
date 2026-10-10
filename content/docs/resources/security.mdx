@@ -1,0 +1,138 @@
+---
+title: Security
+description: Report vulnerabilities and verify kftray release artifacts, SBOMs and build provenance.
+---
+
+Report vulnerabilities privately and verify release artifacts before using them. See the [security model](/docs/resources/architecture#security-model) for runtime credentials, network binding and elevated permissions.
+
+## Report a vulnerability
+
+Don't report security vulnerabilities through public GitHub issues. Use [GitHub Private Vulnerability Reporting](https://github.com/hcavarsan/kftray/security/advisories/new) instead. You'll get a response within 48 hours.
+
+Include:
+
+- A description of the vulnerability
+- Steps to reproduce
+- Affected versions
+- Potential impact
+
+The maintainers coordinate disclosure timing with reporters and prefer at least 90 days before public disclosure.
+
+## Supported versions
+
+Security fixes target the [latest stable release](https://github.com/hcavarsan/kftray/releases/latest). Update to that release before checking whether a reported vulnerability affects your installation.
+
+## Release scanning
+
+Releases are blocked if the scan finds critical or high severity vulnerabilities. The release workflow runs [Grype](https://github.com/anchore/grype) against the `kftray` SBOM, the `kftui` SBOM and the `kftray-server` image before it publishes.
+
+To run the same scan locally, use the mise task:
+
+```bash
+mise run sbom:scan-all
+```
+
+The task builds the SBOMs for `kftray`, `kftui` and `kftray-server`, scans each one and fails on high or critical findings. It writes `vuln-report-*.json` and `sbom-*.cdx.json` files in the repository root. `mise run precommit` runs it too. See [Development](/docs/resources/development#available-tasks) for the other tasks.
+
+[Renovate](https://docs.renovatebot.com/) opens the dependency updates, including the pinned versions of Syft and Grype in `.mise.toml`.
+
+## Security artifacts
+
+Each release includes an SBOM, a Cosign bundle and a vulnerability report for each artifact. The SBOMs use the CycloneDX format. The `mise` tasks build them with Syft, `cargo-cyclonedx` and `sbomasm`.
+
+| Artifact | SBOM | Bundle | Vulnerability report |
+|----------|------|--------|----------------------|
+| `kftray` (desktop) | [`sbom-kftray.cdx.json`](https://github.com/hcavarsan/kftray/releases/latest/download/sbom-kftray.cdx.json) | `sbom-kftray.cdx.json.bundle.json` | [`vuln-report-kftray.json`](https://github.com/hcavarsan/kftray/releases/latest/download/vuln-report-kftray.json) |
+| `kftui` (terminal) | [`sbom-kftui.cdx.json`](https://github.com/hcavarsan/kftray/releases/latest/download/sbom-kftui.cdx.json) | `sbom-kftui.cdx.json.bundle.json` | [`vuln-report-kftui.json`](https://github.com/hcavarsan/kftray/releases/latest/download/vuln-report-kftui.json) |
+| `kftray-server` (Docker) | [`sbom-kftray-server.cdx.json`](https://github.com/hcavarsan/kftray/releases/latest/download/sbom-kftray-server.cdx.json) | `sbom-kftray-server.cdx.json.bundle.json` | [`vuln-report-kftray-server.json`](https://github.com/hcavarsan/kftray/releases/latest/download/vuln-report-kftray-server.json) |
+
+Two more files cover all artifacts:
+
+| File | Description |
+|------|-------------|
+| [`default.vex.openvex.json`](https://github.com/hcavarsan/kftray/releases/latest/download/default.vex.openvex.json) | VEX (vulnerability exploitability) assessments used to suppress findings |
+| `default.vex.openvex.json.bundle.json` | Cosign bundle for the VEX document (signature and certificate) |
+
+The links point to the latest release. Replace `latest/download` with `download/<tag>` for a specific version.
+
+## Verify release artifacts
+
+You need the [GitHub CLI](https://cli.github.com) for attestations and [Cosign](https://docs.sigstore.dev/cosign/overview/) for SBOMs and VEX.
+
+### Build provenance
+
+The release workflow creates GitHub build provenance attestations for the release artifacts and the container image. Check them with `gh attestation verify`:
+Replace `<version>` with the downloaded AppImage's version.
+
+```bash
+# Docker image
+gh attestation verify oci://ghcr.io/hcavarsan/kftray-server:latest --owner hcavarsan
+
+# CLI binary
+gh attestation verify kftui_linux_amd64.tar.gz --owner hcavarsan
+
+# Desktop app
+gh attestation verify 'kftray_<version>_amd64.AppImage' --owner hcavarsan
+```
+
+### SBOM signatures
+
+The SBOMs and the VEX document are signed with Cosign keyless signing and the v3 bundle format. This example verifies the `kftray` SBOM:
+
+```bash
+curl -LO https://github.com/hcavarsan/kftray/releases/latest/download/sbom-kftray.cdx.json
+curl -LO https://github.com/hcavarsan/kftray/releases/latest/download/sbom-kftray.cdx.json.bundle.json
+
+cosign verify-blob \
+  --bundle sbom-kftray.cdx.json.bundle.json \
+  --certificate-identity-regexp "https://github.com/hcavarsan/kftray" \
+  --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+  sbom-kftray.cdx.json
+```
+
+Replace `kftray` with `kftui` or `kftray-server` to verify the other SBOMs.
+
+### VEX signature
+
+```bash
+curl -LO https://github.com/hcavarsan/kftray/releases/latest/download/default.vex.openvex.json
+curl -LO https://github.com/hcavarsan/kftray/releases/latest/download/default.vex.openvex.json.bundle.json
+
+cosign verify-blob \
+  --bundle default.vex.openvex.json.bundle.json \
+  --certificate-identity-regexp "https://github.com/hcavarsan/kftray" \
+  --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+  default.vex.openvex.json
+```
+
+### Linux packages
+
+The Debian, Ubuntu, Fedora, openSUSE and Arch Linux packages come from the [openSUSE Build Service](https://build.opensuse.org/project/show/home:hencavarsan:kftray) and are signed with the project key of `home:hencavarsan:kftray`. The `.repo` files reference that key, the apt source pins it with `signed-by` and pacman trusts it after `pacman-key --lsign-key`. See [Installation](/docs/getting-started/installation#linux-packages) and [Linux packaging](/docs/resources/linux-packaging).
+
+## Container image
+
+The `kftray-server` image has these properties:
+
+| Property | Value |
+|----------|-------|
+| Base image | `scratch`, with only the statically linked `kftray-server` binary |
+| User | Non-root (`65532:65532`) |
+| Shell | None |
+| Architectures | `linux/amd64`, `linux/arm64` |
+
+See [Relay Server](/docs/resources/relay-server) for the image configuration.
+
+## Build integrity
+
+The release workflow builds on GitHub Actions hosted runners and generates provenance with `actions/attest-build-provenance`. GitHub creates the attestation with its Sigstore-based attestation service. The project documents this setup as meeting [SLSA](https://slsa.dev) Level 2 build requirements:
+
+| Requirement | Evidence |
+|-------------|----------|
+| Build service | GitHub Actions (hosted runners) |
+| Signed provenance | `actions/attest-build-provenance` |
+| Non-forgeable | GitHub's Sigstore-based attestation |
+| Service-generated | Provenance generated by GitHub, not by the user |
+
+## Acknowledgments
+
+The maintainers acknowledge reporters after coordinated disclosure.

@@ -15,14 +15,38 @@ kftray and kftui share a config database and port-forwarding code. Each app trac
 | `kftui` | Ratatui terminal interface and keyboard navigation |
 | `kftray-mcp` | MCP server for port-forwarding operations over HTTP with JSON-RPC |
 | `kftray-helper` | Helper for binding low ports and changing the hosts file with elevated permissions |
-| `kftray-server` | In-cluster proxy that carries UDP traffic over TCP |
+| `kftray-server` | In-cluster [relay server](/docs/resources/relay-server) for UDP, proxy and expose traffic |
 | `kftray-http-logs` | HTTP request and response parsing and logging |
 
 The [desktop](/docs/interfaces/desktop) and [terminal](/docs/interfaces/terminal) apps read the same saved configs. The [MCP server](/docs/configuration/mcp-server) uses that database too.
 
+## Forwarding lifecycle
+
+The tools share a Rust core that handles all Kubernetes interaction. A forward goes through these steps:
+
+<Steps>
+<Step>
+Config management: load port-forward configs from local files, GitHub or Kubernetes annotations.
+</Step>
+<Step>
+Pod discovery: find target pods with label selectors or service definitions.
+</Step>
+<Step>
+Connection setup: open a WebSocket connection to the Kubernetes API.
+</Step>
+<Step>
+Traffic relay: forward traffic between local ports and pod ports.
+</Step>
+<Step>
+Health monitoring: watch for pod changes and reconnect when needed.
+</Step>
+</Steps>
+
+For UDP, or when you need to reach external services, kftray deploys a small relay pod in your cluster to do the forwarding. See [relay server](/docs/resources/relay-server).
+
 ## Shared state
 
-kftray stores configs in SQLite at `~/.kftray/kftray.db`:
+kftray stores configs in `configs.db` inside the [configuration directory](/docs/configuration#storage-location). The default location is `~/.kftray/configs.db` when no path override is set:
 
 ```sql
 -- Simplified schema
@@ -52,15 +76,25 @@ This follows the same path as `kubectl port-forward`, with comparable performanc
 
 See [port forwarding configuration](/docs/configuration/port-forwarding) for examples.
 
+## Proxy TCP forwarding architecture
+
+Proxy forwarding adds the `kftray-server` pod between your local app and the upstream server. The local TCP connection goes to the `kftray-server` pod, which sends the TCP packets on to the upstream server:
+
+![The application opens a socket to kftray-server in the Kubernetes pod. The server relays the TCP packet to the remote service. The remote service responds and the pod returns the TCP packet to the application.](/diagrams/proxy-tcp-forwarding.png)
+
+See [proxy forwarding](/docs/configuration/proxy-forwarding) for configs and use cases.
+
 ## UDP forwarding architecture
 
 Kubernetes port-forward only supports TCP. To forward UDP, kftray converts packets to TCP and sends them to an in-cluster proxy:
 
 ![kftray carries UDP traffic over TCP to the kftray-server proxy. The proxy converts it back to UDP for the target service. Responses follow the reverse path.](/diagrams/udp-forwarding.png)
 
+kftray opens a local UDP socket and connects a local TCP socket to the `kftray-server` pod. The TCP socket sends the UDP packets over TCP, and the server forwards them to the upstream server.
+
 kftray deploys `kftray-server` in the target namespace when you create a UDP forward. It removes the deployment when no UDP forwards remain active.
 
-TCP conversion typically adds 5-20 ms compared to native UDP. See [proxy forwarding](/docs/configuration/proxy-forwarding) for setup details.
+See [proxy forwarding](/docs/configuration/proxy-forwarding) for setup details.
 
 ## Proxy server deployment
 
@@ -217,3 +251,5 @@ The server runs inside the desktop app. `kftray-tauri` starts and stops it based
 | Proxy server | Uses limited Kubernetes role-based access control (RBAC) permissions |
 
 On macOS, signing and verification protect the helper binary against tampering.
+
+For release verification, SBOMs and vulnerability reporting, see [Security](/docs/resources/security).

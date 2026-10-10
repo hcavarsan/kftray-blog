@@ -3,7 +3,11 @@ title: Introduction
 description: Manage Kubernetes port forwards from the desktop or terminal, with automatic reconnection and shared configs.
 ---
 
-kftray is a cross-platform tool for managing Kubernetes port forwards. It adds automatic reconnection, UDP support and team configuration sharing.
+kftray is a cross-platform tool for managing Kubernetes port forwards. It adds automatic reconnection, UDP support, HTTP traffic logs and team configuration sharing.
+
+kftray is the desktop app with tray integration, and kftui is the terminal UI. Both share the same Rust backend and configuration files. They use the Kubernetes watch API to see pods come and go, and they reconnect your forwards without you watching them.
+
+For a tour of the desktop app and the terminal interface, watch the [overview video](https://www.youtube.com/watch?v=j2NnhIIFYHw). The [overview blog post](/blog/kftray-manage-all-k8s-port-forward) covers the background.
 
 ## Why We Built This
 
@@ -11,13 +15,16 @@ We built kftray to handle recurring problems with `kubectl port-forward` during 
 
 <Accordions>
 <Accordion title="Dropped connections">
-When pods restart, the forward stops and you have to reconnect by hand.
+When pods restart or get rescheduled, the forward stops and you have to reconnect by hand.
 </Accordion>
 <Accordion title="No UDP support">
 `kubectl port-forward` only handles TCP, so services like DNS or some message queues are out of reach.
 </Accordion>
 <Accordion title="Terminal sprawl">
 Running several forwards means keeping multiple terminals open or writing shell scripts.
+</Accordion>
+<Accordion title="No traffic visibility">
+You can't see the HTTP requests and responses that flow through the tunnel.
 </Accordion>
 <Accordion title="No team sharing">
 Sharing configuration means passing files around by hand.
@@ -39,10 +46,36 @@ Share port-forward configs as JSON files or through GitHub repositories for new 
 <Card title="UDP services">
 Reach DNS, DHCP and other UDP-based services that `kubectl port-forward` can't.
 </Card>
+<Card title="Webhooks and demos">
+Expose a local server to the cluster or the internet with the [expose workload](/docs/configuration/workload-types#expose-reverse-tunneling), like a reverse tunnel.
+</Card>
 <Card title="MCP server">
 Let external clients manage port forwards through kftray with the [MCP server](/docs/configuration/mcp-server).
 </Card>
 </Cards>
+
+## Features
+
+| Feature | Desktop (`kftray`) | Terminal (`kftui`) |
+|---------|--------------------|--------------------|
+| Auto-reconnection when pods restart | Yes | Yes |
+| Multiple forwards, started and stopped together | Yes | Yes |
+| Direct Kubernetes API access, no `kubectl` needed | Yes | Yes |
+| TCP and UDP through a cluster proxy relay | Yes | Yes |
+| HTTP traffic logs | Yes | Yes |
+| Pod health tracking (shows which pod you're connected to) | Yes | Yes |
+| Network recovery after sleep or disconnect | Yes | Yes |
+| GitHub sync | Yes | Yes |
+| Auto import from Kubernetes annotations | Yes | Yes |
+| Custom kubeconfig path | Yes | Yes |
+| Forward timeouts that close a forward after a time limit | Yes | Yes |
+| Hosts file management (updates `/etc/hosts` entries) | Yes | Yes |
+| Automatic SSL certificates for forwards | Yes | Yes |
+| Expose local services (reverse tunnel, like ngrok) | Yes | Yes |
+| System tray integration | Yes | No |
+| Request replay for HTTP logs | No | Yes |
+
+Hosts file updates may need administrator privileges and vary by operating system. HTTP logs and replay can expose sensitive data, so turn them on only when you need them and sanitize what you share.
 
 ## Two Interfaces, One Configuration
 
@@ -56,7 +89,7 @@ kftray comes in two versions that share the same configuration database:
 | Shared features | HTTP traffic logging, GitHub sync, auto import, auto-reconnection, TCP/UDP, expose (reverse tunneling) ||
 | Platform | macOS, Linux, Windows | macOS, Linux, Windows |
 
-Both apps read `~/.kftray/kftray.db`, so you can switch interfaces without copying configs. See the [Desktop Interface](/docs/interfaces/desktop) and [Terminal Interface](/docs/interfaces/terminal) pages for instructions.
+Both apps read `configs.db` in the same [configuration directory](/docs/configuration#storage-location) (`~/.kftray` by default), so you can switch interfaces without copying configs. Set up a port forward in kftray and you see it in kftui. Save something in kftui and it shows up in kftray. See the [Desktop Interface](/docs/interfaces/desktop) and [Terminal Interface](/docs/interfaces/terminal) pages for instructions.
 
 ## Usage at a Glance
 
@@ -64,15 +97,22 @@ You define port forwards as JSON configurations:
 
 ```json
 {
-  "service": "api-gateway",
+  "alias": "gateway",
+  "context": "dev-cluster",
   "namespace": "development",
-  "local_port": 8080,
-  "remote_port": 80,
+  "workload_type": "service",
+  "service": "api-gateway",
   "protocol": "tcp",
-  "alias": "gateway"
+  "local_port": 8080,
+  "remote_port": 80
 }
 ```
 
-Start the forward in either interface. kftray manages the connection and reconnects when pods restart.
+Start the forward in either interface. kftray manages the connection and reconnects when pods restart. You can load configs from:
+
+- Local JSON files
+- GitHub repositories, public or private
+- Kubernetes service annotations
+- The command line (`kftui --json` and `--stdin`)
 
 For the full walkthrough, see the [Quick Start](/docs/getting-started/quick-start).

@@ -1,9 +1,9 @@
 ---
 title: Auto Import
-description: Discover port-forward configurations from Kubernetes service annotations.
+description: Discover port-forward configurations from Kubernetes service annotations in the desktop app and kftui.
 ---
 
-Auto import reads port-forward configurations from Kubernetes service annotations, so you don't need to create them by hand.
+Auto import reads port-forward configurations from Kubernetes service annotations, so you don't need to create them by hand. The configs stay in sync with the service definitions.
 
 ## Annotation format
 
@@ -11,61 +11,75 @@ Auto import reads port-forward configurations from Kubernetes service annotation
 apiVersion: v1
 kind: Service
 metadata:
-  name: api-gateway
-  namespace: production
+  name: monitoring-stack
+  namespace: observability
   annotations:
     kftray.app/enabled: "true"
-    kftray.app/configs: "api-8080-80,admin-8081-8080"
+    kftray.app/configs: "grafana-3000-3000,prometheus-9090-9090,alertmanager-9093-9093"
 spec:
   selector:
-    app: api-gateway
+    app: monitoring
+  ports:
+    - name: grafana
+      port: 3000
+    - name: prometheus
+      port: 9090
+    - name: alertmanager
+      port: 9093
+```
+
+The `kftray.app/configs` annotation defines port forwards in the format `alias-local_port-remote_port`. Separate multiple forwards with commas. The alias and a Service port name can contain hyphens, as in `my-api-8080-http-alt`.
+
+This example creates three configurations. Each one forwards `localhost:<local_port>` to the service's container port.
+
+| Annotation | Value | Description |
+|------------|-------|-------------|
+| `kftray.app/enabled` | `"true"` | Required. Without the exact string `"true"`, kftray skips the service, even if it has a `configs` annotation |
+| `kftray.app/configs` | `"alias-local-remote,..."` | Comma-separated list of port-forward definitions. If you leave it out, kftray creates one config per service port, named after the service, with the same local and remote port |
+
+### Remote port names
+
+`remote_port` can also be a Service port name. kftray then forwards to that port's `targetPort` on the pod, not to the Service's own port.
+
+```yaml
+annotations:
+  kftray.app/enabled: "true"
+  kftray.app/configs: "api-8080-http,admin-8081-admin"
+spec:
   ports:
     - name: http
       port: 80
       targetPort: 8080
     - name: admin
       port: 8080
-      targetPort: 8080
+      targetPort: 9090
 ```
 
-The `kftray.app/configs` annotation defines port forwards in the format `alias-localport-remoteport`. Separate multiple forwards with commas.
+Here `api` forwards `localhost:8080` to container port `8080`, and `admin` forwards `localhost:8081` to container port `9090`. A number in the annotation is used as given, so the Service's exposed port is never translated a second time.
 
-This example creates two configurations:
-
-1. `api`: `localhost:8080` → service port `80`
-2. `admin`: `localhost:8081` → service port `8080`
-
-## Required annotations
-
-| Annotation | Value | Description |
-|------------|-------|-------------|
-| `kftray.app/enabled` | `"true"` | Turns on auto import for this service |
-| `kftray.app/configs` | `"alias-local-remote,..."` | Comma-separated list of port-forward definitions |
+A named `targetPort` is resolved from the container ports of the pods the Service selects. Those pods must declare the same number for that name.
+If they disagree or kftray can't list them, it skips the port and logs a warning.
 
 ## How discovery works
 
-kftray scans services in every namespace you can access for the `kftray.app/enabled: "true"` annotation. For each annotated service, kftray:
+kftray scans services in every namespace you can access. It skips a namespace it can't list and logs the failure. For each service with `kftray.app/enabled: "true"`, kftray:
 
 <Steps>
 <Step>
-Parses the `kftray.app/configs` value.
+Parses the `kftray.app/configs` value. It ignores entries it can't parse.
 </Step>
 <Step>
-Creates a config from the service metadata, your current Kubernetes context and the annotation. The metadata supplies `service` and `namespace`. The annotation supplies `alias`, `local_port` and `remote_port`.
+Creates a TCP `service` config from the service metadata, your Kubernetes context and the annotation. The metadata supplies `service` and `namespace`. The annotation supplies `alias`, `local_port` and `remote_port`.
 </Step>
 <Step>
 Adds the configuration to your local database.
 </Step>
 </Steps>
 
-Discovery runs:
-
-- On kftray startup
-- When you trigger "Discover Services" in the interface
-- Every 10 minutes (desktop interface only)
+Discovery runs when you start it, from the desktop menu or from kftui. kftray doesn't rescan on a timer.
 
 <Callout type="warn" title="RBAC permissions required">
-Auto import needs permission to list services across namespaces. Check your permissions with `kubectl auth can-i list services --all-namespaces`. Cluster-wide discovery may need a `ClusterRole` binding. If you lack list permission for a namespace, type its name in the import dialog.
+Auto import needs permission to list services across namespaces. Check your permissions with `kubectl auth can-i list services --all-namespaces`. Cluster-wide discovery may need a `ClusterRole` binding.
 </Callout>
 
 ## Integration with Helm
@@ -78,28 +92,29 @@ metadata:
   name: {{ include "myapp.fullname" . }}
   annotations:
     kftray.app/enabled: "true"
-    kftray.app/configs: "{{ .Values.kftray.alias }}-{{ .Values.kftray.localPort }}-{{ .Values.service.port }}"
+    kftray.app/configs: "{{ .Values.kftray.alias }}-{{ .Values.kftray.localPort }}-http"
 spec:
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
+    - name: http
+      port: {{ .Values.service.port }}
+      targetPort: 8080
 ```
 
 ```yaml
 # values.yaml
 service:
-  port: 8080
+  port: 80
 
 kftray:
   alias: "myapp"
   localPort: 8080
 ```
 
-Deploy with Helm and kftray discovers the service on its own:
+Deploy with Helm, then run auto import to pick up the service:
 
 ```bash
 helm install myapp ./myapp
-# kftray discovers: myapp-8080-8080
+# auto import creates: myapp-8080-http
 ```
 
 ## Using auto import
@@ -109,34 +124,30 @@ helm install myapp ./myapp
 
 <Steps>
 <Step>
-Open the kftray desktop interface.
+Open the main menu in the footer and select `Auto Import`.
 </Step>
 <Step>
-Click "Discover Services" in the toolbar.
+Select the kubeconfig and the context.
 </Step>
 <Step>
-Select the namespaces to scan, or "All Namespaces".
+Optional: turn on the alias-as-domain or auto address toggles to apply them to every imported config.
 </Step>
 <Step>
-Click "Scan".
-</Step>
-<Step>
-Review discovered configurations.
-</Step>
-<Step>
-Click "Import Selected".
+Click `Import`.
 </Step>
 </Steps>
 
-Discovered configurations show up in your port-forward list right away.
+Discovered configurations show up in your port-forward list.
 
 </Tab>
 <Tab value="Terminal">
 
-Discover annotated services and start their port forwards without opening the TUI:
+In the interface, select `Auto Add` in the top menu (use `←` `→` and `Enter`), then choose a Kubernetes context. kftui creates configurations for all annotated services in that context. In the context list, press `a` to turn alias-as-domain on or off and `d` to turn auto loopback on or off. Press `Enter` to run the discovery.
+
+kftui can also discover services without the interface. This suits scripts and CI jobs where services already carry the annotations:
 
 ```bash
-# Discover and start all annotated services
+# Discover and start all annotated services, and keep them running until Ctrl+C
 kftui --auto-discover --context my-cluster --auto-start --non-interactive
 
 # Save discovered configs to the database for later use
@@ -155,5 +166,9 @@ kftui \
   --non-interactive
 ```
 
+`--auto-discover` needs `--context`. `--kubeconfig`, `--alias-as-domain` and `--auto-loopback` work only with `--auto-discover`. You can't combine `--auto-discover` with another config source. See [kftui flags](/docs/interfaces/cli).
+
 </Tab>
 </Tabs>
+
+Imported configurations merge with existing ones, so running auto import several times doesn't create duplicates.

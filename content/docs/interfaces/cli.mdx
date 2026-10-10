@@ -1,6 +1,6 @@
 ---
 title: CLI Mode and Scripting
-description: Command-line flags, non-interactive mode, scripting and CI/CD integration for kftui.
+description: Command-line flags, config sources, non-interactive mode, scripting and CI/CD integration for kftui.
 ---
 
 kftui accepts command-line flags to load configurations, automate port forwards and run in scripts and pipelines.
@@ -17,16 +17,19 @@ kftui --configs-path config.json --save
 # Load from a GitHub repository
 kftui --github-url https://github.com/team/configs --configs-path env/dev.json
 
+# Merge configs split across several files in the repository
+kftui --github-url https://github.com/team/configs --configs-path env/dev.json,env/shared.json
+
 # Auto-start all forwards on launch
 kftui --configs-path config.json --auto-start
 
 # Non-interactive mode (no TUI, forward and block)
-kftui --json '[{"service":"api","local_port":8080,"remote_port":80,"context":"dev","workload_type":"service","protocol":"tcp","namespace":"default"}]' --auto-start --non-interactive
+kftui --json '[{"alias":"api","service":"api","namespace":"default","local_port":8080,"remote_port":80,"context":"dev","workload_type":"service","protocol":"tcp"}]' --auto-start --non-interactive
 
 # Read configs from stdin
-echo '[...]' | kftui --stdin
+echo '[{"alias":"api",...}]' | kftui --stdin
 
-# Clear existing configs before importing
+# Replace existing configs with the imported ones
 kftui --configs-path config.json --flush
 
 # Only start configs tagged team=payments
@@ -35,20 +38,54 @@ kftui --auto-start --non-interactive --filter tag:team=payments
 
 | Flag | Description |
 |------|-------------|
-| `--configs-path` | Path to JSON configuration file |
-| `--save` | Save imported configs to the local database |
-| `--github-url` | GitHub repository URL for config sync |
-| `--auto-start` | Start all forwards on launch |
-| `--non-interactive` | Run without the terminal interface and keep forwarding until interrupted |
-| `--json` | Inline JSON configuration string |
-| `--stdin` | Read configuration from stdin |
-| `--flush` | Clear existing configs before importing |
-| `--filter` | Only show and start configs that match, e.g. `tag:env=dev` or `namespace=api,web`. You can repeat it, and all conditions must match |
-| `--group-by` | Group this terminal session by `context`, `namespace`, `kubeconfig`, `workload_type`, `protocol`, `tag:<key>` or `none` |
+| `-c`, `--configs-path <PATH>` | Local JSON file, or a path inside the repository when you use `--github-url`. With `--github-url` you can pass several paths separated by commas |
+| `-g`, `--github-url <URL>` | GitHub repository URL to import configs from. Needs `--configs-path` |
+| `-j`, `--json <JSON>` | Inline JSON configuration. One config object or an array |
+| `--stdin` | Read the JSON configuration from stdin |
+| `-s`, `--save` | Store the loaded configs in the database. Needs a config source |
+| `--flush` | Replace existing configs with the imported ones. kftui clears nothing if the source can't be read or a config is invalid |
+| `-a`, `--auto-start` | Start all port forwards right after loading |
+| `--non-interactive` | Run without the interface and keep forwarding until interrupted. Needs `--auto-start` or `--save` |
+| `--auto-discover` | Discover services from Kubernetes annotations (needs `--context`) |
+| `--context <NAME>` | Kubernetes context for auto-discovery |
+| `--kubeconfig <PATH>` | Kubeconfig file for auto-discovery. Defaults to the system default |
+| `--alias-as-domain` | Turn on alias-as-domain for all discovered configs |
+| `--auto-loopback` | Turn on an automatic loopback address for all discovered configs |
+| `--filter <COND>` | Only show and start matching configs. Repeatable, and all conditions must match. For example `tag:env=dev`, `namespace=api,web` or `tag:pinned` |
+| `--group-by <FIELD>` | Group the tables by `context`, `namespace`, `kubeconfig`, `workload_type`, `protocol`, `tag:<key>` or `none` for this session |
+| `--ssl` | Turn on SSL/TLS for port forwarding for this run (overrides settings) |
+| `--log-level <LEVEL>` | Global log level: `error`, `warn`, `info`, `debug`, `trace` or `off`. An unknown value falls back to `info` |
+| `--logs-to-file` | Write logs to `app.log` in the [configuration directory](/docs/configuration#storage-location) instead of the Logs panel |
+| `--no-update-check` | Skip the update check at startup |
+
+### Config sources
+
+Pick one source per run: `--configs-path`, `--github-url` (with `--configs-path`), `--json`, `--stdin` or `--auto-discover`. kftui rejects a command that mixes independent sources.
+
+Related flags need their parent flag. `--save` needs a source, `--context` needs `--auto-discover`, and `--kubeconfig`, `--alias-as-domain` and `--auto-loopback` need `--auto-discover`.
+
+For a GitHub source, kftui trims spaces around each comma-separated path, skips empty entries and combines all the files into one list. A local `--configs-path` accepts one file name.
+
+### Storage: file or memory
+
+- With no source, or with `--save`, kftui uses the file database in the [configuration directory](/docs/configuration#storage-location).
+- With a source and no `--save`, kftui keeps the configs in an in-memory database. They disappear when kftui exits and never touch the file database. That run also sends no crash reports.
+
+### Import safety
+
+kftui loads, parses and validates the whole source before it does anything else. A missing file, malformed JSON or an invalid config stops the run. With `--flush`, the clear happens only after that check, so an invalid source can't wipe your stored configs.
+
+Importing is not a single database transaction. kftui clears the old configs first, then writes the new ones one at a time. If a database error hits in between, you can end up with an empty or partial set. Export your configs before you flush.
+
+`--flush` only applies to the file database. Without `--save`, the in-memory database starts empty anyway.
+
+### Auto-start and filters
+
+`--auto-start` starts every loaded config. When you also pass a source, it starts only the configs from that source. With `--filter`, it starts only the matching ones. `--group-by` changes how the tables look and doesn't change which configs start.
 
 ## Non-interactive mode
 
-Combine `--auto-start` and `--non-interactive` to run forwards without opening the terminal interface. kftui starts the configured forwards and keeps running until you press `Ctrl+C`.
+Combine `--auto-start` and `--non-interactive` to run forwards without opening the terminal interface. kftui starts the configured forwards and keeps running until you stop it.
 
 ```bash
 kftui --configs-path config.json --auto-start --non-interactive
@@ -60,27 +97,46 @@ Use this mode for:
 - Container-based development environments.
 - CI/CD jobs that need port access during tests.
 
+On `Ctrl+C` or `SIGTERM` (Unix), kftui stops the forwards it started and exits. Stops run in parallel under one shared deadline. If some forwards can't stop in time, kftui exits with an error. A second interrupt during the wait also ends with an error.
+
+Without `--auto-start`, `--non-interactive` needs `--save`. kftui then imports and saves the configs, prints `Configurations processed` and exits.
+
+In the interface, `Ctrl+C` or the Exit menu item stops the forwards before kftui exits. Graceful `SIGTERM` handling exists only in non-interactive mode.
+
 ## Stdin and JSON input
 
 You can pipe configurations in without creating files:
 
 ```bash
 # Inline JSON
-kftui --json '[{"service":"api","local_port":8080,"remote_port":80,"context":"dev","workload_type":"service","protocol":"tcp","namespace":"default"}]' --auto-start
+kftui --json '[{"alias":"api","service":"api","namespace":"default","local_port":8080,"remote_port":80,"context":"dev","workload_type":"service","protocol":"tcp"}]' --auto-start
 
 # From another command
 kubectl get configmap kftray-config -o jsonpath='{.data.config}' | kftui --stdin --auto-start
 ```
 
+`--stdin` fails if stdin is a terminal, so pipe or redirect data into it.
+
+## Auto-discovery
+
+Discover annotated services and start them without the interface:
+
+```bash
+kftui --auto-discover --context my-cluster --auto-start --non-interactive
+```
+
+This finds all annotated services in the context, starts a forward for each and keeps them running until `Ctrl+C`. See [Auto Import](/docs/configuration/auto-import) for the annotation format and more examples.
+
 ## CI/CD integration
 
-In a CI pipeline, kftui can forward ports while tests run:
+In a CI pipeline, run kftui in non-interactive mode in the background so the forwards stay up while tests run:
 
 ```yaml
 # GitHub Actions example
 - name: Start port forwards
   run: |
-    tmux new-session -d -s kftray 'kftui --configs-path config.json --auto-start'
+    kftui --configs-path config.json --auto-start --non-interactive &
+    echo $! > kftui.pid
     sleep 5
 
 - name: Run integration tests
@@ -88,12 +144,12 @@ In a CI pipeline, kftui can forward ports while tests run:
 
 - name: Stop port forwards
   if: always()
-  run: |
-    tmux send-keys -t kftray 'q' Enter
-    tmux kill-session -t kftray
+  run: kill "$(cat kftui.pid)"
 ```
 
-You can also run non-interactive mode in the background:
+`kill` sends `SIGTERM`, so kftui stops its forwards and exits. A start can take up to 60 seconds while kftui waits for a Ready pod. Account for this [startup deadline](/docs/configuration/port-forwarding#forwarding-behavior) when choosing the wait time.
+
+The same pattern works in a shell script:
 
 ```bash
 kftui --configs-path config.json --auto-start --non-interactive &
@@ -126,19 +182,25 @@ screen -r kftray
 ```
 
 <Callout type="warn" title="Process management">
-Port forwards started in a detached session stay active until you stop them from the same interface. To stop them, reattach to the session and quit kftui.
+Port forwards started in a detached session stay active until you stop them from the same session. To stop them, reattach and press `Ctrl+C`, or select Exit in the top menu. `q` only opens the About screen.
 </Callout>
+
+## Logs
+
+By default kftui shows logs in the Logs panel and records warnings and errors. Use `--log-level debug` for more detail, and `--logs-to-file` to write them to `app.log` in the configuration directory.
 
 ## Environment variables
 
 | Variable | Purpose | Example |
 |----------|---------|---------|
-| `RUST_LOG` | Log level and component filtering | `debug`, `kftray=debug,kube=info` |
+| `KFTRAY_CONFIG` | Configuration directory (database, logs, HTTP logs) | `/path/to/dir` |
+| `XDG_CONFIG_HOME` | Parent of the `kftray` configuration directory when `KFTRAY_CONFIG` is unset | `~/.config` |
 | `KUBECONFIG` | Custom kubeconfig path | `/path/to/config` |
-| `GITHUB_TOKEN` | GitHub token for private repo sync | `ghp_xxxxxxxxxxxx` |
+| `GITHUB_TOKEN` | GitHub token for private repository imports | `ghp_xxxxxxxxxxxx` |
+| `DO_NOT_TRACK` | Turns off crash reports and performance data | `1` |
 | `HTTPS_PROXY` | HTTPS proxy for the Kubernetes API | `http://proxy:8080` |
 | `HTTP_PROXY` | HTTP proxy for the Kubernetes API | `http://proxy:8080` |
 | `NO_PROXY` | Hosts that bypass the proxy | `localhost,127.0.0.1` |
 | `TERM` | Terminal type for kftui | `xterm-256color` |
 
-See [CLI Reference](/docs/resources/cli-reference) for debug logging examples and data directory paths.
+See [CLI Reference](/docs/resources/cli-reference) for startup commands and data directory paths.

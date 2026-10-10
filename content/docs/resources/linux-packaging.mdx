@@ -1,0 +1,108 @@
+---
+title: Linux Packaging
+description: How maintainers build, validate and publish the kftray and kftui Linux packages to the openSUSE Build Service.
+---
+
+The release workflow publishes Linux packages to the [openSUSE Build Service](https://build.opensuse.org/project/show/home:hencavarsan:kftray) (OBS) after the GitHub release is public and its updater metadata is final. This page is for maintainers. To install the packages, see [Installation](/docs/getting-started/installation#linux-packages).
+
+The scripts and templates live in the [`hacks/obs`](https://github.com/hcavarsan/kftray/tree/main/hacks/obs) directory of the repository.
+
+## How packages are built
+
+Each package uses one source archive that contains the release binaries. The publisher downloads the archive from the GitHub release and verifies it against GitHub's SHA256 asset digests. Releases without asset digests are rejected instead of uploaded unverified.
+
+RPM, Debian and Arch packaging must not strip the AppImage, because stripping discards the embedded filesystem.
+
+The `kftray` archive includes both glibc variants for each architecture. Package builds select the newer variant on glibc 2.39 or later, which matches the updater.
+
+## Targets
+
+`hacks/obs/distros.conf` lists the distributions. Each line has a distribution name, an OBS project, a repository and the architectures. Prebuilt binaries need glibc 2.35 or newer (Ubuntu 22.04, Debian 12).
+
+| Distribution | Architectures |
+|--------------|---------------|
+| `Ubuntu_26.04`, `Ubuntu_24.04`, `Ubuntu_22.04` | `x86_64`, `aarch64` |
+| `Debian_13`, `Debian_12` | `x86_64`, `aarch64` |
+| `Fedora_44`, `Fedora_43` | `x86_64`, `aarch64` |
+| `openSUSE_Tumbleweed`, `openSUSE_Leap_16.0` | `x86_64`, `aarch64` |
+| `Arch` | `x86_64` (OBS only provides `x86_64` for Arch) |
+
+Every target in the file must build for a release to pass.
+
+## Validate locally
+
+You need Linux with Bash, curl, jq, python3, GNU tar and coreutils, gzip, xz and xmllint.
+
+```sh
+VERSION=0.27.31 bash hacks/obs/dry-run.sh
+VERSION=0.27.31 bash hacks/obs/dry-run.sh kftui
+```
+
+A dry run downloads and verifies the real artifacts, renders the same templates and project metadata as the publisher, and removes its temporary files. It doesn't need OBS credentials and never writes to OBS. It checks archive integrity and preparation. It doesn't check application ABI compatibility or remote build results.
+
+Set `GITHUB_TOKEN` to avoid the anonymous GitHub API rate limit.
+
+### Offline regression checks
+
+```sh
+shellcheck hacks/obs/*.sh
+bash hacks/obs/test-publish.sh
+bash hacks/obs/test-package-builds.sh
+uv run --project hacks --with pytest python -m pytest hacks/tests/test_fix_updater_json.py
+```
+
+The package-build test also needs build-essential, pkg-config, debhelper, libdbus-1-dev, rpm and cpio. It builds native Debian and RPM packages, checks the dependency metadata and compares opaque ELF payloads before and after packaging.
+
+Set `OBS_TEST_APPIMAGE` and `OBS_TEST_NEWER_APPIMAGE` to local AppImages to test their exact bytes on the matching target system.
+
+Pass a format to build only that package type:
+
+| Command | Host | Requirements |
+|---------|------|--------------|
+| `bash hacks/obs/test-package-builds.sh rpm` | Fedora or openSUSE | rpm-build, gcc, a static glibc, dbus development headers and cpio. It exercises the distribution's own rpm macros |
+| `bash hacks/obs/test-package-builds.sh deb` | Debian or Ubuntu | debhelper. It does the same for the Debian build |
+| `bash hacks/obs/test-package-builds.sh arch` | Arch | base-devel, dbus and fuse3. It runs `makepkg`, which refuses to run as root, so use a regular user |
+
+CI runs these checks from `.github/workflows/obs-publishing.yml` when the publishing files change. It builds the RPM, Debian and Arch packages inside a container for every distribution in `distros.conf`.
+
+## Publish
+
+```sh
+export VERSION=0.27.31 OBS_USER=your-user OBS_PASSWORD=your-password GITHUB_TOKEN=...
+bash hacks/obs/setup.sh
+bash hacks/obs/publish.sh
+```
+
+The publisher prepares all selected packages before it writes anything to OBS. Then it:
+
+<Steps>
+<Step>
+Replaces the OBS project's repository list with `distros.conf`, and creates the project if it doesn't exist. It keeps other project settings such as the title, maintainers and build flags. Removing a target from `distros.conf` removes its repository and published packages on the next run.
+</Step>
+<Step>
+Makes each OBS package match the rendered templates and generated archives. Files from earlier versions are deleted.
+</Step>
+<Step>
+Commits, waits until the OBS scheduler picks up the new revision, then waits for the builds. `OBS_RESULTS_TIMEOUT` sets the wait per package and defaults to `60m`. Failed, broken, unresolved, unfinished or empty build results fail the command.
+</Step>
+</Steps>
+
+The command is idempotent. Rerunning it for the same version detects no changes, waits for the current builds and reports their result.
+
+## Recover from a failed release job
+
+If the release job fails because OBS was slow, rerun the job.
+
+If it fails because of the publishing files, fix them on `main`. Then run the "OBS publishing" workflow manually with the release version as input. It runs the checks from the selected branch and publishes that version from it.
+
+GitHub Actions serializes OBS publication jobs and limits each one to 90 minutes.
+
+## Release history notes
+
+kftui ARM64 binaries up to v0.27.31 were built on Ubuntu 24.04 and require glibc 2.39. They can't run on Ubuntu 22.04 or Debian 12, even when repackaged. Later releases build ARM64 on Ubuntu 22.04.
+
+Updater manifests published before the finalizer moved ahead of publication may carry generic `linux-*` entries that point to deleted assets. Rerun the finalizer against the tag to repair the published `latest.json` in place:
+
+```sh
+GH_REPO=hcavarsan/kftray uv run hacks/fix_updater_json.py v0.27.31
+```

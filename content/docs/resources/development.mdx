@@ -1,0 +1,350 @@
+---
+title: Development
+description: Set up the kftray development environment and use the mise tasks for building, testing and formatting.
+---
+
+kftray uses [mise](https://mise.jdx.dev) for development tools and tasks. For platform dependencies and release builds, see [building from source](/docs/resources/building-from-source). For the pull request process, see [contributing](/docs/resources/contributing).
+
+## Prerequisites
+
+### mise
+
+Install mise. It manages the other development tools and the tasks:
+
+```bash
+curl https://mise.run | sh
+```
+
+After the installation, restart your terminal or run:
+
+```bash
+source ~/.bashrc  # or ~/.zshrc
+```
+
+mise installs the tools pinned in `.mise.toml`:
+
+- Node.js 26
+- pnpm 12
+- syft and grype (for the `sbom:*` tasks)
+
+`mise run setup` installs the system dependencies and the pnpm packages, including the Tauri CLI.
+
+### Rust
+
+mise doesn't install Rust. Install it with [rustup](https://rustup.rs), along with the nightly `rustfmt` that `mise run format:back` uses:
+
+```bash
+rustup toolchain install stable
+rustup toolchain install nightly --profile minimal --component rustfmt
+```
+
+`mise run test:back` also needs `cargo-llvm-cov` and `cargo-nextest`:
+
+```bash
+cargo install --locked cargo-llvm-cov cargo-nextest
+```
+
+## Quick start
+
+```bash
+# Clone the repository
+git clone https://github.com/hcavarsan/kftray.git
+cd kftray
+
+# Install tools defined in .mise.toml
+mise install
+
+# Set up system dependencies and install project dependencies
+mise run setup
+
+# Start development
+mise run dev
+```
+
+## Development workflow
+
+### First-time setup
+
+```bash
+# Install mise-managed tools (Node, pnpm, syft, grype)
+mise install
+
+# Install system dependencies (webkit, build tools, etc.)
+# This detects your OS and installs the right packages
+mise run setup
+```
+
+### Daily development
+
+```bash
+# Start development mode (hot reload enabled)
+mise run dev
+
+# In another terminal, run tests
+mise run test:back
+
+# Format and lint before committing
+mise run format
+mise run lint
+```
+
+`mise run dev` builds the `kftray-helper` binary in release mode first, then starts `pnpm tauri dev`.
+
+### Building
+
+```bash
+# Build production app
+mise run build
+
+# Build only the UI
+mise run build:ui
+
+# Build with bundle analysis
+mise run build:analyze
+```
+
+For platform requirements and build outputs, see [Building from Source](/docs/resources/building-from-source).
+
+## Available tasks
+
+Run `mise tasks` to see all available tasks. These are the most common ones.
+
+### Development
+
+| Task | Description |
+|------|-------------|
+| `mise run dev` | Start Tauri development mode (hot reload) |
+| `mise run build` | Build the production application |
+| `mise run build:ui` | Build only the frontend UI |
+| `mise run build:analyze` | Build with bundle size analysis |
+
+### Code quality
+
+| Task | Description |
+|------|-------------|
+| `mise run format` | Format the frontend (Biome) and backend (rustfmt) |
+| `mise run format:front` | Format only the frontend code |
+| `mise run format:back` | Format only the backend code |
+| `mise run lint` | Lint with auto-fix (Biome and Clippy) |
+| `mise run lint:front` | Lint the frontend with auto-fix |
+| `mise run lint:back` | Lint the backend with auto-fix |
+| `mise run check` | TypeScript type checking |
+
+### Testing
+
+| Task | Description |
+|------|-------------|
+| `mise run test:back` | Run the Rust backend tests with coverage |
+| `mise run test:server` | Run the Docker proxy tests |
+
+### Pre-commit
+
+| Task | Description |
+|------|-------------|
+| `mise run precommit` | Run format, lint, SBOM scan and backend tests |
+| `mise run precommit:hook` | Format, run `cargo check` and stage tracked changes |
+
+### Utilities
+
+| Task | Description |
+|------|-------------|
+| `mise run setup` | Set up the development environment |
+| `mise run generate-icons` | Generate application icons |
+| `mise run knip` | Detect unused exports in the frontend |
+
+### Version management
+
+| Task | Description |
+|------|-------------|
+| `mise run bump:patch` | Bump the patch version (0.0.x) |
+| `mise run bump:minor` | Bump the minor version (0.x.0) |
+| `mise run bump:major` | Bump the major version (x.0.0) |
+
+## Project structure
+
+```text
+kftray/
+├── .mise.toml              # mise configuration (tools + tasks)
+├── frontend/               # React + TypeScript UI
+│   ├── src/
+│   └── package.json
+├── crates/                 # Rust workspace
+│   ├── kftray-tauri/      # Desktop app (Tauri)
+│   ├── kftui/             # Terminal UI
+│   ├── kftray-server/     # Proxy relay server
+│   ├── kftray-portforward/# Port forwarding logic
+│   └── ...
+├── hacks/                  # Utility scripts
+│   ├── setup.sh           # OS-specific setup script
+│   └── ...
+└── README.md               # Project overview and documentation links
+```
+
+See [Architecture](/docs/resources/architecture) for what each crate does.
+
+### Documentation
+
+Guides live in [`kftray-blog/content/docs`](https://github.com/hcavarsan/kftray-blog/tree/main/content/docs).
+Update the corresponding MDX page when app behavior or development commands change. Repository READMEs provide short introductions and links to these pages.
+
+When adding a page, include it in its directory's `meta.json` navigation. Publish new site routes before repository links that depend on them.
+The version bump utility updates package manifests and Tauri configuration. Documentation downloads link to the website instead of requiring version updates in local Markdown guides.
+
+## Git workflow
+
+### Pre-commit hook
+
+The repository doesn't install a Git hook. `mise run precommit:hook` is meant to be used as one. It:
+
+<Steps>
+<Step>
+Formats all code (Biome and rustfmt).
+</Step>
+<Step>
+Runs `cargo check` on the workspace.
+</Step>
+<Step>
+Stages every modified tracked file with `git add -u`.
+</Step>
+</Steps>
+
+Run it before you commit, or call it from your own `.git/hooks/pre-commit`.
+
+To bypass the hook (not recommended):
+
+```bash
+git commit --no-verify
+```
+
+### Pull requests
+
+1. Fork and clone the repository.
+2. Create a feature branch: `git checkout -b feature/my-feature`.
+3. Make your changes.
+4. Run `mise run format` and `mise run lint`, then commit.
+5. Push and create a pull request.
+
+CI runs these checks:
+
+- Format check
+- Lint check (no auto-fix in CI)
+- Backend tests with coverage
+- Frontend bundle analysis
+
+See [Contributing](/docs/resources/contributing) for the full pull request and merge process.
+
+## Testing
+
+### Backend tests
+
+```bash
+# Run all backend tests with coverage
+mise run test:back
+
+# Run a specific test
+cargo test test_name
+```
+
+### Frontend type checking
+
+```bash
+# Check TypeScript types
+mise run check
+```
+
+### Docker proxy tests
+
+```bash
+# Test TCP/UDP proxy functionality
+mise run test:server
+```
+
+## Troubleshooting
+
+### mise not found
+
+After installing mise, restart your terminal or run:
+
+```bash
+source ~/.bashrc  # or ~/.zshrc
+```
+
+### System dependencies missing
+
+Run the setup task again. It detects your OS and installs the missing dependencies:
+
+```bash
+mise run setup
+```
+
+### Tool version mismatch
+
+Reinstall the tools to get the versions pinned in `.mise.toml`:
+
+```bash
+mise install
+```
+
+### Port already in use
+
+Tauri uses a default development port. In `tauri.conf.json` the dev URL is `http://localhost:1420`. Stop any process that uses the port:
+
+```bash
+# macOS/Linux
+lsof -ti:PORT | xargs kill -9
+
+# Windows
+netstat -ano | findstr :PORT
+taskkill /PID <PID> /F
+```
+
+### Pre-commit hook failing
+
+If you call `mise run precommit:hook` from your own Git hook, it runs `mise run format` and `cargo check`. If it fails:
+
+1. Check the error message.
+2. Fix the issue manually.
+3. Try committing again.
+
+Or run the checks manually:
+
+```bash
+mise run format
+mise run lint
+```
+
+### Building fails on Windows
+
+Check that you have:
+
+1. Microsoft C++ Build Tools installed
+2. WebView2 Runtime installed
+3. NASM installed (for some dependencies)
+
+Run `mise run setup` to see detailed instructions.
+
+### Node and pnpm version issues
+
+mise manages the Node and pnpm versions. If you have version issues:
+
+```bash
+# Check installed versions
+mise ls
+
+# Reinstall tools
+mise install --force
+```
+
+## Additional resources
+
+- [Tauri documentation](https://tauri.app)
+- [mise documentation](https://mise.jdx.dev)
+- [Contributing](/docs/resources/contributing)
+- [Building from Source](/docs/resources/building-from-source)
+- [Linux packaging](/docs/resources/linux-packaging) for maintainers who publish the Linux packages
+- [Security](/docs/resources/security) for the SBOM and vulnerability scan that `mise run precommit` runs
+
+## Getting help
+
+- Check the [Issues](https://github.com/hcavarsan/kftray/issues) page.
+- Join the [Slack community](https://join.slack.com/t/kftray/shared_invite/zt-2q6lwn15f-Y8Mi_4NlenH9TuEDMjxPUA).

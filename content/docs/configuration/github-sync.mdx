@@ -3,13 +3,13 @@ title: GitHub Sync
 description: Share port-forward configurations across a team through a GitHub repository.
 ---
 
-GitHub sync pulls your team's port-forward configs from a shared repository.
+GitHub sync pulls your team's port-forward configs from a shared repository. Commit the JSON once and everyone gets new configs and changes on the next sync.
 
 ## Setup
 
 ### Create a configuration repository
 
-Create a GitHub repository to hold your team's port-forward configurations:
+Export your configs to a JSON file (see [import and export](/docs/configuration#import-and-export)), then commit it to a GitHub repository:
 
 ```bash
 mkdir kftray-configs
@@ -20,20 +20,24 @@ git init
 cat > production.json <<EOF
 [
   {
+    "alias": "Production API",
     "service": "api-gateway",
     "namespace": "production",
     "local_port": 8080,
     "remote_port": 80,
     "context": "prod-cluster",
-    "alias": "Production API"
+    "workload_type": "service",
+    "protocol": "tcp"
   },
   {
+    "alias": "Production Database",
     "service": "postgres",
     "namespace": "databases",
     "local_port": 5432,
     "remote_port": 5432,
     "context": "prod-cluster",
-    "alias": "Production Database"
+    "workload_type": "service",
+    "protocol": "tcp"
   }
 ]
 EOF
@@ -55,7 +59,9 @@ git push -u origin main
 </Folder>
 </Files>
 
-Each JSON file holds an array of [configuration objects](/docs/configuration). You can organize files by environment, team or service group.
+Each JSON file holds an array of [configuration objects](/docs/configuration). You can organize files by environment, team or service group and sync several of them at once.
+
+kftray uses the repository's default branch. There's no branch setting.
 
 ### Configure sync
 
@@ -64,26 +70,31 @@ Each JSON file holds an array of [configuration objects](/docs/configuration). Y
 
 <Steps>
 <Step>
-Open the kftray desktop interface.
+Select the GitHub icon (`Configure Git Sync`) in the footer.
 </Step>
 <Step>
-Go to Settings → GitHub Sync.
+Enter the URL of your repository, for example `https://github.com/your-org/kftray-configs`.
 </Step>
 <Step>
-Enter the repository URL: `https://github.com/your-org/kftray-configs`
+Enter the path to the JSON config file. If your configs are split across several files, use the `+` button to add more paths.
 </Step>
 <Step>
-Enter the branch name: `main`
+For a private repository, enter a personal access token. See [Authentication](#authentication).
 </Step>
 <Step>
-Enter a personal access token. See [Authentication](#authentication) for the required permissions.
+Set the polling interval, the time between automatic syncs.
 </Step>
 <Step>
-Click "Enable Sync".
+Save. kftray syncs with the repository and imports new configs and changes.
 </Step>
 </Steps>
 
-kftray fetches the configs as soon as you turn on sync.
+| Option | Detail |
+|--------|--------|
+| Polling interval | A slider from 0 to 120 minutes in steps of 5. The default is 60 minutes. `0` turns automatic polling off |
+| Flush existing configs before sync | Off by default. When on, kftray deletes all your local configs before it imports |
+
+While Git credentials are configured, `Import Local File` in the footer menu is disabled.
 
 </Tab>
 <Tab value="Terminal">
@@ -94,7 +105,15 @@ Pass the GitHub repository URL and the config file path when you launch kftui:
 kftui --github-url https://github.com/your-org/kftray-configs --configs-path env/production.json
 ```
 
-Add `--save` to keep the imported configurations in the local database:
+To merge configs split across several files, separate the paths with commas:
+
+```bash
+kftui --github-url https://github.com/your-org/kftray-configs --configs-path env/production.json,env/shared.json
+```
+
+kftui trims spaces around each path, skips empty entries and joins the files into one list. `--github-url` always needs `--configs-path`.
+
+Add `--save` to keep the imported configurations in the database. Without it, kftui keeps them in memory for that run:
 
 ```bash
 kftui --github-url https://github.com/your-org/kftray-configs --configs-path env/production.json --save
@@ -107,7 +126,7 @@ For private repositories, set the `GITHUB_TOKEN` environment variable before you
 
 ## Authentication
 
-GitHub sync needs a personal access token with the `repo` scope for private repositories or the `public_repo` scope for public ones.
+Public repositories need no token. For a private repository, GitHub sync needs a personal access token that can read it. A classic token with the `repo` scope works.
 
 Create a token at https://github.com/settings/tokens:
 
@@ -122,7 +141,7 @@ Name it "kftray sync".
 Set an expiration that fits your security policy.
 </Step>
 <Step>
-Select the `repo` scope, or `public_repo` for public repositories only.
+Select the `repo` scope.
 </Step>
 <Step>
 Click "Generate token".
@@ -132,6 +151,8 @@ Copy the token right away, because GitHub won't show it again.
 </Step>
 </Steps>
 
+The desktop app saves the token, with the other sync settings, in the system keyring (Keychain on macOS). kftray doesn't store credentials in any local file.
+
 <Callout type="error" title="Token security">
 A personal access token grants access to every repository in its scope. Store tokens securely and rotate them regularly. Never commit tokens to version control or share them in chat.
 </Callout>
@@ -140,53 +161,44 @@ A personal access token grants access to every repository in its scope. Store to
 
 ### Periodic checks
 
-kftray checks the repository every 5 minutes. When it finds changes, kftray:
+The desktop app syncs at the polling interval, 60 minutes by default. Each sync updates your configs one at a time:
 
 <Steps>
 <Step>
-Adds new configs to your local database.
+kftray matches repository configs to local configs by context, namespace, workload type, protocol and target. The target is a service, pod selector or proxy address.
+When a config has a non-zero local port, the local and remote ports must match too. For `expose` configs, kftray matches by alias and local port.
 </Step>
 <Step>
-Updates existing configs, matching them by service, namespace and context.
+A match is updated with the repository's values and keeps its ID. If the repository's alias is blank or its local port is missing or `0`, kftray keeps the old alias or local port.
 </Step>
 <Step>
-Removes configs that the repository no longer contains.
+A config with no match is added.
 </Step>
 </Steps>
 
+kftray doesn't delete local configs that are missing from the repository, unless `Flush existing configs before sync` is on.
+
 ### Conflict resolution
 
-The repository always wins. If you change a synced configuration locally, the next sync overwrites it with the repository version.
+The repository wins. If you change a synced configuration locally, the next sync overwrites it with the repository version.
 
 To keep local changes:
 
 <Steps>
 <Step>
-Disable GitHub sync.
+Turn polling off by setting the interval to `0`.
 </Step>
 <Step>
 Export your local configurations.
 </Step>
 <Step>
-Merge your changes into the repository.
+Merge your changes into the repository and push to GitHub.
 </Step>
 <Step>
-Push to GitHub.
-</Step>
-<Step>
-Enable sync again.
+Turn sync back on.
 </Step>
 </Steps>
 
 ### Manual trigger
 
-To fetch the latest configs before the next scheduled check:
-
-<Steps>
-<Step>
-Go to Settings → GitHub Sync.
-</Step>
-<Step>
-Click "Sync Now".
-</Step>
-</Steps>
+To fetch the latest configs before the next scheduled check, click the `Sync` button in the footer. Hover over it to see the repository, paths, authentication, interval and the last and next sync times. The button is disabled while a sync runs or when no credentials are configured. A scheduled sync is skipped while another one is running.

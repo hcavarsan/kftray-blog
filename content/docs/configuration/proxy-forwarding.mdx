@@ -1,42 +1,72 @@
 ---
 title: Proxy Forwarding
-description: Route traffic through a Kubernetes cluster to reach internal or external services.
+description: Route traffic through a Kubernetes cluster to reach internal or external services, and carry UDP through a relay pod.
 ---
 
-Proxy forwarding sends traffic through your Kubernetes cluster to reach services your local machine can't connect to directly.
+Proxy forwarding sends traffic through your Kubernetes cluster to reach hosts your local machine can't connect to directly.
 
 ## Basic proxy configuration
 
 ```json
 {
-  "service": "kftray-server",
+  "alias": "Internal API via Proxy",
   "workload_type": "proxy",
-  "remote_address": "internal-api.company.com:443",
+  "remote_address": "internal-api.company.com",
+  "remote_port": 443,
   "local_port": 8443,
-  "remote_port": 8080,
+  "namespace": "default",
   "context": "prod-cluster",
-  "alias": "Internal API via Proxy"
+  "protocol": "tcp"
 }
 ```
 
-This forwards `localhost:8443` through the `kftray-server` proxy pod to `internal-api.company.com:443`.
+This forwards `localhost:8443` through a `kftray-server` relay pod to `internal-api.company.com:443`. The destination is `remote_address` plus `remote_port`, and the cluster is where the connection starts. A proxy config doesn't need a `service` field.
 
-## The kftray-server proxy component
+## The kftray-server relay
 
-The `kftray-server` proxy pod runs in your Kubernetes cluster. It receives traffic from your local port forward and sends it to the `remote_address` target.
+The `kftray-server` relay pod runs in your Kubernetes cluster. It receives traffic from your local port forward and sends it to the `remote_address` target.
 
-You need the proxy component for:
+You need the relay for:
 
-- UDP port forwarding
+- Proxy forwards to hosts outside the target workload
+- UDP port forwarding, for every workload type
 - Reaching services outside the cluster from the cluster network
 - Reaching internal corporate services through cluster network policies
 - Connecting to services that allow your cluster's outbound IP addresses
 
-kftray deploys the proxy pod automatically when you create a proxy forward. The pod runs in the same namespace as your target service.
+kftray deploys the relay when you start the forward and deletes it when you stop. The relay runs in the `namespace` of the config.
+
+- Proxy startup waits for the relay's TCP listener instead of using a fixed delay.
+- kftray keeps existing startup probes. An unready sidecar doesn't stop a started relay from forwarding.
+- If the relay pod fails, kftray tries to recover the forward up to five times, waiting 2, 4, 8, 16 and 32 seconds between attempts.
+- The [server resources](/docs/interfaces/desktop#server-resources) view in the desktop app lists the relay pods kftray created, so you can remove leftovers.
 
 <Callout type="warn" title="Cluster permissions required">
-Deploying the proxy needs permission to create pods and services in the target namespace. If deployment fails, check your Kubernetes role-based access control (RBAC) permissions with `kubectl auth can-i create pods -n NAMESPACE`.
+Deploying the relay needs permission to create pods and services in the target namespace. If deployment fails, check your Kubernetes role-based access control (RBAC) permissions with `kubectl auth can-i create pods -n NAMESPACE`.
 </Callout>
+
+<Callout type="info" title="Cancelled starts">
+If you cancel a start and kftray can't finish the rollback, it reports `cleanup_incomplete`. A relay pod, a loopback alias or a hosts entry can stay behind, so check the server resources view.
+</Callout>
+
+## UDP through the relay
+
+UDP forwards use the same relay. Set `protocol` to `udp` with the `proxy` workload to reach an external DNS server:
+
+```json
+{
+  "alias": "dns-proxy",
+  "workload_type": "proxy",
+  "remote_address": "8.8.8.8",
+  "remote_port": 53,
+  "local_port": 5353,
+  "namespace": "default",
+  "context": "my-k8s-cluster",
+  "protocol": "udp"
+}
+```
+
+A `service` or `pod` config with `"protocol": "udp"` also goes through the relay. See [port forwarding](/docs/configuration/port-forwarding#udp-forwarding).
 
 ## Use cases
 
@@ -44,13 +74,14 @@ Deploying the proxy needs permission to create pods and services in the target n
 
 ```json
 {
-  "service": "kftray-server",
+  "alias": "HR API",
   "workload_type": "proxy",
-  "remote_address": "hr-api.internal.company.com:8080",
-  "local_port": 9000,
+  "remote_address": "hr-api.internal.company.com",
   "remote_port": 8080,
+  "local_port": 9000,
+  "namespace": "default",
   "context": "corp-cluster",
-  "namespace": "default"
+  "protocol": "tcp"
 }
 ```
 
@@ -60,13 +91,14 @@ This reaches internal APIs through the corporate cluster's network, even when yo
 
 ```json
 {
-  "service": "kftray-server",
+  "alias": "Restricted cloud API",
   "workload_type": "proxy",
-  "remote_address": "restricted-api.cloud-provider.com:443",
+  "remote_address": "restricted-api.cloud-provider.com",
+  "remote_port": 443,
   "local_port": 8443,
-  "remote_port": 8080,
+  "namespace": "production",
   "context": "prod-cluster",
-  "namespace": "production"
+  "protocol": "tcp"
 }
 ```
 

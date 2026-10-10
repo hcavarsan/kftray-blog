@@ -1,9 +1,15 @@
 ---
 title: HTTP Logging
-description: Record HTTP requests and responses from port forwards in a format compatible with the VS Code REST Client.
+description: Record HTTP requests and responses from TCP port forwards in a format compatible with the VS Code REST Client.
 ---
 
-HTTP logging records the requests and responses that pass through your port forwards, so you can debug API calls.
+HTTP logging records the requests and responses that pass through your TCP port forwards, so you can debug API calls. It is off by default and you turn it on for each config.
+
+The [HTTP logs video](https://www.youtube.com/watch?v=73PyGbMnNSY) shows the desktop logs opened in an editor.
+
+<Callout type="error" title="Sensitive data in logs">
+HTTP logs capture request and response headers and bodies, including authentication tokens, API keys and personal data. Turn logging on only while you debug, sanitize what you share and delete the logs when you finish.
+</Callout>
 
 ## Enabling HTTP logging
 
@@ -12,95 +18,146 @@ HTTP logging records the requests and responses that pass through your port forw
 
 <Steps>
 <Step>
-Right-click the port forward in the desktop interface.
+Open the actions menu (the menu icon at the end of the row) for the port forward.
 </Step>
 <Step>
-Select "Configure HTTP Logging".
+Select `Enable HTTP Logs`. The same item reads `Disable HTTP Logs` once logging is on.
 </Step>
 <Step>
-Toggle "Enable HTTP Logging".
-</Step>
-<Step>
-Click "Save".
+Optional: select `HTTP Logs Settings` to change the log options for that config.
 </Step>
 </Steps>
+
+The menu shows these items only for TCP forwards. Once logging is on, `Open HTTP Logs File` opens the log in your external editor or the system app for log files. kftray tries `EDITOR`, then `VISUAL`, then the system opener.
 
 </Tab>
 <Tab value="Terminal">
 
 Press `l` to toggle HTTP logging on the selected configuration, or set `"http_logs_enabled": true` in your JSON config.
 
-Press `L` to set log retention (1 to 365 days) and maximum log size (1 to 1000 MB).
+Press `L` to configure logging. The dialog stores a size setting of 1 to 1000 MiB and retention of 1 to 365 days.
+It also stores an automatic-cleanup preference. See the limitations below before relying on those settings.
 
 </Tab>
 </Tabs>
 
-Logging starts right away for new connections. Existing connections stay unlogged until they reconnect.
+Logging starts for new connections. Connections that were open before you turned it on stay unlogged until they reconnect.
+
+## Config fields
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `http_logs_enabled` | `false` | Turns logging on for the config |
+| `http_logs_max_file_size` | 10 MiB | Saved file-size setting, in bytes. Import accepts 1 byte to 100 MiB |
+| `http_logs_retention_days` | 7 | Saved retention setting. Import accepts 1 to 365 days |
+| `http_logs_auto_cleanup` | `true` | Saved automatic-cleanup preference |
+
+The current HTTP logger appends to files without applying these size and retention settings. Check disk usage and [delete old logs](#cleanup) manually.
+
+This example saves a 20 MiB size setting and 14-day retention preference:
+
+```json
+{
+  "alias": "api-debug",
+  "target": "app=backend,version=v2",
+  "namespace": "staging",
+  "local_port": 3000,
+  "remote_port": 8080,
+  "context": "my-k8s-cluster",
+  "workload_type": "pod",
+  "protocol": "tcp",
+  "http_logs_enabled": true,
+  "http_logs_max_file_size": 20971520,
+  "http_logs_retention_days": 14,
+  "http_logs_auto_cleanup": true
+}
+```
 
 ## Log file location
 
-Logs go to `~/.kftray/http_logs/`, with one file per port forward:
+HTTP logs live in the `http_logs` folder inside the [configuration directory](/docs/configuration#storage-location). kftray looks for the directory in this order:
+
+1. `KFTRAY_CONFIG`
+2. `$XDG_CONFIG_HOME/kftray`
+3. `~/.kftray`
+
+Each port forward writes its own file, named `<config id>_<local port>.http`:
 
 <Files>
 <Folder name="~/.kftray/http_logs" defaultOpen>
-<File name="api-gateway-8080.log" />
-<File name="auth-service-8001.log" />
-<File name="user-service-8002.log" />
+<File name="3_8080.http" />
+<File name="4_8001.http" />
+<File name="5_8002.http" />
 </Folder>
 </Files>
 
-File names follow the pattern `{alias-or-service}-{local-port}.log`.
-
 ## Log format
 
-```
-[2026-02-09T14:32:15.123Z] trace_id=a1b2c3d4 method=POST path=/api/users status=201 duration=45ms
+The `.http` files are plain text. The `#` lines and `###` separators match the VS Code REST Client format. Each request and each response is its own entry.
 
-REQUEST:
+```
+# ----------------------------------------
+# Trace ID: a1b2c3d4
+# Request at: 2026-02-09T14:32:15.123+00:00
 POST /api/users HTTP/1.1
 Host: localhost:8080
 Content-Type: application/json
-Authorization: Bearer eyJhbGc...
 Content-Length: 87
 
 {"email":"user@example.com","name":"Jane Doe","role":"admin"}
 
-RESPONSE:
+###
+
+# ----------------------------------------
+# Trace ID: a1b2c3d4
+# Response at: 2026-02-09T14:32:15.168+00:00
+# Took: 45 ms
 HTTP/1.1 201 Created
 Content-Type: application/json
-X-Request-ID: a1b2c3d4
 Content-Length: 156
 
-{"id":"usr_123","email":"user@example.com","name":"Jane Doe","role":"admin","created_at":"2026-02-09T14:32:15Z"}
+{"id":"usr_123","email":"user@example.com","name":"Jane Doe","role":"admin"}
 
----
+###
 ```
 
-Each log entry includes:
+| Part | Detail |
+|------|--------|
+| Trace ID | Links a request to its response |
+| Request at, Response at | RFC 3339 timestamps |
+| Took | Response time in milliseconds |
+| Request line, headers and body | The request as it went through the forward |
+| Status line, headers and body | The response as it came back |
 
-| Field | Detail |
-|---|---|
-| Timestamp | Millisecond precision |
-| Trace ID | Links related requests |
-| HTTP method, path, status code | Identifies the request |
-| Request duration | How long the request took |
-| Full request headers and body | The complete request |
-| Full response headers and body | The complete response |
+kftray decodes response bodies sent with `Content-Encoding: gzip`, `br` or a stacked value such as `gzip, br`. It shows other encodings as received.
+The preformatted-response path cuts decoded bodies at 10 MiB and adds a truncation marker. Other response-formatting paths do not share that limit.
 
-## Log management
+## Viewing and replaying in kftui
 
-### Viewing logs in kftui
+Press `V` to open the HTTP logs viewer. It has two modes.
 
-Press `V` to open the log viewer for the selected configuration. In the detail view, press `r` to replay an HTTP request and retest an endpoint. Press `o` to open the logs in your default external editor.
+List mode is the default:
 
-### Cleanup
+- It shows all requests with timestamps and status codes.
+- `↑` `↓` move through requests and `PageUp` `PageDown` scroll by ten entries.
+- `Enter` opens the detail view for a request.
+- `a` turns automatic scrolling for new requests on or off.
+- `Esc` closes the viewer.
+
+Detail mode shows the full request and response, including headers and body:
+
+- `↑` `↓` and `PageUp` `PageDown` scroll the details.
+- `r` replays the selected request. kftui sends it to `http://localhost:<local_port>` of the forward, unless the request path is already a full HTTP URL.
+- `Esc` goes back to list mode.
+
+Press `o` to open the log file in your external editor. Request replay exists in kftui only.
+
+## Cleanup
 
 Delete old logs manually:
 
 ```bash
-rm ~/.kftray/http_logs/*.log
+rm ~/.kftray/http_logs/*.http
 ```
 
-<Callout type="error" title="Sensitive data in logs">
-HTTP logs capture full request and response bodies, including authentication tokens, API keys and personal data. Delete the logs when you finish debugging.
-</Callout>
+If you changed `KFTRAY_CONFIG` or `XDG_CONFIG_HOME`, use that directory's `http_logs` folder instead. HTTP logging can produce large files for busy services, so check disk use now and then.

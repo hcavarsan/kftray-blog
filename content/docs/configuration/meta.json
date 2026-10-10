@@ -2,6 +2,7 @@
 	"title": "Features",
 	"pages": [
 		"workload-types",
+		"examples",
 		"index",
 		"port-forwarding",
 		"tags-and-views",

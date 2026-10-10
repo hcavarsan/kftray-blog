@@ -1,9 +1,9 @@
 ---
 title: CLI Reference
-description: Look up startup commands, environment variables and debug logging options for kftray and kftui.
+description: Look up startup commands, kftui flags, environment variables, data directories and logging options for kftray and kftui.
 ---
 
-Use these commands to start kftray or kftui. Set environment variables to choose credentials, proxies and log output.
+Use these commands to start kftray or kftui. Set environment variables to choose the configuration directory, credentials and proxies.
 
 ## Desktop startup
 
@@ -15,9 +15,6 @@ open /Applications/kftray.app
 
 # Launch from terminal
 /Applications/kftray.app/Contents/MacOS/kftray
-
-# Launch with debug logging
-RUST_LOG=debug /Applications/kftray.app/Contents/MacOS/kftray
 ```
 </Tab>
 <Tab value="Linux">
@@ -27,9 +24,6 @@ kftray
 
 # Launch from terminal
 /usr/bin/kftray
-
-# Launch with debug logging
-RUST_LOG=debug kftray
 ```
 </Tab>
 <Tab value="Windows">
@@ -38,12 +32,11 @@ RUST_LOG=debug kftray
 
 # Launch from PowerShell
 & "C:\Program Files\kftray\kftray.exe"
-
-# Launch with debug logging
-$env:RUST_LOG="debug"; & "C:\Program Files\kftray\kftray.exe"
 ```
 </Tab>
 </Tabs>
+
+When you start kftray from a terminal, it also prints log lines at the `info` level to that terminal. The desktop app writes its logs to the [configuration directory](#data-directories). It doesn't use `RUST_LOG` to set the level.
 
 ## Terminal launch
 
@@ -86,125 +79,97 @@ screen -S kftray kftui
 
 | Flag | Description |
 |------|-------------|
-| `--configs-path` | Path to JSON configuration file |
-| `--save` | Save imported configs to the local database |
-| `--github-url` | GitHub repository URL for config sync |
-| `--auto-start` | Start all forwards on launch |
-| `--non-interactive` | Run without the terminal interface and keep forwarding until interrupted |
-| `--json` | Inline JSON configuration string |
+| `-c`, `--configs-path` | Path to a JSON configuration file, or a path inside the repository with `--github-url` (comma-separate several paths) |
+| `-s`, `--save` | Save imported configs to the local database. Needs a config source |
+| `-g`, `--github-url` | GitHub repository URL to import configs from |
+| `-a`, `--auto-start` | Start all forwards on launch |
+| `--non-interactive` | Run without the terminal interface and keep forwarding until interrupted. Needs `--auto-start` or `--save` |
+| `-j`, `--json` | Inline JSON configuration string |
 | `--stdin` | Read configuration from stdin |
-| `--flush` | Clear existing configs before importing |
-| `--filter` | Show and start matching configs, such as `tag:env=dev` or `namespace=api,web`. Repeat the flag to combine conditions. All conditions must match. |
+| `--flush` | Replace existing configs with the imported ones. Nothing is cleared if the source can't be read or a config is invalid |
+| `--filter` | Show and start matching configs, such as `tag:env=dev` or `namespace=api,web`. Repeat the flag to combine conditions. All conditions must match |
 | `--group-by` | Group this terminal session by `context`, `namespace`, `kubeconfig`, `workload_type`, `protocol`, `tag:<key>` or `none` |
-| `--auto-discover` | Find services with Kubernetes annotations. Requires `--context`. |
+| `--auto-discover` | Find services with Kubernetes annotations. Needs `--context` |
 | `--context` | Kubernetes context for auto-discovery |
-| `--kubeconfig` | Kubeconfig path for auto-discovery. Uses the system default if omitted. |
+| `--kubeconfig` | Kubeconfig path for auto-discovery. Uses the system default if omitted |
 | `--alias-as-domain` | Use each discovered config's alias as its local domain |
 | `--auto-loopback` | Assign a loopback address to each discovered config |
+| `--ssl` | Turn on SSL/TLS for port forwarding (overrides settings) |
+| `--log-level` | Global log level: `error`, `warn`, `info`, `debug`, `trace` or `off` |
+| `--logs-to-file` | Write logs to `app.log` in the configuration directory instead of the Logs panel |
+| `--no-update-check` | Skip the update check at startup |
+
+Config sources are mutually exclusive. See [CLI mode and scripting](/docs/interfaces/cli) for the rules, storage behavior and examples.
 
 ## Environment variables
 
 | Variable | Purpose | Example values |
 |----------|---------|----------------|
-| `RUST_LOG` | Logging level and component filtering | `info`, `debug`, `warn`, `error`, `kftray=debug,kube=info` |
+| `KFTRAY_CONFIG` | Configuration directory for the database and logs | `/path/to/dir` |
+| `XDG_CONFIG_HOME` | Parent of the `kftray` configuration directory when `KFTRAY_CONFIG` is unset | `~/.config` |
 | `KUBECONFIG` | Custom kubeconfig path or multiple files | `/path/to/config`, `/path/one:/path/two` |
-| `GITHUB_TOKEN` | GitHub personal access token for private repository sync | `ghp_xxxxxxxxxxxx` |
+| `GITHUB_TOKEN` | GitHub personal access token for private repository imports in kftui | `ghp_xxxxxxxxxxxx` |
+| `DO_NOT_TRACK` | Turns off crash reports and performance data, whatever the settings say | `1` |
 | `HTTPS_PROXY` | HTTPS proxy for Kubernetes API requests | `http://proxy.example.com:8080` |
 | `HTTP_PROXY` | HTTP proxy for Kubernetes API requests | `http://proxy.example.com:8080` |
 | `NO_PROXY` | Hosts that bypass the proxy | `localhost,127.0.0.1,.local` |
 | `TERM` | Terminal type for kftui | `xterm-256color`, `screen-256color` |
 
-To limit log output to a component, include its name in `RUST_LOG`:
-
-```bash
-# Debug only kftray components, info for everything else
-RUST_LOG=kftray=debug,info kftui
-
-# Debug Kubernetes client, warn for everything else
-RUST_LOG=kube=debug,warn kftray
-
-# Trace-level logging for port forwarding
-RUST_LOG=kftray_portforward=trace kftui
-```
-
 ## Data directories
 
-<Tabs items={['macOS', 'Linux', 'Windows']}>
-<Tab value="macOS">
-```bash
-# Configuration database
-~/.kftray/kftray.db
+kftray and kftui look for their files in one configuration directory on every operating system. kftray picks the first match:
 
-# HTTP logs (desktop only)
-~/.kftray/http_logs/
+1. `KFTRAY_CONFIG`
+2. `$XDG_CONFIG_HOME/kftray`
+3. `~/.kftray` (`%USERPROFILE%\.kftray` on Windows)
 
-# Application logs
-~/Library/Logs/kftray/
-```
-</Tab>
-<Tab value="Linux">
-```bash
-# Configuration database
-~/.kftray/kftray.db
+| Path in the directory | Content |
+|-----------------------|---------|
+| `configs.db` | Configuration database |
+| `http_logs/` | [HTTP logs](/docs/configuration/http-logging), written by both apps |
+| `kftray_<date>_<time>.log` | Desktop application logs |
+| `logger-errors.log` | Desktop logger errors |
+| `app.log` | kftui logs, with `--logs-to-file` |
 
-# HTTP logs (desktop only)
-~/.kftray/http_logs/
-
-# Application logs
-~/.local/share/kftray/logs/
-```
-</Tab>
-<Tab value="Windows">
-```powershell
-# Configuration database
-%USERPROFILE%\.kftray\kftray.db
-
-# HTTP logs (desktop only)
-%USERPROFILE%\.kftray\http_logs\
-
-# Application logs
-%APPDATA%\kftray\logs\
-```
-</Tab>
-</Tabs>
+kftray doesn't use `~/Library/Logs`, `~/.local/share` or `%APPDATA%` for these files. See [Configuration](/docs/configuration#storage-location) for details.
 
 ## Terminal keyboard shortcuts
 
 | Key | Action |
 |-----|--------|
 | `↑` `↓` `←` `→` | Navigate lists and sections |
-| `Space` | Select or deselect an item |
-| `a` | Select all items |
-| `f` | Start or stop forwards for selected configs |
-| `i` | Import configuration from JSON file |
-| `e` | Export selected configurations to JSON |
-| `d` | Delete selected configurations |
+| `Space` | Mark or unmark an item |
+| `a` | Mark all items |
+| `f` | Start or stop the marked forwards |
+| `i` | Import configuration from a JSON file |
+| `e` | Export configurations to JSON |
+| `d` | Delete the marked configurations |
 | `s` | Open settings |
-| `l` | Turn HTTP logging on or off for selected configs |
+| `l` | Turn HTTP logging on or off |
 | `L` | Set HTTP log retention and maximum size |
 | `V` | View HTTP logs |
 | `o` | Open HTTP logs in an external editor |
 | `r` | Replay an HTTP request from the log detail view |
+| `v` | Group by and filter configs |
+| `t` | Edit tags |
+| `/` | Search |
 | `h` | Show help |
-| `q` | Quit the app |
+| `q` | Show About |
 | `Tab` | Switch between sections |
 | `Ctrl+C` | Exit |
 
-See the [terminal interface guide](/docs/interfaces/terminal) for workflow examples.
+See the [terminal interface guide](/docs/interfaces/terminal#keyboard-reference) for the full reference and workflow examples.
 
 ## Debug logging
 
-Turn on debug logging to investigate connection failures, authentication errors or unexpected behavior:
+Raise the level to investigate connection failures, authentication errors or unexpected behavior.
 
 ```bash
-# Desktop with full debug output
-RUST_LOG=debug kftray 2>&1 | tee kftray-debug.log
+# Terminal with debug output in the Logs panel
+kftui --log-level debug
 
-# Terminal with debug output
-RUST_LOG=debug kftui 2>&1 | tee kftui-debug.log
-
-# Component-specific debugging
-RUST_LOG=kftray_portforward=trace,kube=debug kftui
+# Write the logs to <configuration directory>/app.log
+kftui --log-level debug --logs-to-file
 ```
 
 The log output includes:
@@ -217,3 +182,4 @@ The log output includes:
 | Proxy server | Deployment events |
 | HTTP parsing | Requests and responses when you turn on [HTTP logging](/docs/configuration/http-logging) |
 
+For the desktop app, open the log viewer from the footer menu, the tray menu or `Settings > Log Files > View Logs`, or read the `kftray_*.log` files in the configuration directory.
