@@ -1,6 +1,6 @@
 ---
 title: Documentation
-description: Complete reference for kftray and kftui — installation, configuration, port forwarding, HTTP logging, and proxy setup for Kubernetes development.
+description: Install kftray or kftui and set up Kubernetes port forwards, HTTP logs and proxies.
 ---
 
 import { BookOpen, Download, Zap, Cog, ArrowRightLeft, Monitor, Terminal, TerminalSquare, FileCode, Blocks, FileSearch, GitBranch, Radio, Layers } from 'lucide-react';
@@ -9,16 +9,16 @@ import { BookOpen, Download, Zap, Cog, ArrowRightLeft, Monitor, Terminal, Termin
 
 <Cards>
   <Card icon={<BookOpen />} href="/docs/getting-started/introduction" title="Introduction">
-    What kftray is and why it exists.
+    Choose between the desktop and terminal apps.
   </Card>
   <Card icon={<Download />} href="/docs/getting-started/installation" title="Install">
-    Get kftray running on macOS, Linux, or Windows.
+    Install on macOS, Linux or Windows.
   </Card>
   <Card icon={<Zap />} href="/docs/getting-started/quick-start" title="Quick Start">
-    Create your first port forward in minutes.
+    Create your first port forward.
   </Card>
   <Card icon={<Cog />} href="/docs/getting-started/how-it-works" title="How It Works">
-    Understand the forwarding pipeline.
+    Follow traffic from your machine to the cluster.
   </Card>
 </Cards>
 
@@ -26,28 +26,28 @@ import { BookOpen, Download, Zap, Cog, ArrowRightLeft, Monitor, Terminal, Termin
 
 <Cards>
   <Card icon={<Layers />} href="/docs/configuration/workload-types" title="Workload Types">
-    Service, pod, proxy, and expose modes.
+    Choose service, pod, proxy or expose mode.
   </Card>
   <Card icon={<FileCode />} href="/docs/configuration" title="Configuration">
-    Field reference, defaults, and storage.
+    Check config fields, defaults and storage paths.
   </Card>
   <Card icon={<ArrowRightLeft />} href="/docs/configuration/port-forwarding" title="Port Forwarding">
-    TCP and UDP forwarding options.
+    Set up TCP and UDP forwards.
   </Card>
   <Card icon={<Radio />} href="/docs/configuration/proxy-forwarding" title="Proxy Forwarding">
-    Route traffic through cluster proxies.
+    Reach remote services through your cluster.
   </Card>
   <Card icon={<FileSearch />} href="/docs/configuration/http-logging" title="HTTP Logging">
-    Capture request and response data.
+    Record HTTP requests and responses.
   </Card>
   <Card icon={<GitBranch />} href="/docs/configuration/github-sync" title="GitHub Sync">
-    Share configs across teams.
+    Share configs through a GitHub repository.
   </Card>
   <Card icon={<Download />} href="/docs/configuration/auto-import" title="Auto Import">
-    Discover services from annotations.
+    Import services with Kubernetes annotations.
   </Card>
   <Card icon={<Blocks />} href="/docs/configuration/mcp-server" title="MCP Server">
-    Let external clients manage port-forwards through kftray.
+    Let external clients manage port forwards through kftray.
   </Card>
 </Cards>
 
@@ -55,13 +55,13 @@ import { BookOpen, Download, Zap, Cog, ArrowRightLeft, Monitor, Terminal, Termin
 
 <Cards>
   <Card icon={<Monitor />} href="/docs/interfaces/desktop" title="GUI">
-    System tray app with HTTP logging and GitHub sync.
+    Manage forwards from the system tray.
   </Card>
   <Card icon={<Terminal />} href="/docs/interfaces/terminal" title="TUI">
-    Keyboard-driven, SSH-compatible, lightweight.
+    Manage forwards with a keyboard, including over SSH.
   </Card>
   <Card icon={<TerminalSquare />} href="/docs/interfaces/cli" title="CLI">
-    Flags, non-interactive mode, scripting, CI/CD.
+    Run forwards from scripts and CI jobs.
   </Card>
 </Cards>
 
@@ -69,9 +69,9 @@ import { BookOpen, Download, Zap, Cog, ArrowRightLeft, Monitor, Terminal, Termin
 
 <Cards>
   <Card icon={<FileCode />} href="/docs/resources/cli-reference" title="CLI Reference">
-    Environment variables, keyboard shortcuts, debug logging.
+    Look up flags, environment variables and keyboard shortcuts.
   </Card>
   <Card icon={<Blocks />} href="/docs/resources/architecture" title="Architecture">
-    Deep dive into components and internals.
+    Read about components, shared state and security.
   </Card>
 </Cards>

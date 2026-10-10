@@ -40,7 +40,7 @@
     <div class="diagram-container">
       <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="udp-forwarding-title udp-forwarding-desc">
       <title id="udp-forwarding-title">UDP forwarding sequence</title>
-      <desc id="udp-forwarding-desc">Sequence diagram of a UDP packet converted to TCP by kftray, sent through a Kubernetes port-forward to the in-cluster kftray-server proxy, converted back to UDP for the target service, with responses returning in reverse.</desc>
+      <desc id="udp-forwarding-desc">kftray carries UDP over TCP through Kubernetes to kftray-server, which restores UDP for the target service and returns responses along the same path.</desc>
       <defs>
       <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#999999"/></marker>
       <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4a8af5"/></marker>
@@ -49,7 +49,7 @@
       <rect width="100%" height="100%" fill="#121212"/>
       <text class="eyebrow" x="40" y="40">SEQUENCE · UDP FORWARDING</text>
       <text class="diagram-title" x="40" y="72">UDP forwarding via proxy</text>
-      <text class="subtitle" x="40" y="100">Kubernetes port-forward carries TCP only: kftray converts UDP to TCP, and the in-cluster kftray-server converts it back to UDP.</text>
+      <text class="subtitle" x="40" y="100">Kubernetes port-forward carries TCP. kftray converts UDP to TCP, and the in-cluster kftray-server converts it back to UDP.</text>
       <g data-group="lifelines">
       <line class="lifeline" x1="132" y1="172" x2="132" y2="524"/>
       <line class="lifeline" x1="364" y1="172" x2="364" y2="524"/>

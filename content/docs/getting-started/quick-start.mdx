@@ -1,35 +1,33 @@
 ---
 title: Quick Start
-description: Create your first port-forward configuration, start it, and verify the connection.
+description: Create your first port-forward configuration, start it and verify the connection.
 ---
 
-# Quick Start
-
-In this guide, you'll create a port-forward configuration, start it, and verify that traffic flows from your local machine to a Kubernetes service.
+Forward a Kubernetes web service to `localhost:8080` and check the connection with `curl`.
 
 ## Prerequisites
 
 - kftray or kftui [installed](/docs/getting-started/installation)
-- A running Kubernetes cluster accessible via `kubeconfig`
-- At least one service running in the cluster (we'll use a web service on port 80 as an example)
+- A running Kubernetes cluster you can reach through `kubeconfig`
+- A running service. The examples use a web service on port `80`.
 
-Verify your cluster access first:
+Check your cluster access first:
 
 ```bash
 kubectl get services -n default
 ```
 
-## Step 1 — Create a Configuration
+## Step 1: Create a Configuration
 
 <Tabs items={['Desktop', 'Terminal']}>
 <Tab value="Desktop">
 
 <Steps>
 <Step>
-Launch kftray. The main window opens on start. If it has hidden, click the system tray icon to open it again.
+Launch kftray. The main window opens on start. If it is hidden, click the system tray icon to open it again.
 </Step>
 <Step>
-Click the **+** button (or press `Ctrl+N` / `Cmd+N`).
+Click the `+` button or press `Ctrl+N` / `Cmd+N`.
 </Step>
 <Step>
 Fill in the configuration form:
@@ -44,7 +42,7 @@ Fill in the configuration form:
 | Alias | `web` |
 </Step>
 <Step>
-Click **Save**.
+Click "Save".
 </Step>
 </Steps>
 
@@ -85,12 +83,12 @@ Navigate to your `config.json` file and press `Enter`.
 </Tab>
 </Tabs>
 
-## Step 2 — Start the Port Forward
+## Step 2: Start the Port Forward
 
 <Tabs items={['Desktop', 'Terminal']}>
 <Tab value="Desktop">
 
-Toggle the switch next to your "web" configuration, or click **Start All** to enable all forwards.
+Toggle the switch next to your `web` config, or click "Start All" to start every forward.
 
 A green status indicator means the connection is active.
 
@@ -99,7 +97,7 @@ A green status indicator means the connection is active.
 
 <Steps>
 <Step>
-Use arrow keys to highlight the "web" configuration.
+Use the arrow keys to move to the `web` config.
 </Step>
 <Step>
 Press `Space` to select it.
@@ -109,12 +107,12 @@ Press `f` to start forwarding.
 </Step>
 </Steps>
 
-The status column changes to **Running**.
+The status column changes to "Running".
 
 </Tab>
 </Tabs>
 
-## Step 3 — Verify the Connection
+## Step 3: Verify the Connection
 
 Test that traffic flows through the forward:
 
@@ -122,14 +120,14 @@ Test that traffic flows through the forward:
 curl http://localhost:8080
 ```
 
-You should see the response from your Kubernetes service. For database services, connect your client to `localhost:LOCAL_PORT` as usual.
+You should see the response from your Kubernetes service. For database services, point your client at `localhost:LOCAL_PORT` as usual.
 
-## Step 4 — Test Automatic Reconnection
+## Step 4: Test Automatic Reconnection
 
-Restart the target pod to see automatic reconnection in action:
+Restart the target pod to see automatic reconnection:
 
 ```bash
 kubectl rollout restart deployment/my-service -n default
 ```
 
-Watch the kftray status — it briefly shows a reconnection attempt, then returns to green/running. No manual intervention needed.
+kftray briefly shows a reconnection attempt before the status returns to green (running).

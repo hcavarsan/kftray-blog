@@ -1,9 +1,9 @@
 ---
 title: Workload Types
-description: The four forwarding modes — service, pod, proxy, and expose — and when to use each.
+description: The four forwarding modes (service, pod, proxy and expose) and when to use each.
 ---
 
-kftray supports four workload types for different forwarding scenarios.
+Choose a workload type based on the target you need to reach and the direction of traffic.
 
 ![Workload types: TCP forward, proxy forward, UDP forward and expose traffic paths side by side](/diagrams/workload-types.png)
 
@@ -19,7 +19,7 @@ kftray supports four workload types for different forwarding scenarios.
 }
 ```
 
-Forwards to a Kubernetes Service. Traffic routes through the service's load balancer to any healthy pod. Use this for most scenarios — it's resilient to pod restarts and scaling.
+Service mode forwards traffic through a Kubernetes Service's load balancer to a healthy pod. Use it for most forwards, since it survives pod restarts and scaling.
 
 ## Pod
 
@@ -34,7 +34,7 @@ Forwards to a Kubernetes Service. Traffic routes through the service's load bala
 }
 ```
 
-Forwards directly to a specific pod using a label selector or pod name. Use this when debugging a particular pod instance or when no service exists. The forward breaks if the pod restarts.
+Pod mode forwards directly to one pod, chosen by a label selector or pod name. Use it to debug a particular pod or when no service exists. The forward breaks if the pod restarts.
 
 ## Proxy
 
@@ -50,7 +50,7 @@ Forwards directly to a specific pod using a label selector or pod name. Use this
 }
 ```
 
-Routes traffic through a kftray-server proxy pod in your cluster to reach services that aren't directly accessible from your local machine. Also required for UDP forwarding, since Kubernetes only supports TCP port-forward natively.
+Proxy mode routes traffic through a `kftray-server` pod to reach services your machine can't access directly. UDP forwarding also needs this mode, because Kubernetes port-forward only supports TCP.
 
 See [Proxy Forwarding](/docs/configuration/proxy-forwarding) for deployment details and use cases.
 
@@ -74,15 +74,15 @@ See [Proxy Forwarding](/docs/configuration/proxy-forwarding) for deployment deta
 }
 ```
 
-Reverse tunnels your local service into the Kubernetes cluster or the public internet. Traffic flows in the opposite direction: cluster (or internet) → kftray-server pod → your local machine.
+Expose mode makes your local service available to the cluster or the public internet. Traffic goes through the `kftray-server` pod to your machine.
 
 Use cases:
 
 - Testing webhooks from external services against your local development server
-- Sharing work-in-progress features with teammates through a cluster-accessible URL
-- Running local services that need to be reachable from other pods in the cluster
+- Sharing work-in-progress features with teammates through a URL the cluster can reach
+- Running local services that other pods in the cluster need to reach
 
-Set `"exposure_type": "internal"` to make the service reachable only within the cluster, or `"public"` to create an ingress with optional TLS via cert-manager.
+Set `"exposure_type": "internal"` to make the service reachable only inside the cluster. Set it to `"public"` to create an ingress, with optional TLS through cert-manager.
 
 ```json
 {
@@ -103,7 +103,7 @@ Set `"exposure_type": "internal"` to make the service reachable only within the 
 | Field | Description |
 |-------|-------------|
 | `exposure_type` | `"internal"` (cluster only) or `"public"` (internet via ingress) |
-| `cert_manager_enabled` | Enable automatic TLS certificates via cert-manager |
-| `cert_issuer` | cert-manager issuer name (e.g., `"letsencrypt-prod"`) |
+| `cert_manager_enabled` | Turns on automatic TLS certificates through cert-manager |
+| `cert_issuer` | cert-manager issuer name, e.g. `"letsencrypt-prod"` |
 | `cert_issuer_kind` | `"Issuer"` or `"ClusterIssuer"` |
-| `ingress_class` | Ingress class for public exposure (e.g., `"nginx"`) |
+| `ingress_class` | Ingress class for public exposure, e.g. `"nginx"` |

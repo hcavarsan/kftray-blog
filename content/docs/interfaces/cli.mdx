@@ -1,9 +1,9 @@
 ---
 title: CLI Mode and Scripting
-description: Command-line flags, non-interactive mode, scripting, and CI/CD integration for kftui.
+description: Command-line flags, non-interactive mode, scripting and CI/CD integration for kftui.
 ---
 
-kftui accepts command-line flags for loading configurations, automating port forwards, and integrating with scripts and pipelines.
+kftui accepts command-line flags to load configurations, automate port forwards and run in scripts and pipelines.
 
 ## Command-line flags
 
@@ -36,33 +36,33 @@ kftui --auto-start --non-interactive --filter tag:team=payments
 | Flag | Description |
 |------|-------------|
 | `--configs-path` | Path to JSON configuration file |
-| `--save` | Persist imported configs to local database |
+| `--save` | Save imported configs to the local database |
 | `--github-url` | GitHub repository URL for config sync |
 | `--auto-start` | Start all forwards on launch |
-| `--non-interactive` | Run without TUI (forward and block) |
+| `--non-interactive` | Run without the terminal interface and keep forwarding until interrupted |
 | `--json` | Inline JSON configuration string |
 | `--stdin` | Read configuration from stdin |
 | `--flush` | Clear existing configs before importing |
-| `--filter` | Only show and start configs that match, e.g. `tag:env=dev` or `namespace=api,web`. Repeatable, all conditions must match |
-| `--group-by` | Group the TUI by `context`, `namespace`, `kubeconfig`, `workload_type`, `protocol`, `tag:<key>`, or `none` for this session |
+| `--filter` | Only show and start configs that match, e.g. `tag:env=dev` or `namespace=api,web`. You can repeat it, and all conditions must match |
+| `--group-by` | Group this terminal session by `context`, `namespace`, `kubeconfig`, `workload_type`, `protocol`, `tag:<key>` or `none` |
 
 ## Non-interactive mode
 
-Combine `--auto-start` and `--non-interactive` to run kftui as a headless forwarding daemon. The process starts all configured forwards and blocks until interrupted with `Ctrl+C`.
+Combine `--auto-start` and `--non-interactive` to run forwards without opening the terminal interface. kftui starts the configured forwards and keeps running until you press `Ctrl+C`.
 
 ```bash
 kftui --configs-path config.json --auto-start --non-interactive
 ```
 
-This is useful for:
+Use this mode for:
 
-- Running port forwards in the background on a server
-- Docker or container-based development environments
-- CI/CD pipelines that need port access during test execution
+- Background port forwards on a server.
+- Container-based development environments.
+- CI/CD jobs that need port access during tests.
 
 ## Stdin and JSON input
 
-Pipe configurations directly without creating files:
+You can pipe configurations in without creating files:
 
 ```bash
 # Inline JSON
@@ -74,7 +74,7 @@ kubectl get configmap kftray-config -o jsonpath='{.data.config}' | kftui --stdin
 
 ## CI/CD integration
 
-Use kftui in continuous integration pipelines to forward ports during test execution:
+In a CI pipeline, kftui can forward ports while tests run:
 
 ```yaml
 # GitHub Actions example
@@ -93,7 +93,7 @@ Use kftui in continuous integration pipelines to forward ports during test execu
     tmux kill-session -t kftray
 ```
 
-For simpler setups, use non-interactive mode with background execution:
+You can also run non-interactive mode in the background:
 
 ```bash
 kftui --configs-path config.json --auto-start --non-interactive &
@@ -104,7 +104,7 @@ kill $KFTUI_PID
 
 ## Automation with tmux and screen
 
-Run kftui in detached terminal sessions for long-running forwards:
+For long-running forwards, run kftui in a detached terminal session:
 
 ```bash
 # Start kftui in tmux, auto-forward all configs
@@ -126,7 +126,7 @@ screen -r kftray
 ```
 
 <Callout type="warn" title="Process management">
-Port forwards started in a detached session remain active until you stop them from the same interface. To stop them, reattach to the session and quit kftui.
+Port forwards started in a detached session stay active until you stop them from the same interface. To stop them, reattach to the session and quit kftui.
 </Callout>
 
 ## Environment variables
@@ -136,9 +136,9 @@ Port forwards started in a detached session remain active until you stop them fr
 | `RUST_LOG` | Log level and component filtering | `debug`, `kftray=debug,kube=info` |
 | `KUBECONFIG` | Custom kubeconfig path | `/path/to/config` |
 | `GITHUB_TOKEN` | GitHub token for private repo sync | `ghp_xxxxxxxxxxxx` |
-| `HTTPS_PROXY` | HTTPS proxy for K8s API | `http://proxy:8080` |
-| `HTTP_PROXY` | HTTP proxy for K8s API | `http://proxy:8080` |
-| `NO_PROXY` | Bypass proxy for hosts | `localhost,127.0.0.1` |
-| `TERM` | Terminal type for TUI rendering | `xterm-256color` |
+| `HTTPS_PROXY` | HTTPS proxy for the Kubernetes API | `http://proxy:8080` |
+| `HTTP_PROXY` | HTTP proxy for the Kubernetes API | `http://proxy:8080` |
+| `NO_PROXY` | Hosts that bypass the proxy | `localhost,127.0.0.1` |
+| `TERM` | Terminal type for kftui | `xterm-256color` |
 
 See [CLI Reference](/docs/resources/cli-reference) for debug logging examples and data directory paths.

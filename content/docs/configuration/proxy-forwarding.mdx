@@ -1,9 +1,9 @@
 ---
 title: Proxy Forwarding
-description: Route traffic through Kubernetes clusters to reach internal or external services.
+description: Route traffic through a Kubernetes cluster to reach internal or external services.
 ---
 
-Proxy forwarding routes traffic through your Kubernetes cluster to reach services that aren't directly accessible from your local machine.
+Proxy forwarding sends traffic through your Kubernetes cluster to reach services your local machine can't connect to directly.
 
 ## Basic proxy configuration
 
@@ -19,23 +19,23 @@ Proxy forwarding routes traffic through your Kubernetes cluster to reach service
 }
 ```
 
-This forwards `localhost:8443` through the kftray-server proxy pod to `internal-api.company.com:443`. Traffic flows: your machine → kftray-server pod → target service.
+This forwards `localhost:8443` through the `kftray-server` proxy pod to `internal-api.company.com:443`.
 
 ## The kftray-server proxy component
 
-kftray-server is a lightweight proxy pod that runs in your Kubernetes cluster. It receives traffic from your local port forward and routes it to the `remote_address` target.
+The `kftray-server` proxy pod runs in your Kubernetes cluster. It receives traffic from your local port forward and sends it to the `remote_address` target.
 
-The proxy component is required for:
+You need the proxy component for:
 
 - UDP port forwarding
-- Accessing services outside the cluster from within cluster network context
+- Reaching services outside the cluster from the cluster network
 - Reaching internal corporate services through cluster network policies
-- Bypassing IP allowlist restrictions using cluster egress IPs
+- Connecting to services that allow your cluster's outbound IP addresses
 
-kftray automatically deploys the proxy pod when you create a proxy-type forward. The pod runs in the same namespace as your target service.
+kftray deploys the proxy pod automatically when you create a proxy forward. The pod runs in the same namespace as your target service.
 
 <Callout type="warn" title="Cluster permissions required">
-Deploying the proxy requires permissions to create pods and services in the target namespace. If you see deployment errors, check your RBAC permissions with `kubectl auth can-i create pods -n NAMESPACE`.
+Deploying the proxy needs permission to create pods and services in the target namespace. If deployment fails, check your Kubernetes role-based access control (RBAC) permissions with `kubectl auth can-i create pods -n NAMESPACE`.
 </Callout>
 
 ## Use cases
@@ -54,7 +54,7 @@ Deploying the proxy requires permissions to create pods and services in the targ
 }
 ```
 
-Access internal APIs that are only reachable from within your corporate network. The cluster's network context provides access even when your local machine is outside the VPN.
+This reaches internal APIs through the corporate cluster's network, even when your machine is outside the VPN.
 
 ### Cloud services with IP restrictions
 
@@ -70,6 +70,4 @@ Access internal APIs that are only reachable from within your corporate network.
 }
 ```
 
-Reach cloud services that allowlist your cluster's egress IPs but not your local IP. Traffic appears to originate from the cluster, satisfying IP restrictions.
-
-
+This reaches cloud services that allow your cluster's outbound IP addresses. The traffic comes from the cluster, so your local IP doesn't need access.

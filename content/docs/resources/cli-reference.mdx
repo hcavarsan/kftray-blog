@@ -1,9 +1,9 @@
 ---
 title: CLI Reference
-description: Command-line behavior, environment variables, and debug logging for both interfaces.
+description: Look up startup commands, environment variables and debug logging options for kftray and kftui.
 ---
 
-Both kftray interfaces accept environment variables and command-line options for startup, debugging, and integration with automation scripts.
+Use these commands to start kftray or kftui. Set environment variables to choose credentials, proxies and log output.
 
 ## Desktop startup
 
@@ -87,34 +87,34 @@ screen -S kftray kftui
 | Flag | Description |
 |------|-------------|
 | `--configs-path` | Path to JSON configuration file |
-| `--save` | Persist imported configs to local database |
+| `--save` | Save imported configs to the local database |
 | `--github-url` | GitHub repository URL for config sync |
 | `--auto-start` | Start all forwards on launch |
-| `--non-interactive` | Run without TUI (forward and block until interrupted) |
+| `--non-interactive` | Run without the terminal interface and keep forwarding until interrupted |
 | `--json` | Inline JSON configuration string |
 | `--stdin` | Read configuration from stdin |
 | `--flush` | Clear existing configs before importing |
-| `--filter` | Only show and start configs that match, e.g. `tag:env=dev` or `namespace=api,web`. Repeatable, all conditions must match |
-| `--group-by` | Group the TUI by `context`, `namespace`, `kubeconfig`, `workload_type`, `protocol`, `tag:<key>`, or `none` for this session |
-| `--auto-discover` | Discover services from Kubernetes annotations (requires `--context`) |
-| `--context` | Kubernetes context to use for auto-discovery |
-| `--kubeconfig` | Path to kubeconfig file for auto-discovery (default: system default) |
-| `--alias-as-domain` | Enable alias-as-domain for all discovered configs |
-| `--auto-loopback` | Enable auto loopback address for all discovered configs |
+| `--filter` | Show and start matching configs, such as `tag:env=dev` or `namespace=api,web`. Repeat the flag to combine conditions. All conditions must match. |
+| `--group-by` | Group this terminal session by `context`, `namespace`, `kubeconfig`, `workload_type`, `protocol`, `tag:<key>` or `none` |
+| `--auto-discover` | Find services with Kubernetes annotations. Requires `--context`. |
+| `--context` | Kubernetes context for auto-discovery |
+| `--kubeconfig` | Kubeconfig path for auto-discovery. Uses the system default if omitted. |
+| `--alias-as-domain` | Use each discovered config's alias as its local domain |
+| `--auto-loopback` | Assign a loopback address to each discovered config |
 
 ## Environment variables
 
-| Variable | Purpose | Example Values |
+| Variable | Purpose | Example values |
 |----------|---------|----------------|
 | `RUST_LOG` | Logging level and component filtering | `info`, `debug`, `warn`, `error`, `kftray=debug,kube=info` |
 | `KUBECONFIG` | Custom kubeconfig path or multiple files | `/path/to/config`, `/path/one:/path/two` |
-| `GITHUB_TOKEN` | GitHub Personal Access Token for private repo sync | `ghp_xxxxxxxxxxxx` |
+| `GITHUB_TOKEN` | GitHub personal access token for private repository sync | `ghp_xxxxxxxxxxxx` |
 | `HTTPS_PROXY` | HTTPS proxy for Kubernetes API requests | `http://proxy.example.com:8080` |
 | `HTTP_PROXY` | HTTP proxy for Kubernetes API requests | `http://proxy.example.com:8080` |
-| `NO_PROXY` | Bypass proxy for specific hosts | `localhost,127.0.0.1,.local` |
-| `TERM` | Terminal type for kftui rendering | `xterm-256color`, `screen-256color` |
+| `NO_PROXY` | Hosts that bypass the proxy | `localhost,127.0.0.1,.local` |
+| `TERM` | Terminal type for kftui | `xterm-256color`, `screen-256color` |
 
-Component-specific logging targets the exact subsystem you need:
+To limit log output to a component, include its name in `RUST_LOG`:
 
 ```bash
 # Debug only kftray components, info for everything else
@@ -173,20 +173,20 @@ RUST_LOG=kftray_portforward=trace kftui
 | Key | Action |
 |-----|--------|
 | `↑` `↓` `←` `→` | Navigate lists and sections |
-| `Space` | Select/deselect item |
+| `Space` | Select or deselect an item |
 | `a` | Select all items |
-| `f` | Toggle forward for selected configs |
+| `f` | Start or stop forwards for selected configs |
 | `i` | Import configuration from JSON file |
 | `e` | Export selected configurations to JSON |
 | `d` | Delete selected configurations |
 | `s` | Open settings |
-| `l` | Toggle HTTP logging for selected |
-| `L` | Configure HTTP logging (retention, max size) |
+| `l` | Turn HTTP logging on or off for selected configs |
+| `L` | Set HTTP log retention and maximum size |
 | `V` | View HTTP logs |
-| `o` | Open HTTP logs in external editor |
-| `r` | Replay HTTP request (in log detail view) |
-| `h` | Show help screen |
-| `q` | Quit application |
+| `o` | Open HTTP logs in an external editor |
+| `r` | Replay an HTTP request from the log detail view |
+| `h` | Show help |
+| `q` | Quit the app |
 | `Tab` | Switch between sections |
 | `Ctrl+C` | Exit |
 
@@ -194,7 +194,7 @@ See the [terminal interface guide](/docs/interfaces/terminal) for workflow examp
 
 ## Debug logging
 
-Enable debug logging to diagnose connection issues, authentication problems, or unexpected behavior:
+Turn on debug logging to investigate connection failures, authentication errors or unexpected behavior:
 
 ```bash
 # Desktop with full debug output
@@ -215,5 +215,5 @@ The log output includes:
 | Port binding | Attempts and failures |
 | Configuration | Database operations |
 | Proxy server | Deployment events |
-| HTTP parsing | Request/response parsing (when [HTTP logging](/docs/configuration/http-logging) is enabled) |
+| HTTP parsing | Requests and responses when you turn on [HTTP logging](/docs/configuration/http-logging) |
 

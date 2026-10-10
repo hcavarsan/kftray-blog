@@ -1,9 +1,9 @@
 ---
 title: MCP Server Integration
-description: A built-in MCP server that lets external clients manage port-forwards through kftray.
+description: Let external MCP clients manage port forwards through kftray's built-in MCP server.
 ---
 
-kftray includes a built-in MCP server. When enabled, MCP-compatible clients can browse Kubernetes clusters, start and stop port-forwards, and manage saved configurations, all through the same engine that powers the desktop and terminal interfaces.
+kftray's Model Context Protocol (MCP) server lets compatible clients browse Kubernetes resources, manage port forwards and change saved configs.
 
 ## Enabling
 
@@ -15,11 +15,11 @@ Open Settings in kftray.
 Find the MCP Server section.
 </Step>
 <Step>
-Toggle it on and set the port (default: 3000).
+Turn it on and set the port. The default is `3000`.
 </Step>
 </Steps>
 
-The server runs in the background as part of kftray. It stops when kftray closes and auto-starts on next launch if left enabled.
+The server runs in the background as part of kftray. It stops when kftray closes and starts again on the next launch if you left it enabled.
 
 | Setting | Default | Description |
 |---------|---------|-------------|
@@ -34,7 +34,7 @@ Point an MCP client at:
 http://localhost:3000/mcp
 ```
 
-Clients that read server definitions from a config file typically need an entry like:
+Clients that read server definitions from a config file usually need an entry like this:
 
 ```json
 {
@@ -46,9 +46,9 @@ Clients that read server definitions from a config file typically need an entry 
 }
 ```
 
-Where this file lives depends on the client. Check its documentation.
+The file location depends on the client, so check its documentation.
 
-To verify the server is running:
+To check that the server is running:
 
 ```bash
 curl http://localhost:3000/health
@@ -56,36 +56,30 @@ curl http://localhost:3000/health
 
 ## What it can do
 
-The server exposes 16 tools grouped in three areas.
+The server exposes 16 tools in three areas.
 
-**Cluster browsing** lets a client list the available kubeconfig contexts, namespaces within a context, services and pods within a namespace, and ports exposed by a service. If a service is not found when listing ports, kftray falls back to looking at container ports on pods matching that name as a label selector.
-
-**Port-forward control** lets a client start a forward from a saved config or from scratch by specifying context, namespace, service, and port. It can also stop a specific forward, stop all forwards at once, or list everything that is currently running. When starting a forward without a saved config, kftray creates the config automatically. If the forward fails to start, it cleans up the config so nothing is left behind.
-
-**Configuration management** lets a client list, inspect, create, update, and delete saved configs. It can also export all configs as JSON or import configs from a JSON string. These are the same configs visible in the desktop and terminal interfaces.
+Clients can browse clusters, control port forwards and manage the same saved configs as the desktop and terminal apps. The [examples](#examples) show tool calls for each task.
 
 <Callout type="info" title="Shared state">
-All interfaces share the same database at `~/.kftray/kftray.db`. A config or forward created through the MCP server shows up in the GUI and TUI, and the other way around.
+The MCP server, desktop app and terminal app share `~/.kftray/kftray.db`. Each interface shows configs and forwards created through the others.
 </Callout>
 
 ## Examples
-
-These show what a user might ask an MCP client and what kftray does behind the scenes.
 
 <Tabs items={['Browsing', 'Forwarding', 'Managing configs']}>
 <Tab value="Browsing">
 
 <Accordions>
 <Accordion title="What clusters do I have access to?">
-The client calls `list_kube_contexts`. kftray reads the kubeconfig and returns the context names, for example `dev-cluster`, `staging-cluster`, `prod-cluster`.
+The client calls `list_kube_contexts`. kftray reads the kubeconfig and returns the context names, for example `dev-cluster`, `staging-cluster` and `prod-cluster`.
 </Accordion>
 
 <Accordion title="What services are in the payments namespace?">
-The client calls `list_services` with the context and namespace. kftray queries the Kubernetes API and returns the service names, for example `payments-api`, `payments-worker`, `payments-db`.
+The client calls `list_services` with the context and namespace. kftray queries the Kubernetes API and returns the service names, for example `payments-api`, `payments-worker` and `payments-db`.
 </Accordion>
 
 <Accordion title="What ports does redis expose?">
-The client calls `list_ports` with the context, namespace, and service name. kftray returns each port with its name, number, target port, and protocol. If the service is not found, it falls back to container ports on pods matching that name as a label selector.
+The client calls `list_ports` with the context, namespace and service name. kftray returns each port with its name, number, target port and protocol. If it can't find the service, it checks container ports on pods, using the name as a label selector.
 </Accordion>
 </Accordions>
 
@@ -94,11 +88,11 @@ The client calls `list_ports` with the context, namespace, and service name. kft
 
 <Accordions>
 <Accordion title="Connect me to payments-api on port 8080">
-The client calls `start_port_forward` with the context, namespace, service name, and remote port. kftray creates a config, starts the forward, and returns the local port it assigned (for example `localhost:54321`). If a specific local port was requested, it uses that instead. If the forward fails to start, kftray deletes the config it just created.
+The client calls `start_port_forward` with the context, namespace, service name and remote port. kftray creates a config, starts the forward and returns the local port it assigned (for example `localhost:54321`). If the request names a local port, kftray uses that one. If the forward fails to start, kftray deletes the config it created.
 </Accordion>
 
 <Accordion title="Start config 3">
-The client calls `start_port_forward` with just the config ID. kftray looks up the saved config, starts the forward, and returns the local and remote ports.
+The client calls `start_port_forward` with only the config ID. kftray looks up the saved config, starts the forward and returns the local and remote ports.
 </Accordion>
 
 <Accordion title="Forward to pods labeled app=auth">
@@ -106,15 +100,15 @@ The client calls `start_port_forward` with `workload_type` set to `pod` and `tar
 </Accordion>
 
 <Accordion title="What's running right now?">
-The client calls `list_active_port_forwards`. kftray returns a list of all active forwards with their config ID, service, namespace, ports, protocol, and alias.
+The client calls `list_active_port_forwards`. kftray returns every active forward with its config ID, service, namespace, ports, protocol and alias.
 </Accordion>
 
 <Accordion title="Stop the payments forward">
-The client calls `stop_port_forward` with the config ID. kftray stops the forward and confirms which service was stopped.
+The client calls `stop_port_forward` with the config ID. kftray stops the forward and confirms which service it stopped.
 </Accordion>
 
 <Accordion title="Stop everything">
-The client calls `stop_all_port_forwards`. kftray stops all active forwards and returns how many were stopped.
+The client calls `stop_all_port_forwards`. kftray stops every active forward and returns how many it stopped.
 </Accordion>
 </Accordions>
 
@@ -123,15 +117,15 @@ The client calls `stop_all_port_forwards`. kftray stops all active forwards and 
 
 <Accordions>
 <Accordion title="Save a config for grafana but don't start it">
-The client calls `create_config` with context, namespace, service, and ports. kftray saves the config and returns its ID. The forward is not started until explicitly requested.
+The client calls `create_config` with the context, namespace, service and ports. kftray saves the config and returns its ID. It starts no forward until the client asks for one.
 </Accordion>
 
 <Accordion title="Export all my configs">
-The client calls `export_configs`. kftray returns all saved configs as a JSON string along with the total count.
+The client calls `export_configs`. kftray returns all saved configs as a JSON string with the total count.
 </Accordion>
 
 <Accordion title="Import configs from JSON">
-The client calls `import_configs` with a JSON string. kftray imports the configs and they become available in the GUI and TUI immediately.
+The client calls `import_configs` with a JSON string. kftray imports the configs, and they appear in the GUI and TUI right away.
 </Accordion>
 </Accordions>
 
@@ -147,21 +141,26 @@ The client calls `import_configs` with a JSON string. kftray imports the configs
 | `list_kube_contexts` | | context names |
 | `list_namespaces` | `context` | namespace names |
 | `list_services` | `context`, `namespace` | service names |
-| `list_pods` | `context`, `namespace` | pods with name, status, and labels |
-| `list_ports` | `context`, `namespace`, `service` | ports with name, number, target port, and protocol |
+| `list_pods` | `context`, `namespace` | pods with name, status and labels |
+| `list_ports` | `context`, `namespace`, `service` | ports with name, number, target port and protocol |
 
-All tools accept an optional `kubeconfig` parameter. `list_pods` also accepts `label_selector`.
+Every tool accepts an optional `kubeconfig` parameter. `list_pods` also accepts `label_selector`.
 
 ### Port-forward control
 
 | Tool | Required args | Returns |
 |------|--------------|---------|
-| `start_port_forward` | `config_id` **or** `namespace` + `remote_port` | local port, remote port, config ID |
+| `start_port_forward` | `config_id`, or `namespace` + `remote_port` | local port, remote port, config ID |
 | `stop_port_forward` | `config_id` | service name, namespace |
 | `stop_all_port_forwards` | | count of stopped forwards |
 | `list_active_port_forwards` | | list of active forwards with config ID, service, namespace, ports, protocol, alias |
 
-When creating a new forward without `config_id`, these parameters are also accepted: `context`, `service`, `target`, `local_port`, `protocol` (tcp or udp), `workload_type` (service, pod, or proxy), `kubeconfig`, `alias`.
+Without `config_id`, a new forward also accepts:
+
+- `context`, `service` and `target`.
+- `local_port` and `protocol` (`tcp` or `udp`).
+- `workload_type` (`service`, `pod` or `proxy`).
+- `kubeconfig` and `alias`.
 
 ### Configuration management
 
@@ -178,7 +177,7 @@ When creating a new forward without `config_id`, these parameters are also accep
 ## Security
 
 <Callout type="warn" title="Local only by default">
-The server binds to `127.0.0.1`. Only processes on the same machine can reach it.
+The server binds to `127.0.0.1`, so only processes on the same machine can reach it.
 </Callout>
 
-The MCP server uses the same kubeconfig credentials as the rest of kftray. It does not store or transmit credentials separately.
+The MCP server uses the same kubeconfig credentials as the rest of kftray. It doesn't store or send credentials separately.

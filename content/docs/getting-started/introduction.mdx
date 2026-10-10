@@ -1,66 +1,62 @@
 ---
 title: Introduction
-description: What kftray is, why we built it, and how it fits into your Kubernetes development workflow.
+description: Manage Kubernetes port forwards from the desktop or terminal, with automatic reconnection and shared configs.
 ---
 
-# Introduction
-
-Putting it simply, kftray is a cross-platform tool for managing Kubernetes port forwards with automatic reconnection, UDP support, and team configuration sharing.
+kftray is a cross-platform tool for managing Kubernetes port forwards. It adds automatic reconnection, UDP support and team configuration sharing.
 
 ## Why We Built This
 
-We kept running into the same friction with `kubectl port-forward` during daily Kubernetes development. The built-in command works fine for one-off TCP connections, but it falls short in a few common scenarios:
+We built kftray to handle recurring problems with `kubectl port-forward` during Kubernetes development:
 
 <Accordions>
 <Accordion title="Dropped connections">
-When pods restart, your forward dies and you have to manually reconnect.
+When pods restart, the forward stops and you have to reconnect by hand.
 </Accordion>
 <Accordion title="No UDP support">
-`kubectl port-forward` only handles TCP. Services like DNS or certain message queues are out of reach.
+`kubectl port-forward` only handles TCP, so services like DNS or some message queues are out of reach.
 </Accordion>
 <Accordion title="Terminal sprawl">
-Managing multiple forwards means juggling multiple terminal windows or complex shell scripts.
+Running several forwards means keeping multiple terminals open or writing shell scripts.
 </Accordion>
 <Accordion title="No team sharing">
-Configuration sharing becomes a manual file-passing exercise.
+Sharing configuration means passing files around by hand.
 </Accordion>
 </Accordions>
-
-kftray solves these by wrapping Kubernetes port forwarding in a managed layer that handles reconnection, protocol bridging, and configuration persistence.
 
 ## Use Cases
 
 <Cards>
 <Card title="Local microservices development">
-Forward your database, API gateway, and backend services to `localhost` with a single click or command.
+Forward your database, API gateway and backend services to `localhost` with one click or command.
 </Card>
 <Card title="Production debugging">
-Temporarily forward specific services for investigation without setting up VPN tunnels.
+Forward specific services for a while to investigate an issue, without setting up VPN tunnels.
 </Card>
 <Card title="Team onboarding">
-Share port-forward configurations via JSON files or GitHub repositories so new developers get a working environment in minutes.
+Share port-forward configs as JSON files or through GitHub repositories for new developers to import.
 </Card>
 <Card title="UDP services">
-Access DNS, DHCP, or other UDP-based services that `kubectl port-forward` can't reach.
+Reach DNS, DHCP and other UDP-based services that `kubectl port-forward` can't.
 </Card>
 <Card title="MCP server">
-Let external clients manage port-forwards through kftray via the [MCP server](/docs/configuration/mcp-server).
+Let external clients manage port forwards through kftray with the [MCP server](/docs/configuration/mcp-server).
 </Card>
 </Cards>
 
 ## Two Interfaces, One Configuration
 
-kftray comes in two flavors that share the same configuration database:
+kftray comes in two versions that share the same configuration database:
 
 | | Desktop (`kftray`) | Terminal (`kftui`) |
 |---|---|---|
-| **Best for** | Visual management, system tray convenience | Keyboard-driven workflows, SSH, low resources |
-| **Memory** | ~100 MB | ~30 MB |
-| **Exclusive features** | System tray integration | Request replay, SSH-compatible, tmux-friendly, non-interactive mode |
-| **Shared features** | HTTP traffic logging, GitHub sync, auto import, auto-reconnection, TCP/UDP, expose (reverse tunneling) ||
-| **Platform** | macOS, Linux, Windows | macOS, Linux, Windows |
+| Best for | Visual management and system tray access | Keyboard-driven workflows, SSH and low resource use |
+| Memory | ~100 MB | ~30 MB |
+| Exclusive features | System tray integration | Request replay, SSH compatibility, tmux support, non-interactive mode |
+| Shared features | HTTP traffic logging, GitHub sync, auto import, auto-reconnection, TCP/UDP, expose (reverse tunneling) ||
+| Platform | macOS, Linux, Windows | macOS, Linux, Windows |
 
-Both interfaces read from the same SQLite database (`~/.kftray/kftray.db`), so you can mix and match based on the situation. Check the [Desktop Interface](/docs/interfaces/desktop) and [Terminal Interface](/docs/interfaces/terminal) pages for details.
+Both apps read `~/.kftray/kftray.db`, so you can switch interfaces without copying configs. See the [Desktop Interface](/docs/interfaces/desktop) and [Terminal Interface](/docs/interfaces/terminal) pages for instructions.
 
 ## Usage at a Glance
 
@@ -77,6 +73,6 @@ You define port forwards as JSON configurations:
 }
 ```
 
-Then enable them through either interface. kftray handles the connection lifecycle — including automatic reconnection when pods restart.
+Start the forward in either interface. kftray manages the connection and reconnects when pods restart.
 
 For the full walkthrough, see the [Quick Start](/docs/getting-started/quick-start).

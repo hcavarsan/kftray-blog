@@ -1,33 +1,30 @@
 ---
 title: Installation Guide
-description: Install the kftray desktop app or kftui terminal interface on macOS, Linux, or Windows.
+description: Install the kftray desktop app or the kftui terminal interface on macOS, Linux or Windows.
 ---
 
-# Install
-
-There are several ways to install kftray. Pick the method that matches your platform and preference, then move on to the [Quick Start](/docs/getting-started/quick-start).
+Pick the install method that matches your platform, then continue with the [Quick Start](/docs/getting-started/quick-start).
 
 ## Desktop Interface (kftray)
 
 <Tabs items={['macOS', 'Linux', 'Windows']}>
 <Tab value="macOS">
 
-Install via Homebrew (recommended):
+Install with Homebrew (recommended):
 
 ```bash
 brew tap hcavarsan/kftray
 brew install --cask kftray
 ```
 
-Or download `kftray_universal.dmg` from the [latest release](https://github.com/hcavarsan/kftray/releases/latest). The universal binary works on both Intel and Apple Silicon.
-
+Or download `kftray_universal.dmg` from the [latest release](https://github.com/hcavarsan/kftray/releases/latest). The universal binary runs on both Intel and Apple Silicon.
 
 </Tab>
 <Tab value="Linux">
 
-Debian, Ubuntu, Fedora, and openSUSE users can install the `kftray` package from the [package repositories](#linux-packages) below.
+On Debian, Ubuntu, Fedora and openSUSE, you can install the `kftray` package from the [package repositories](#linux-packages) below.
 
-Install via Homebrew:
+To install with Homebrew:
 
 ```bash
 brew tap hcavarsan/kftray
@@ -36,10 +33,10 @@ brew install kftray-linux
 
 Or download the AppImage from the [latest release](https://github.com/hcavarsan/kftray/releases/latest):
 
-- `kftray_amd64.AppImage` — x86_64 systems
-- `kftray_aarch64.AppImage` — ARM64 systems
+- `kftray_amd64.AppImage` for x86_64 systems
+- `kftray_aarch64.AppImage` for ARM64 systems
 
-Make it executable before running:
+Make it executable, then run it:
 
 ```bash
 chmod +x kftray_amd64.AppImage
@@ -47,7 +44,7 @@ chmod +x kftray_amd64.AppImage
 ```
 
 <Callout type="warn" title="GNOME Users">
-The system tray icon requires AppIndicator support. Install the [AppIndicator extension](https://extensions.gnome.org/extension/615/appindicator-support/) for the tray icon to appear. KDE, XFCE, and i3 include tray support by default.
+The system tray icon needs AppIndicator support. Install the [AppIndicator extension](https://extensions.gnome.org/extension/615/appindicator-support/) so the icon appears. KDE, XFCE and i3 include tray support by default.
 </Callout>
 
 </Tab>
@@ -55,10 +52,10 @@ The system tray icon requires AppIndicator support. Install the [AppIndicator ex
 
 Download the installer from the [latest release](https://github.com/hcavarsan/kftray/releases/latest):
 
-- `kftray_x64-setup.exe` — standard x86_64 systems
-- `kftray_arm64-setup.exe` — ARM64 devices (Surface Pro X, etc.)
+- `kftray_x64-setup.exe` for standard x86_64 systems
+- `kftray_arm64-setup.exe` for ARM64 devices, such as Surface Pro X
 
-The installer configures PATH and creates Start Menu entries automatically.
+The installer sets up `PATH` and creates Start Menu entries automatically.
 
 </Tab>
 </Tabs>
@@ -80,12 +77,12 @@ brew install kftui
 cargo install kftui
 ```
 
-Requires a working Rust toolchain. See [rustup.rs](https://rustup.rs) if you don't have one.
+This needs a working Rust toolchain. If you don't have one, see [rustup.rs](https://rustup.rs).
 
 </Tab>
 <Tab value="Linux Packages">
 
-Add the [package repository](#linux-packages) for your distribution, then:
+Add the [package repository](#linux-packages) for your distribution, then run:
 
 ```bash
 sudo apt install kftui     # Debian and Ubuntu
@@ -106,12 +103,12 @@ Or with `wget`:
 bash <(wget -qO- https://raw.githubusercontent.com/hcavarsan/kftray/main/hacks/kftui_installer.sh)
 ```
 
-This installs `kftui` to `/usr/local/bin/` and requires `sudo` for the system-wide install.
+The script installs `kftui` to `/usr/local/bin/`, which needs `sudo` for the system-wide install.
 
 </Tab>
 <Tab value="Windows">
 
-Run in PowerShell:
+Run this in PowerShell:
 
 ```powershell
 Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/hcavarsan/kftray/main/hacks/kftui_installer.ps1'))
@@ -122,7 +119,7 @@ Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw
 
 ### Manual Binary Downloads
 
-If the installer scripts don't work in your environment (corporate firewalls, restricted networks), download binaries directly from the [latest release](https://github.com/hcavarsan/kftray/releases/latest):
+If your network blocks the installer scripts, download the binaries from the [latest release](https://github.com/hcavarsan/kftray/releases/latest):
 
 | Platform | Desktop | Terminal |
 |---|---|---|
@@ -130,16 +127,18 @@ If the installer scripts don't work in your environment (corporate firewalls, re
 | Linux x86_64 | `kftray_amd64.AppImage` | `kftui_amd64` |
 | Linux ARM64 | `kftray_aarch64.AppImage` | `kftui_arm64` |
 | Windows x64 | `kftray_x64-setup.exe` | `kftui_x86_64.exe` |
-| Windows ARM64 | `kftray_arm64-setup.exe` | — |
+| Windows ARM64 | `kftray_arm64-setup.exe` | None |
 
 ## Linux Packages
 
-Every release publishes `kftray` and `kftui` packages for Debian, Ubuntu, Fedora, and openSUSE through the [openSUSE Build Service](https://build.opensuse.org/project/show/home:hencavarsan:kftray). Add the repository once, then install either package with your package manager; updates arrive with the regular system upgrade. The commands below install `kftui`; replace it with `kftray` for the desktop app.
+Each release publishes `kftray` and `kftui` packages for Debian, Ubuntu, Fedora and openSUSE through the [openSUSE Build Service](https://build.opensuse.org/project/show/home:hencavarsan:kftray). Add the repository once and install either package with your package manager. Updates arrive with regular system upgrades.
+
+The commands below install `kftui`. Replace it with `kftray` for the desktop app.
 
 <Tabs items={['Debian / Ubuntu', 'Fedora', 'openSUSE']}>
 <Tab value="Debian / Ubuntu">
 
-Replace `Debian_12` with `Debian_13`, `Ubuntu_22.04`, `Ubuntu_24.04`, or `Ubuntu_26.04`:
+Replace `Debian_12` with `Debian_13`, `Ubuntu_22.04`, `Ubuntu_24.04` or `Ubuntu_26.04` as needed:
 
 ```bash
 sudo mkdir -p /etc/apt/keyrings
@@ -173,14 +172,16 @@ sudo zypper install kftui
 </Tab>
 </Tabs>
 
-Packages are signed with the project key of `home:hencavarsan:kftray`; the `.repo` files reference it and the apt source pins it with `signed-by`. The `kftray` package ships the AppImage and depends on `fuse3`; `kftui` depends on `libdbus-1`.
+The packages use the signing key for `home:hencavarsan:kftray`. The `.repo` files reference that key, and the apt source pins it with `signed-by`.
+
+The `kftray` package ships the AppImage and depends on `fuse3`. The `kftui` package depends on `libdbus-1`.
 
 ## Verifying the Installation
 
 <Tabs items={['Desktop', 'Terminal']}>
 <Tab value="Desktop">
 
-Launch kftray from your applications menu. The main window opens, and a system tray icon (a small Kubernetes logo) appears. The window hides when it loses focus, click the icon to open it again.
+Launch kftray from your applications menu. The main window opens and a system tray icon (a small Kubernetes logo) appears. The window hides when it loses focus, so click the icon to open it again.
 
 </Tab>
 <Tab value="Terminal">
@@ -204,4 +205,4 @@ Both interfaces store data in `~/.kftray/`:
 | `app.log` | Application logs |
 | `http_logs/` | HTTP traffic captures (when enabled) |
 
-This directory is shared between both interfaces, so configurations created in one appear instantly in the other.
+Both interfaces share this directory, so configurations created in one appear instantly in the other.

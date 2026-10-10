@@ -1,9 +1,9 @@
 ---
 title: Auto Import
-description: Automatically discover port-forward configurations from Kubernetes service annotations.
+description: Discover port-forward configurations from Kubernetes service annotations.
 ---
 
-Auto import discovers port-forward configurations from Kubernetes service annotations, so you don't have to create them manually.
+Auto import reads port-forward configurations from Kubernetes service annotations, so you don't need to create them by hand.
 
 ## Annotation format
 
@@ -28,7 +28,7 @@ spec:
       targetPort: 8080
 ```
 
-The `kftray.app/configs` annotation defines port forwards using the format `alias-localport-remoteport`. Multiple forwards are comma-separated.
+The `kftray.app/configs` annotation defines port forwards in the format `alias-localport-remoteport`. Separate multiple forwards with commas.
 
 This example creates two configurations:
 
@@ -39,33 +39,33 @@ This example creates two configurations:
 
 | Annotation | Value | Description |
 |------------|-------|-------------|
-| `kftray.app/enabled` | `"true"` | Enables auto import for this service |
-| `kftray.app/configs` | `"alias-local-remote,..."` | Comma-separated list of port forward definitions |
+| `kftray.app/enabled` | `"true"` | Turns on auto import for this service |
+| `kftray.app/configs` | `"alias-local-remote,..."` | Comma-separated list of port-forward definitions |
 
 ## How discovery works
 
-kftray scans all services in namespaces you have access to, looking for the `kftray.app/enabled: "true"` annotation. For each annotated service:
+kftray scans services in every namespace you can access for the `kftray.app/enabled: "true"` annotation. For each annotated service, kftray:
 
 <Steps>
 <Step>
-Parse the `kftray.app/configs` value.
+Parses the `kftray.app/configs` value.
 </Step>
 <Step>
-Create a configuration object with `service` and `namespace` from metadata, `context` from your current Kubernetes context, and `alias`, `local_port`, `remote_port` from the config string parts.
+Creates a config from the service metadata, your current Kubernetes context and the annotation. The metadata supplies `service` and `namespace`. The annotation supplies `alias`, `local_port` and `remote_port`.
 </Step>
 <Step>
-Add the configuration to your local database.
+Adds the configuration to your local database.
 </Step>
 </Steps>
 
 Discovery runs:
 
 - On kftray startup
-- When you manually trigger "Discover Services" in the interface
+- When you trigger "Discover Services" in the interface
 - Every 10 minutes (desktop interface only)
 
 <Callout type="warn" title="RBAC permissions required">
-Auto import requires permissions to list services across namespaces. If discovery fails, verify permissions with `kubectl auth can-i list services --all-namespaces`. You may need a ClusterRole binding for cluster-wide discovery. If you don't have LIST privilege on a namespace, you can type the namespace name manually in the import dialog.
+Auto import needs permission to list services across namespaces. Check your permissions with `kubectl auth can-i list services --all-namespaces`. Cluster-wide discovery may need a `ClusterRole` binding. If you lack list permission for a namespace, type its name in the import dialog.
 </Callout>
 
 ## Integration with Helm
@@ -95,7 +95,7 @@ kftray:
   localPort: 8080
 ```
 
-Deploy with Helm and kftray automatically discovers the service:
+Deploy with Helm and kftray discovers the service on its own:
 
 ```bash
 helm install myapp ./myapp
@@ -109,13 +109,13 @@ helm install myapp ./myapp
 
 <Steps>
 <Step>
-Open kftray desktop interface.
+Open the kftray desktop interface.
 </Step>
 <Step>
 Click "Discover Services" in the toolbar.
 </Step>
 <Step>
-Select namespaces to scan (or "All Namespaces").
+Select the namespaces to scan, or "All Namespaces".
 </Step>
 <Step>
 Click "Scan".
@@ -128,12 +128,12 @@ Click "Import Selected".
 </Step>
 </Steps>
 
-Discovered configurations appear in your port forward list immediately.
+Discovered configurations show up in your port-forward list right away.
 
 </Tab>
 <Tab value="Terminal">
 
-Discover annotated services and start port-forwards immediately, without opening the TUI:
+Discover annotated services and start their port forwards without opening the TUI:
 
 ```bash
 # Discover and start all annotated services

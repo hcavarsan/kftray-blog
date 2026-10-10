@@ -40,7 +40,7 @@
     <div class="diagram-container">
       <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="mcp-server-title mcp-server-desc">
       <title id="mcp-server-title">MCP server sequence</title>
-      <desc id="mcp-server-desc">Sequence diagram of an MCP client posting a tools/call request to kftray-mcp, which executes the tool through kftray-portforward against the Kubernetes API, with the result returned as a JSON-RPC response.</desc>
+      <desc id="mcp-server-desc">An MCP client calls a tool through kftray-mcp and kftray-portforward, which accesses Kubernetes and returns a JSON-RPC response.</desc>
       <defs>
       <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#999999"/></marker>
       <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4a8af5"/></marker>
@@ -49,7 +49,7 @@
       <rect width="100%" height="100%" fill="#121212"/>
       <text class="eyebrow" x="40" y="40">SEQUENCE · MCP SERVER</text>
       <text class="diagram-title" x="40" y="72">MCP server request flow</text>
-      <text class="subtitle" x="40" y="100">POST /mcp (tools/call) over HTTP; kftray-mcp delegates the tool to kftray-portforward, which calls the Kubernetes API.</text>
+      <text class="subtitle" x="40" y="100">The client sends tools/call to POST /mcp. kftray-mcp uses kftray-portforward to call the Kubernetes API.</text>
       <g data-group="lifelines">
       <line class="lifeline" x1="132" y1="172" x2="132" y2="500"/>
       <line class="lifeline" x1="364" y1="172" x2="364" y2="500"/>

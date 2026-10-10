@@ -1,22 +1,22 @@
 ---
 title: Terminal Interface
-description: Keyboard-driven port-forward management with minimal resource usage and SSH compatibility.
+description: Keyboard-driven port-forward management with low resource use and SSH compatibility.
 ---
 
-The kftui terminal interface provides keyboard-driven management of Kubernetes port forwards with minimal resource usage and full SSH compatibility. For command-line flags, non-interactive mode, and scripting, see the [CLI](/docs/interfaces/cli) page.
+The kftui terminal interface manages Kubernetes port forwards from the keyboard. It uses few resources and works over SSH. For command-line flags, non-interactive mode and scripting, see the [CLI](/docs/interfaces/cli) page.
 
 ![kftui terminal interface](/img/kftui2025.png)
 
 ## Interface layout
 
-The terminal interface uses a split-panel layout with keyboard navigation. The main panels are:
+kftui has four panels:
 
-- **Stopped Configs** — configurations not currently forwarding
-- **Running Configs** — active port forwards with live status
-- **Details** — full configuration details for the selected entry (service, namespace, ports, HTTP logs path)
-- **Logs** — application log output
+- Stopped Configs: configurations not currently forwarding
+- Running Configs: active port forwards with live status
+- Details: full configuration details for the selected entry (service, namespace, ports, HTTP logs path)
+- Logs: application log output
 
-Status indicators in the status column:
+The status column uses these indicators:
 
 | Indicator | Meaning |
 |-----------|---------|
@@ -30,22 +30,22 @@ Status indicators in the status column:
 |----------|--------|
 | `↑` `↓` | Navigate configurations |
 | `←` `→` | Navigate table columns |
-| `Space` | Select/deselect configuration |
+| `Space` | Select or deselect a config |
 | `a` | Select all configurations |
-| `f` | Toggle forward for selected |
+| `f` | Start or stop forwards for selected configs |
 | `i` | Import configurations from JSON |
 | `e` | Export configurations to JSON |
 | `d` | Delete selected configurations |
 | `s` | Open settings |
-| `l` | Toggle HTTP logging for selected |
-| `L` | Configure HTTP logging (retention, max size) |
-| `V` | View HTTP logs for selected |
-| `o` | Open HTTP logs in external editor |
+| `l` | Turn HTTP logging on or off for selected configs |
+| `L` | Set HTTP log retention and maximum size |
+| `V` | View HTTP logs for selected configs |
+| `o` | Open HTTP logs in an external editor |
 | `v` | Group by and filter configurations ([details](/docs/configuration/tags-and-views#terminal-kftui)) |
 | `t` | Edit tags of the selected configuration |
-| `r` | Replay HTTP request (in log detail view) |
-| `h` | Show help screen |
-| `q` | Quit application |
+| `r` | Replay an HTTP request from the log detail view |
+| `h` | Show help |
+| `q` | Quit the app |
 | `Tab` | Switch interface sections |
 | `Enter` | Confirm action |
 | `Esc` | Cancel action |
@@ -58,7 +58,7 @@ Status indicators in the status column:
 
 Press `i` to open the import dialog.
 
-**File browser navigation:**
+File browser navigation:
 ```
 ↑ ↓     Navigate files/directories
 Enter   Select file or enter directory
@@ -66,24 +66,24 @@ Enter   Select file or enter directory
 Esc     Cancel import
 ```
 
-**Import process:**
+To import:
 
 <Steps>
 <Step>
-Navigate to JSON configuration file.
+Navigate to the JSON configuration file.
 </Step>
 <Step>
-Press `Enter` to select.
+Press `Enter` to select it.
 </Step>
 <Step>
-Review configurations to import.
+Review the configurations to import.
 </Step>
 <Step>
 Press `Enter` to confirm.
 </Step>
 </Steps>
 
-**JSON format:**
+The JSON format:
 ```json
 [
   {
@@ -97,58 +97,56 @@ Press `Enter` to confirm.
 ]
 ```
 
-Validation errors appear immediately with details about what needs to be fixed.
+Validation errors appear immediately, with details about what to fix.
 
 </Tab>
 <Tab value="Export">
 
-Press `e` to open the export dialog.
-
-**Export workflow:**
+To export:
 
 <Steps>
 <Step>
-Select configurations to export (or `Ctrl+A` for all).
+Select the configurations to export (or press `Ctrl+A` for all).
 </Step>
 <Step>
 Press `e`.
 </Step>
 <Step>
-Navigate to save location.
+Navigate to the save location.
 </Step>
 <Step>
-Enter filename.
+Enter a filename.
 </Step>
 <Step>
 Press `Enter` to confirm.
 </Step>
 </Steps>
 
-**Default location:**
+The default location is:
 ```bash
 ~/.kftray/exports/
 ```
 
-Exported files work with both terminal and desktop interfaces for cross-platform sharing.
+Exported files work in both the terminal and desktop interfaces, so you can share them across platforms.
 
 </Tab>
 <Tab value="Delete">
 
-**Delete selected:**
+To delete selected configurations:
 
 <Steps>
 <Step>
-Select configurations with `Space`.
+Select the configurations with `Space`.
 </Step>
 <Step>
 Press `d`.
 </Step>
 <Step>
-Confirm deletion with `Enter`.
+Confirm the deletion with `Enter`.
 </Step>
 </Steps>
 
-**Delete all:**
+To delete all configurations:
 
 <Steps>
 <Step>
@@ -158,34 +156,34 @@ Press `Ctrl+A` to select all.
 Press `d`.
 </Step>
 <Step>
-Confirm deletion with `Enter`.
+Confirm the deletion with `Enter`.
 </Step>
 </Steps>
 
-Active forwards are stopped before deletion. Confirmation prompt prevents accidental deletion.
+kftui asks for confirmation and stops active forwards before deleting their configs.
 
 </Tab>
 </Tabs>
 
 ## Port forward management
 
-**Start forwards:**
+To start a forward:
 
 <Steps>
 <Step>
-Navigate to configuration with `↑` `↓`.
+Navigate to the configuration with `↑` `↓`.
 </Step>
 <Step>
-Press `Space` to select.
+Press `Space` to select it.
 </Step>
 <Step>
-Press `f` to toggle forward.
+Press `f` to toggle the forward.
 </Step>
 </Steps>
 
-Status changes from `○ Stopped` to `⚠ Connecting` to `● Running`.
+The status changes from `○ Stopped` to `⚠ Connecting` to `● Running`.
 
-**Bulk start:**
+To start several forwards at once:
 
 <Steps>
 <Step>
@@ -196,48 +194,41 @@ Press `f` to start all selected forwards.
 </Step>
 </Steps>
 
-**Stop forwards:**
-Same selection and toggle pattern. Navigate to running configurations, select with `Space`, and press `f` to stop.
+To stop forwards, use the same selection and toggle pattern. Navigate to the running configurations, select them with `Space` and press `f`.
 
-**Error handling:**
-Failed forwards show `⚠ Error` status. Navigate to the configuration and press `Enter` to view error details.
+Failed forwards show the `⚠ Error` status. Navigate to the configuration and press `Enter` to view the error details.
 
 ## Auto import
 
-Access auto import through the `Tab` menu system.
-
-**Workflow:**
+To run it:
 
 <Steps>
 <Step>
-Press `Tab` to open menu.
+Press `Tab` to open the menu.
 </Step>
 <Step>
 Navigate to "Auto Import" with `↑` `↓`.
 </Step>
 <Step>
-Press `Enter` to select.
+Press `Enter` to select it.
 </Step>
 <Step>
-Choose kubeconfig and context.
+Choose the kubeconfig and context.
 </Step>
 <Step>
-Select target namespace.
+Select the target namespace.
 </Step>
 <Step>
-Review discovered services with `kftray.app/enabled` annotation.
+Review the discovered services with the `kftray.app/enabled` annotation.
 </Step>
 <Step>
-Select services to import with `Space`.
+Select the services to import with `Space`.
 </Step>
 <Step>
-Press `Enter` to confirm import.
+Press `Enter` to confirm the import.
 </Step>
 </Steps>
 
-See [Auto Import](/docs/configuration/auto-import) for annotation format and service discovery details.
+See [Auto Import](/docs/configuration/auto-import) for the annotation format and service discovery details.
 
-Imported configurations merge with existing ones. Running auto import multiple times won't create duplicates.
-
-
-
+Imported configurations merge with existing ones, so running auto import several times creates no duplicates.

@@ -1,9 +1,9 @@
 ---
 title: HTTP Logging
-description: Capture and inspect HTTP request and response traffic flowing through port forwards, with VS Code REST Client compatible log output.
+description: Record HTTP requests and responses from port forwards in a format compatible with the VS Code REST Client.
 ---
 
-HTTP logging captures request and response data flowing through your port forwards for debugging API interactions.
+HTTP logging records the requests and responses that pass through your port forwards, so you can debug API calls.
 
 ## Enabling HTTP logging
 
@@ -30,16 +30,16 @@ Click "Save".
 
 Press `l` to toggle HTTP logging on the selected configuration, or set `"http_logs_enabled": true` in your JSON config.
 
-Press `L` to configure log retention (1–365 days) and maximum log size (1–1000 MB).
+Press `L` to set log retention (1 to 365 days) and maximum log size (1 to 1000 MB).
 
 </Tab>
 </Tabs>
 
-Logging starts immediately for new connections. Existing connections continue without logging until they reconnect.
+Logging starts right away for new connections. Existing connections stay unlogged until they reconnect.
 
 ## Log file location
 
-Logs are written to `~/.kftray/http_logs/` with one file per port forward:
+Logs go to `~/.kftray/http_logs/`, with one file per port forward:
 
 <Files>
 <Folder name="~/.kftray/http_logs" defaultOpen>
@@ -81,17 +81,17 @@ Each log entry includes:
 | Field | Detail |
 |---|---|
 | Timestamp | Millisecond precision |
-| Trace ID | For correlating requests |
-| HTTP method, path, status code | Request identification |
-| Request duration | Timing information |
-| Full request headers and body | Complete request capture |
-| Full response headers and body | Complete response capture |
+| Trace ID | Links related requests |
+| HTTP method, path, status code | Identifies the request |
+| Request duration | How long the request took |
+| Full request headers and body | The complete request |
+| Full response headers and body | The complete response |
 
 ## Log management
 
 ### Viewing logs in kftui
 
-Press `V` to open the log viewer for the selected configuration. From the detail view, press `r` to replay any captured HTTP request — useful for re-testing endpoints without leaving the terminal. Press `o` to open logs in your default external editor.
+Press `V` to open the log viewer for the selected configuration. In the detail view, press `r` to replay an HTTP request and retest an endpoint. Press `o` to open the logs in your default external editor.
 
 ### Cleanup
 
@@ -102,7 +102,5 @@ rm ~/.kftray/http_logs/*.log
 ```
 
 <Callout type="error" title="Sensitive data in logs">
-HTTP logs capture full request and response bodies, including authentication tokens, API keys, and personal data. Delete logs when debugging is complete.
+HTTP logs capture full request and response bodies, including authentication tokens, API keys and personal data. Delete the logs when you finish debugging.
 </Callout>
-
-

@@ -1,15 +1,15 @@
 ---
 title: Tags, Filters and Group By
-description: Label configurations with tags, group the list by context, namespace, or any tag, and filter what shows up in the desktop app, kftui, and the CLI.
+description: Use tags, grouping and filters to organize port forwards in the desktop app, kftui and the CLI.
 ---
 
-Once you have forwards across several clusters and teams, a single list grouped by context gets hard to scan. Tags let you label configurations your own way, and the view settings decide how the list is grouped and which configurations show up.
+Tags let you label configs by team, environment or another value you choose. Use grouping and filters to organize the list and choose which configs appear.
 
-The view is saved with your settings, so the desktop app and kftui show the same grouping and filters. The default is to group by context with no filters, which is how kftray has always looked.
+kftray saves the view settings, so the desktop app and kftui use the same grouping and filters. By default, they group configs by context without filters.
 
 ## Tags
 
-A tag is either a `key=value` pair, like `team=payments` or `env=prod`, or just a key, like `pinned`. Tags are optional and live in the configuration JSON:
+A tag is a `key=value` pair, like `team=payments` or `env=prod`, or a bare key, like `pinned`. Tags are optional and live in the configuration JSON:
 
 ```json
 {
@@ -27,25 +27,25 @@ A tag is either a `key=value` pair, like `team=payments` or `env=prod`, or just 
 }
 ```
 
-A key without a value is stored with an empty string. Configurations without tags don't need the field at all, and exports skip it when it's empty.
+kftray stores a key without a value as an empty string. Configs without tags don't need the field, and exports skip it when it's empty.
 
 | Rule | Detail |
 |---|---|
 | Keys | Lowercase letters, digits, `.`, `_`, `-` and `/`, up to 63 characters |
 | Values | Up to 128 characters, no `,` or `=` |
-| Normalization | Keys are trimmed and lowercased, values are trimmed |
-| Duplicates | Two keys that end up the same after normalization, like `Env` and `env`, are rejected |
+| Normalization | kftray removes spaces at the start and end of keys and values. It also converts keys to lowercase |
+| Duplicates | kftray rejects two keys that match after normalization, like `Env` and `env` |
 
-Tags travel with the configuration, so they're included in exports, imports, and [GitHub sync](/docs/configuration/github-sync).
+Tags travel with the configuration, so exports, imports and [GitHub sync](/docs/configuration/github-sync) include them.
 
 ### Editing tags
 
 <Tabs items={['Desktop', 'Terminal']}>
 <Tab value="Desktop">
 
-Open the add or edit dialog and use the **Tags** field. Type `team=payments` or `pinned` and press `Enter` to add a tag. The field suggests keys and values that other configurations already use.
+Open the add or edit dialog and use the "Tags" field. Type `team=payments` or `pinned` and press `Enter` to add a tag. The field suggests keys and values that other configurations already use.
 
-Invalid tags show an error under the field and block saving. To change the value of a key, remove the old tag first, since each key holds a single value.
+Invalid tags show an error under the field and block saving. Each key holds one value, so to change a value, remove the old tag first.
 
 </Tab>
 <Tab value="Terminal">
@@ -63,45 +63,45 @@ Edit the list and press `Enter` to save, or `Esc` to cancel. The details panel s
 
 ## Group by
 
-Configurations can be grouped by:
+Choose one of these fields to group configs:
 
 | Field | Groups by |
 |---|---|
 | `context` | Kubernetes context (default) |
 | `namespace` | Kubernetes namespace |
 | `kubeconfig` | Kubeconfig file |
-| `workload_type` | `service`, `pod`, `proxy`, or `expose` |
+| `workload_type` | `service`, `pod`, `proxy` or `expose` |
 | `protocol` | `tcp` or `udp` |
 | `tag:<key>` | The value of a tag, like `tag:team` |
 | `none` | A single list with everything |
 
-Groups are sorted alphabetically. Configurations that don't have the field, like ones without the `team` tag when grouping by `tag:team`, go into an **Ungrouped** section at the end. When grouping by a tag that has no value, like `pinned`, the group is named after the key.
+kftray sorts groups alphabetically. Configs without the grouping field appear in an "Ungrouped" section at the end. For example, grouping by `tag:team` puts configs without a `team` tag there. When a tag has no value, such as `pinned`, its key becomes the group name.
 
 ## Filters
 
-Filters narrow the list down to the configurations you care about. Every field you can group by can also be filtered.
+Filters narrow the list to the configurations you want. You can filter by any field you can group by.
 
-- Picking several values of the same field shows configurations that match any of them. `namespace` set to `api` and `web` shows both namespaces.
+- Several values of the same field match any of them. Setting `namespace` to `api` and `web` shows both namespaces.
 - Filters on different fields must all match. `env=prod` plus `context=prod-eu` shows only prod configurations in `prod-eu`.
-- **Has tag** matches any configuration that has the key, whatever its value.
+- "Has tag" matches any configuration with that key, whatever its value.
 
-Search still works on top of filters, and it also matches tags. In the desktop app, Start All only starts the configurations that are visible, while Stop All stops every running forward, including the ones a filter is hiding.
+Search narrows the filtered list and also matches tags. In the desktop app, "Start All" starts only visible configs. "Stop All" stops every running forward, including those hidden by a filter.
 
 ## Desktop app
 
-The toolbar next to Start All and Stop All has the view controls:
+The view controls sit in the toolbar next to "Start All" and "Stop All":
 
 | Control | What it does |
 |---|---|
 | Group by (layers icon) | Choose the field to group by. The icon turns blue when the grouping isn't the default context grouping |
-| Filter (funnel icon) | Pick values to filter by. Each value shows how many configurations have it, and a badge on the icon shows how many filters are active |
+| Filter (funnel icon) | Pick values to filter by. Each value shows its config count. A badge on the icon shows the number of active filters |
 | Expand/collapse | Expand or collapse every group |
 
-Active filters are listed at the top of the filter menu, and you can remove each one or use **Clear all**. If nothing matches your search and filters, the list shows a button to clear both.
+The filter menu lists active filters at the top. You can remove each one or use "Clear all". If nothing matches your search and filters, the list shows a button that clears both.
 
 ## Terminal (kftui)
 
-Press `v` to open the view popup. It lists the group by options, a **has tag** row for each tag key, and a row for each value you can filter by.
+Press `v` to open the view popup. It lists grouping options, a "has tag" row for each tag key and each value you can filter by.
 
 | Key | Action |
 |---|---|
@@ -110,15 +110,15 @@ Press `v` to open the view popup. It lists the group by options, a **has tag** r
 | `c` | Clear all filters |
 | `Esc` / `v` | Close the popup |
 
-Changes apply right away. When the list is grouped by something other than context, the tables show a **Group** column with the group name on the first row of each group.
+Changes apply right away. When you group by a field other than context, a "Group" column shows each group's name on its first row.
 
 <Callout type="info" title="Selections are cleared">
-Changing the view or saving tags reorders the tables, so kftui clears the rows you marked with `Space`. This keeps bulk actions like delete or start from hitting configurations that moved into those rows.
+Changing the view or saving tags reorders the tables, so kftui clears the rows you marked with `Space`. That stops bulk actions like delete or start from hitting configurations that moved into those rows.
 </Callout>
 
 ## CLI
 
-kftui takes the same filters and grouping as flags:
+kftui accepts the same filters and grouping as flags:
 
 ```bash
 # Start only the payments team's forwards, without the TUI
@@ -136,9 +136,9 @@ kftui --group-by tag:team
 
 | Flag | Format |
 |---|---|
-| `--filter <COND>` | `field=value1,value2`, `tag:<key>=value`, or `tag:<key>` for "has tag". Repeat it to add more conditions |
-| `--group-by <FIELD>` | `context`, `namespace`, `kubeconfig`, `workload_type`, `protocol`, `tag:<key>`, or `none` |
+| `--filter <COND>` | `field=value1,value2`, `tag:<key>=value` or `tag:<key>` for "has tag". Repeat the flag to add conditions |
+| `--group-by <FIELD>` | `context`, `namespace`, `kubeconfig`, `workload_type`, `protocol`, `tag:<key>` or `none` |
 
-With `--auto-start`, only matching configurations are started. When configs come from `--configs-path`, `--json`, `--stdin`, or `--github-url`, only the imported configurations that match are started.
+With `--auto-start`, kftui starts only matching configurations. When configs come from `--configs-path`, `--json`, `--stdin` or `--github-url`, it starts only the imported configurations that match.
 
-The flags apply to that session only and don't change the saved view. An invalid field or tag key is rejected before kftui starts.
+The flags apply to that session only and leave the saved view unchanged. kftui rejects an invalid field or tag key before it starts.
