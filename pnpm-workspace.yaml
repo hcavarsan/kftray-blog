@@ -4,3 +4,5 @@ allowBuilds:
 onlyBuiltDependencies:
   - esbuild
   - sharp
+overrides:
+  uuid: 14.0.2
