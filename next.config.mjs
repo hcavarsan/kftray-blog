@@ -7,6 +7,7 @@ const withMDX = createMDX()
 
 /** @type {import('next').NextConfig} */
 const config = {
+	agentRules: false,
 	reactStrictMode: true,
 	output: 'standalone',
 	turbopack: {
