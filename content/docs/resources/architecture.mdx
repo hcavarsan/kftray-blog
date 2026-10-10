@@ -46,19 +46,7 @@ Both interfaces read and write to this database concurrently. SQLite's locking m
 
 Direct TCP forwarding uses the Kubernetes API's port-forward subprotocol:
 
-```mermaid
-sequenceDiagram
-    participant App as Local App
-    participant KF as kftray
-    participant API as K8s API Server
-    participant Pod as Target Pod
-    App->>KF: Connect to localhost:8080
-    KF->>API: Establish port-forward stream
-    API->>Pod: Forward traffic
-    Pod-->>API: Response
-    API-->>KF: Response data
-    KF-->>App: Response
-```
+![TCP forwarding sequence: the local app connects to localhost:8080 on kftray, kftray establishes a port-forward stream to the K8s API server, the API server forwards traffic to the target pod, and the response returns through the API server and kftray to the local app.](/diagrams/tcp-forwarding.png)
 
 This path is identical to `kubectl port-forward` and has comparable performance. The `kftray-portforward` component maintains a persistent WebSocket connection to the Kubernetes API server and multiplexes multiple TCP connections over it.
 
@@ -68,21 +56,7 @@ See [port forwarding configuration](/docs/configuration/port-forwarding) for usa
 
 UDP forwarding requires protocol conversion because Kubernetes port-forward only supports TCP:
 
-```mermaid
-sequenceDiagram
-    participant App as Local App
-    participant KF as kftray
-    participant Proxy as kftray-server
-    participant Svc as Target Service
-    App->>KF: UDP packet
-    KF->>KF: Convert UDP to TCP
-    KF->>Proxy: TCP via K8s port-forward
-    Proxy->>Proxy: Convert TCP to UDP
-    Proxy->>Svc: UDP packet
-    Svc-->>Proxy: UDP response
-    Proxy-->>KF: TCP response
-    KF-->>App: UDP response
-```
+![UDP forwarding sequence: the local app sends a UDP packet to kftray, kftray converts it to TCP and sends it through a Kubernetes port-forward to the in-cluster kftray-server proxy, the proxy converts it back to UDP for the target service, and the UDP response returns by the reverse path with a TCP leg between the proxy and kftray.](/diagrams/udp-forwarding.png)
 
 The `kftray-server` proxy runs as a deployment in the target namespace. kftray automatically deploys it when you create a UDP forward and removes it when no UDP forwards remain active.
 
@@ -240,19 +214,7 @@ Follow security best practices when configuring credential storage and network a
 
 The [MCP server](/docs/configuration/mcp-server) exposes kftray operations to external clients over HTTP:
 
-```mermaid
-sequenceDiagram
-    participant Client as MCP Client
-    participant MCP as kftray-mcp
-    participant PF as kftray-portforward
-    participant K8s as Kubernetes API
-    Client->>MCP: POST /mcp (tools/call)
-    MCP->>PF: execute tool
-    PF->>K8s: K8s API call
-    K8s-->>PF: response
-    PF-->>MCP: result
-    MCP-->>Client: JSON-RPC response
-```
+![MCP server sequence: an MCP client sends POST /mcp (tools/call) to kftray-mcp, which executes the tool through kftray-portforward, which calls the Kubernetes API; the response returns as a result to kftray-mcp and as a JSON-RPC response to the client.](/diagrams/mcp-server.png)
 
 The server provides 16 tools across three categories: Kubernetes resource discovery, port-forward management, and configuration CRUD. It delegates all work to `kftray-portforward` and `kftray-commons`, so it behaves the same as the GUI and TUI.
 

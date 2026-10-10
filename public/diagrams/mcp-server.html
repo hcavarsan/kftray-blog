@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCP server sequence</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { background: #121212; }
+    body { font-family: Inter, system-ui, sans-serif; background: #121212; color: #ebebeb; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+    .frame { width: 100%; max-width: 100%; min-width: 0; }
+    .diagram-container { width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; }
+    svg { width: 100%; min-width: 960px; display: block; }
+    .diagram-title { font: 600 28px Inter, system-ui, sans-serif; fill: #ebebeb; }
+    .subtitle { font: 400 11px Inter, system-ui, sans-serif; fill: #999999; }
+    .eyebrow { font: 400 8px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; letter-spacing: 0.18em; fill: #999999; }
+    .node-name { font: 600 12px Inter, system-ui, sans-serif; fill: #ebebeb; }
+    .meta { font: 400 9px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; fill: #999999; }
+    .edge-label { font: 400 8px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; letter-spacing: 0.06em; fill: #999999; }
+    .edge-label.accent { fill: #4a8af5; }
+    .legend { font: 400 10px Inter, system-ui, sans-serif; fill: #999999; }
+    .label-bg { fill: #121212; }
+    .paper { fill: #121212; }
+    .node { fill: #2a2a2d; stroke: #3a3a3a; stroke-width: 1; }
+    .focal { fill: rgba(74,138,245,0.125); stroke: #4a8af5; stroke-width: 1; }
+    .edge { stroke: #999999; stroke-width: 1.2; fill: none; }
+    .edge.accent, .edge.link { stroke: #4a8af5; }
+    .return { stroke-dasharray: 5,4; }
+    .lifeline { stroke: #3a3a3a; stroke-width: 1; stroke-dasharray: 3,3; }
+    .rule { stroke: #3a3a3a; stroke-width: 0.8; }
+    @media print {
+      .diagram-container { overflow-x: visible; }
+      svg { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="mcp-server-title mcp-server-desc">
+      <title id="mcp-server-title">MCP server sequence</title>
+      <desc id="mcp-server-desc">Sequence diagram of an MCP client posting a tools/call request to kftray-mcp, which executes the tool through kftray-portforward against the Kubernetes API, with the result returned as a JSON-RPC response.</desc>
+      <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#999999"/></marker>
+      <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4a8af5"/></marker>
+      <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4a8af5"/></marker>
+      </defs>
+      <rect width="100%" height="100%" fill="#121212"/>
+      <text class="eyebrow" x="40" y="40">SEQUENCE · MCP SERVER</text>
+      <text class="diagram-title" x="40" y="72">MCP server request flow</text>
+      <text class="subtitle" x="40" y="100">POST /mcp (tools/call) over HTTP; kftray-mcp delegates the tool to kftray-portforward, which calls the Kubernetes API.</text>
+      <g data-group="lifelines">
+      <line class="lifeline" x1="132" y1="172" x2="132" y2="500"/>
+      <line class="lifeline" x1="364" y1="172" x2="364" y2="500"/>
+      <line class="lifeline" x1="596" y1="172" x2="596" y2="500"/>
+      <line class="lifeline" x1="828" y1="172" x2="828" y2="500"/>
+      </g>
+      <g data-group="messages">
+      <line class="edge link" data-edge="m1" x1="132" y1="216" x2="364" y2="216" marker-end="url(#arrow-link)"/>
+      <line class="edge" data-edge="m2" x1="364" y1="268" x2="596" y2="268" marker-end="url(#arrow)"/>
+      <line class="edge" data-edge="m3" x1="596" y1="320" x2="828" y2="320" marker-end="url(#arrow)"/>
+      <line class="edge return" data-edge="m4" x1="828" y1="372" x2="596" y2="372" marker-end="url(#arrow)"/>
+      <line class="edge return" data-edge="m5" x1="596" y1="424" x2="364" y2="424" marker-end="url(#arrow)"/>
+      <line class="edge return" data-edge="m6" x1="364" y1="476" x2="132" y2="476" marker-end="url(#arrow)"/>
+      </g>
+      <g data-group="labels">
+      <g data-label="m1"><rect class="label-bg" x="216" y="196" width="64" height="12" rx="2"/><text class="edge-label accent" x="248" y="205" text-anchor="middle">POST /MCP</text></g>
+      <g data-label="m2"><rect class="label-bg" x="440" y="248" width="80" height="12" rx="2"/><text class="edge-label" x="480" y="257" text-anchor="middle">EXECUTE TOOL</text></g>
+      <g data-label="m3"><rect class="label-bg" x="672" y="300" width="80" height="12" rx="2"/><text class="edge-label" x="712" y="309" text-anchor="middle">K8S API CALL</text></g>
+      <g data-label="m4"><rect class="label-bg" x="684" y="352" width="56" height="12" rx="2"/><text class="edge-label" x="712" y="361" text-anchor="middle">RESPONSE</text></g>
+      <g data-label="m5"><rect class="label-bg" x="456" y="404" width="48" height="12" rx="2"/><text class="edge-label" x="480" y="413" text-anchor="middle">RESULT</text></g>
+      <g data-label="m6"><rect class="label-bg" x="206" y="456" width="84" height="12" rx="2"/><text class="edge-label" x="248" y="465" text-anchor="middle">JSON-RPC RESP</text></g>
+      </g>
+      <g data-group="participants">
+      <g data-node="mcp-client"><rect class="paper" x="48" y="120" width="168" height="52" rx="6"/><rect class="node" x="48" y="120" width="168" height="52" rx="6"/>
+      <text class="node-name" x="132" y="150" text-anchor="middle">MCP Client</text>
+      </g>
+      <g data-node="kftray-mcp"><rect class="paper" x="280" y="120" width="168" height="52" rx="6"/><rect class="focal" x="280" y="120" width="168" height="52" rx="6"/>
+      <text class="node-name" x="364" y="150" text-anchor="middle">kftray-mcp</text>
+      </g>
+      <g data-node="kftray-portforward"><rect class="paper" x="512" y="120" width="168" height="52" rx="6"/><rect class="node" x="512" y="120" width="168" height="52" rx="6"/>
+      <text class="node-name" x="596" y="150" text-anchor="middle">kftray-portforward</text>
+      </g>
+      <g data-node="kubernetes-api"><rect class="paper" x="744" y="120" width="168" height="52" rx="6"/><rect class="node" x="744" y="120" width="168" height="52" rx="6"/>
+      <text class="node-name" x="828" y="150" text-anchor="middle">Kubernetes API</text>
+      </g>
+      </g>
+      <line class="rule" x1="40" y1="540" x2="920" y2="540"/>
+      <line class="edge" x1="40" y1="560" x2="68" y2="560" marker-end="url(#arrow)"/>
+      <text class="legend" x="76" y="564">Request</text>
+      <line class="edge return" x1="147" y1="560" x2="175" y2="560" marker-end="url(#arrow)"/>
+      <text class="legend" x="183" y="564">Response</text>
+      <line class="edge link" x1="259" y1="560" x2="287" y2="560" marker-end="url(#arrow-link)"/>
+      <text class="legend" x="295" y="564">HTTP call</text>
+      <rect class="focal" x="377" y="554" width="20" height="12" rx="2"/>
+      <text class="legend" x="405" y="564">kftray-mcp</text>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>

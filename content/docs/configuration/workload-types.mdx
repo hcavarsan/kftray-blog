@@ -5,7 +5,13 @@ description: The four forwarding modes — service, pod, proxy, and expose — a
 
 kftray supports four workload types for different forwarding scenarios.
 
-![Workload types overview](/img/workload-types.webp)
+![TCP forwarding from a local app through kftray and the Kubernetes API to StatsD](/diagrams/workload-tcp.png)
+
+![Proxy forwarding through kftray-server to a Datadog Agent in the VPC](/diagrams/workload-proxy.png)
+
+![UDP forwarding with TCP encapsulation and UDP restoration by kftray-server](/diagrams/workload-udp.png)
+
+![Expose reverse tunnel from a cluster pod through kftray-server to local StatsD](/diagrams/workload-expose.png)
 
 ## Service
 

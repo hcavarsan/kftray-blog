@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UDP forwarding sequence</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { background: #121212; }
+    body { font-family: Inter, system-ui, sans-serif; background: #121212; color: #ebebeb; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+    .frame { width: 100%; max-width: 100%; min-width: 0; }
+    .diagram-container { width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; }
+    svg { width: 100%; min-width: 960px; display: block; }
+    .diagram-title { font: 600 28px Inter, system-ui, sans-serif; fill: #ebebeb; }
+    .subtitle { font: 400 11px Inter, system-ui, sans-serif; fill: #999999; }
+    .eyebrow { font: 400 8px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; letter-spacing: 0.18em; fill: #999999; }
+    .node-name { font: 600 12px Inter, system-ui, sans-serif; fill: #ebebeb; }
+    .meta { font: 400 9px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; fill: #999999; }
+    .edge-label { font: 400 8px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; letter-spacing: 0.06em; fill: #999999; }
+    .edge-label.accent { fill: #4a8af5; }
+    .legend { font: 400 10px Inter, system-ui, sans-serif; fill: #999999; }
+    .label-bg { fill: #121212; }
+    .paper { fill: #121212; }
+    .node { fill: #2a2a2d; stroke: #3a3a3a; stroke-width: 1; }
+    .focal { fill: rgba(74,138,245,0.125); stroke: #4a8af5; stroke-width: 1; }
+    .edge { stroke: #999999; stroke-width: 1.2; fill: none; }
+    .edge.accent, .edge.link { stroke: #4a8af5; }
+    .return { stroke-dasharray: 5,4; }
+    .lifeline { stroke: #3a3a3a; stroke-width: 1; stroke-dasharray: 3,3; }
+    .rule { stroke: #3a3a3a; stroke-width: 0.8; }
+    @media print {
+      .diagram-container { overflow-x: visible; }
+      svg { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="udp-forwarding-title udp-forwarding-desc">
+      <title id="udp-forwarding-title">UDP forwarding sequence</title>
+      <desc id="udp-forwarding-desc">Sequence diagram of a UDP packet converted to TCP by kftray, sent through a Kubernetes port-forward to the in-cluster kftray-server proxy, converted back to UDP for the target service, with responses returning in reverse.</desc>
+      <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#999999"/></marker>
+      <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4a8af5"/></marker>
+      <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4a8af5"/></marker>
+      </defs>
+      <rect width="100%" height="100%" fill="#121212"/>
+      <text class="eyebrow" x="40" y="40">SEQUENCE · UDP FORWARDING</text>
+      <text class="diagram-title" x="40" y="72">UDP forwarding via proxy</text>
+      <text class="subtitle" x="40" y="100">Kubernetes port-forward carries TCP only: kftray converts UDP to TCP, and the in-cluster kftray-server converts it back to UDP.</text>
+      <g data-group="lifelines">
+      <line class="lifeline" x1="132" y1="172" x2="132" y2="524"/>
+      <line class="lifeline" x1="364" y1="172" x2="364" y2="524"/>
+      <line class="lifeline" x1="596" y1="172" x2="596" y2="524"/>
+      <line class="lifeline" x1="828" y1="172" x2="828" y2="524"/>
+      </g>
+      <g data-group="messages">
+      <line class="edge" data-edge="m1" x1="132" y1="208" x2="364" y2="208" marker-end="url(#arrow)"/>
+      <path class="edge" data-edge="m2" d="M 364 244 H 392 a 8 8 0 0 1 8 8 V 256 a 8 8 0 0 1 -8 8 H 364" marker-end="url(#arrow)"/>
+      <line class="edge accent" data-edge="m3" x1="364" y1="300" x2="596" y2="300" marker-end="url(#arrow-accent)"/>
+      <path class="edge" data-edge="m4" d="M 596 336 H 624 a 8 8 0 0 1 8 8 V 348 a 8 8 0 0 1 -8 8 H 596" marker-end="url(#arrow)"/>
+      <line class="edge" data-edge="m5" x1="596" y1="392" x2="828" y2="392" marker-end="url(#arrow)"/>
+      <line class="edge return" data-edge="m6" x1="828" y1="428" x2="596" y2="428" marker-end="url(#arrow)"/>
+      <line class="edge return" data-edge="m7" x1="596" y1="464" x2="364" y2="464" marker-end="url(#arrow)"/>
+      <line class="edge return" data-edge="m8" x1="364" y1="500" x2="132" y2="500" marker-end="url(#arrow)"/>
+      </g>
+      <g data-group="labels">
+      <g data-label="m1"><rect class="label-bg" x="214" y="188" width="68" height="12" rx="2"/><text class="edge-label" x="248" y="197" text-anchor="middle">UDP PACKET</text></g>
+      <g data-label="m2"><rect class="label-bg" x="408" y="248" width="64" height="12" rx="2"/><text class="edge-label" x="414" y="257">UDP → TCP</text></g>
+      <g data-label="m3"><rect class="label-bg" x="440" y="280" width="80" height="12" rx="2"/><text class="edge-label accent" x="480" y="289" text-anchor="middle">TCP PORT-FWD</text></g>
+      <g data-label="m4"><rect class="label-bg" x="640" y="340" width="64" height="12" rx="2"/><text class="edge-label" x="646" y="349">TCP → UDP</text></g>
+      <g data-label="m5"><rect class="label-bg" x="678" y="372" width="68" height="12" rx="2"/><text class="edge-label" x="712" y="381" text-anchor="middle">UDP PACKET</text></g>
+      <g data-label="m6"><rect class="label-bg" x="672" y="408" width="80" height="12" rx="2"/><text class="edge-label" x="712" y="417" text-anchor="middle">UDP RESPONSE</text></g>
+      <g data-label="m7"><rect class="label-bg" x="440" y="444" width="80" height="12" rx="2"/><text class="edge-label" x="480" y="453" text-anchor="middle">TCP RESPONSE</text></g>
+      <g data-label="m8"><rect class="label-bg" x="208" y="480" width="80" height="12" rx="2"/><text class="edge-label" x="248" y="489" text-anchor="middle">UDP RESPONSE</text></g>
+      </g>
+      <g data-group="participants">
+      <g data-node="local-app"><rect class="paper" x="48" y="120" width="168" height="52" rx="6"/><rect class="node" x="48" y="120" width="168" height="52" rx="6"/>
+      <text class="node-name" x="132" y="150" text-anchor="middle">Local App</text>
+      </g>
+      <g data-node="kftray"><rect class="paper" x="280" y="120" width="168" height="52" rx="6"/><rect class="node" x="280" y="120" width="168" height="52" rx="6"/>
+      <text class="node-name" x="364" y="150" text-anchor="middle">kftray</text>
+      </g>
+      <g data-node="kftray-server"><rect class="paper" x="512" y="120" width="168" height="52" rx="6"/><rect class="focal" x="512" y="120" width="168" height="52" rx="6"/>
+      <text class="node-name" x="596" y="142" text-anchor="middle">kftray-server</text><text class="meta" x="596" y="158" text-anchor="middle">in-cluster</text>
+      </g>
+      <g data-node="target-service"><rect class="paper" x="744" y="120" width="168" height="52" rx="6"/><rect class="node" x="744" y="120" width="168" height="52" rx="6"/>
+      <text class="node-name" x="828" y="150" text-anchor="middle">Target Service</text>
+      </g>
+      </g>
+      <line class="rule" x1="40" y1="540" x2="920" y2="540"/>
+      <line class="edge" x1="40" y1="560" x2="68" y2="560" marker-end="url(#arrow)"/>
+      <text class="legend" x="76" y="564">Request</text>
+      <line class="edge return" x1="147" y1="560" x2="175" y2="560" marker-end="url(#arrow)"/>
+      <text class="legend" x="183" y="564">Response</text>
+      <path class="edge" d="M 259 554 H 275 a 6 6 0 0 1 6 6 a 6 6 0 0 1 -6 6 H 259" marker-end="url(#arrow)"/>
+      <text class="legend" x="295" y="564">Protocol conversion</text>
+      <line class="edge accent" x1="433" y1="560" x2="461" y2="560" marker-end="url(#arrow-accent)"/>
+      <text class="legend" x="469" y="564">TCP via K8s port-forward</text>
+      <rect class="focal" x="635" y="554" width="20" height="12" rx="2"/>
+      <text class="legend" x="663" y="564">kftray-server</text>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>

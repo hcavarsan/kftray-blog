@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proxy TCP Forwarding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper: #121212; --color-surface: #2a2a2d; --color-ink: #ebebeb;
+      --color-muted: #999999; --color-border: #3a3a3a; --color-accent: #4a8af5;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    body { font-family: var(--font-sans); background: var(--color-paper); color: var(--color-ink); padding: 1rem; }
+    .frame { width: 100%; min-width: 0; max-width: 100%; }
+    .diagram-container { width: 100%; min-width: 0; max-width: 100%; overflow-x: auto; }
+    svg { width: 100%; min-width: 960px; display: block; }
+    .bg { fill: #121212; }
+    .diagram-title { font-family: var(--font-sans); font-size: 28px; font-weight: 600; fill: #ebebeb; }
+    .eyebrow { font-family: var(--font-mono); font-size: 10px; font-weight: 400; letter-spacing: 0.14em; fill: #999999; }
+    .subtitle { font-family: var(--font-sans); font-size: 11px; font-weight: 400; fill: #999999; }
+    .legend { font-family: var(--font-sans); font-size: 10px; font-weight: 400; fill: #999999; }
+    .node-name { font-family: var(--font-sans); font-size: 12px; font-weight: 600; fill: #ebebeb; }
+    .group-name { font-family: var(--font-sans); font-size: 14px; font-weight: 600; fill: #ebebeb; }
+    .meta { font-family: var(--font-mono); font-size: 9px; font-weight: 400; fill: #999999; }
+    .edge-label { font-family: var(--font-mono); font-size: 8px; font-weight: 400; letter-spacing: 0.04em; fill: #999999; }
+    .label-bg { fill: #121212; }
+    .node { fill: #2a2a2d; stroke: #3a3a3a; stroke-width: 1; }
+    .focal { fill: rgba(74,138,245,0.125); stroke: #4a8af5; stroke-width: 1.2; }
+    .zone { fill: none; stroke: #3a3a3a; stroke-width: 1; }
+    .edge { stroke: #999999; stroke-width: 1.2; fill: none; }
+    .return { stroke-dasharray: 5,4; }
+    .lifeline { stroke: #3a3a3a; stroke-width: 1; stroke-dasharray: 3,3; }
+    .rule { stroke: #3a3a3a; stroke-width: 1; }
+    @media print {
+      .diagram-container { overflow-x: visible; }
+      svg { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="proxy-tcp-forwarding-title proxy-tcp-forwarding-desc">
+        <title id="proxy-tcp-forwarding-title">Proxy TCP Forwarding</title>
+        <desc id="proxy-tcp-forwarding-desc">Sequence: the Application opens a socket to kftray-server in the Kubernetes Pod, which relays the TCP packet to the Remote Service and returns its response.</desc>
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#999999"/></marker>
+          <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4a8af5"/></marker>
+          <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4a8af5"/></marker>
+        </defs>
+        <rect class="bg" width="960" height="600"/>
+        <text class="eyebrow" x="40" y="40">SEQUENCE · PROXY TCP FORWARDING</text>
+        <text class="diagram-title" x="40" y="72">Proxy TCP Forwarding</text>
+        <text class="subtitle" x="40" y="100">The local TCP connects to the kftray-server pod, which then sends TCP packet to the upstream server.</text>
+        <line class="lifeline" x1="200" y1="184" x2="200" y2="520"/>
+        <line class="lifeline" x1="480" y1="184" x2="480" y2="520"/>
+        <line class="lifeline" x1="760" y1="184" x2="760" y2="520"/>
+        <g data-label="m1">
+          <line class="edge" x1="200" y1="240" x2="476" y2="240" marker-end="url(#arrow)"/>
+          <rect class="label-bg" x="297" y="214" width="86" height="16"/>
+          <text class="edge-label" x="340" y="226" text-anchor="middle">SOCKET + RELAY</text>
+          <text class="meta" x="340" y="258" text-anchor="middle">Socket to kftray-server, facilitates TCP relay</text>
+        </g>
+        <g data-label="m2">
+          <line class="edge" x1="480" y1="320" x2="756" y2="320" marker-end="url(#arrow)"/>
+          <rect class="label-bg" x="582" y="294" width="76" height="16"/>
+          <text class="edge-label" x="620" y="306" text-anchor="middle">RELAY PACKET</text>
+          <text class="meta" x="620" y="338" text-anchor="middle">Relays TCP Packet</text>
+        </g>
+        <g data-label="m3">
+          <line class="edge return" x1="760" y1="400" x2="484" y2="400" marker-end="url(#arrow)"/>
+          <rect class="label-bg" x="592" y="374" width="56" height="16"/>
+          <text class="edge-label" x="620" y="386" text-anchor="middle">RESPONDS</text>
+        </g>
+        <g data-label="m4">
+          <line class="edge return" x1="480" y1="480" x2="204" y2="480" marker-end="url(#arrow)"/>
+          <rect class="label-bg" x="300" y="454" width="81" height="16"/>
+          <text class="edge-label" x="340" y="466" text-anchor="middle">RETURN PACKET</text>
+          <text class="meta" x="340" y="498" text-anchor="middle">Returns TCP Packet</text>
+        </g>
+        <g data-node="application">
+          <rect class="node" x="120" y="136" width="160" height="48" rx="6"/>
+          <text class="node-name" x="200" y="164" text-anchor="middle">Application</text>
+        </g>
+        <g data-node="pod">
+          <rect class="focal" x="400" y="136" width="160" height="48" rx="6"/>
+          <text class="node-name" x="480" y="164" text-anchor="middle">Kubernetes Pod</text>
+        </g>
+        <g data-node="remote">
+          <rect class="node" x="680" y="136" width="160" height="48" rx="6"/>
+          <text class="node-name" x="760" y="164" text-anchor="middle">Remote Service</text>
+        </g>
+
+        <line class="rule" x1="40" y1="540" x2="920" y2="540"/>
+        <line class="edge" x1="40" y1="560" x2="72" y2="560" marker-end="url(#arrow)"/>
+        <text class="legend" x="80" y="564">Request</text>
+        <line class="edge return" x1="144" y1="560" x2="176" y2="560" marker-end="url(#arrow)"/>
+        <text class="legend" x="184" y="564">Response</text>
+        <rect class="focal" x="264" y="554" width="16" height="12" rx="3"/>
+        <text class="legend" x="288" y="564">Focal participant</text>
+        <rect class="node" x="400" y="554" width="16" height="12" rx="3"/>
+        <text class="legend" x="424" y="564">Participant</text>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>

@@ -30,19 +30,7 @@ Every port forward goes through four phases:
 
 For TCP services, kftray works similarly to `kubectl port-forward` but adds automatic reconnection and multi-forward management:
 
-```mermaid
-sequenceDiagram
-    participant App as Local App
-    participant KF as kftray
-    participant API as K8s API Server
-    participant Pod as Target Pod
-    App->>KF: Connect to localhost:8080
-    KF->>API: Establish port-forward stream
-    API->>Pod: Forward traffic
-    Pod-->>API: Response
-    API-->>KF: Response data
-    KF-->>App: Response
-```
+![TCP forwarding sequence: the local app connects to localhost:8080 on kftray, kftray establishes a port-forward stream to the K8s API server, the API server forwards traffic to the target pod, and the response returns through the API server and kftray to the local app.](/diagrams/tcp-forwarding.png)
 
 The key difference from `kubectl`: when that pod restarts, kftray detects the drop and reconnects to the replacement pod automatically.
 
@@ -50,21 +38,7 @@ The key difference from `kubectl`: when that pod restarts, kftray detects the dr
 
 Kubernetes doesn't support UDP port forwarding natively, so kftray uses a proxy architecture:
 
-```mermaid
-sequenceDiagram
-    participant App as Local App
-    participant KF as kftray
-    participant Proxy as kftray-server (in-cluster)
-    participant Svc as Target Service
-    App->>KF: UDP packet
-    KF->>KF: Convert UDP → TCP
-    KF->>Proxy: TCP via K8s port-forward
-    Proxy->>Proxy: Convert TCP → UDP
-    Proxy->>Svc: UDP packet
-    Svc-->>Proxy: UDP response
-    Proxy-->>KF: TCP response
-    KF-->>App: UDP response
-```
+![UDP forwarding sequence: the local app sends a UDP packet to kftray, kftray converts it to TCP and sends it through a Kubernetes port-forward to the in-cluster kftray-server proxy, the proxy converts it back to UDP for the target service, and the UDP response returns by the reverse path with a TCP leg between the proxy and kftray.](/diagrams/udp-forwarding.png)
 
 kftray deploys a lightweight `kftray-server` pod in your cluster that acts as a UDP-to-TCP bridge. This adds one network hop but enables access to services like DNS, DHCP, and UDP-based message queues.
 

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Server TCP Mode</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper: #121212; --color-surface: #2a2a2d; --color-ink: #ebebeb;
+      --color-muted: #999999; --color-border: #3a3a3a; --color-accent: #4a8af5;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    body { font-family: var(--font-sans); background: var(--color-paper); color: var(--color-ink); padding: 1rem; }
+    .frame { width: 100%; min-width: 0; max-width: 100%; }
+    .diagram-container { width: 100%; min-width: 0; max-width: 100%; overflow-x: auto; }
+    svg { width: 100%; min-width: 960px; display: block; }
+    .bg { fill: #121212; }
+    .diagram-title { font-family: var(--font-sans); font-size: 28px; font-weight: 600; fill: #ebebeb; }
+    .eyebrow { font-family: var(--font-mono); font-size: 10px; font-weight: 400; letter-spacing: 0.14em; fill: #999999; }
+    .subtitle { font-family: var(--font-sans); font-size: 11px; font-weight: 400; fill: #999999; }
+    .legend { font-family: var(--font-sans); font-size: 10px; font-weight: 400; fill: #999999; }
+    .node-name { font-family: var(--font-sans); font-size: 12px; font-weight: 600; fill: #ebebeb; }
+    .group-name { font-family: var(--font-sans); font-size: 14px; font-weight: 600; fill: #ebebeb; }
+    .meta { font-family: var(--font-mono); font-size: 9px; font-weight: 400; fill: #999999; }
+    .edge-label { font-family: var(--font-mono); font-size: 8px; font-weight: 400; letter-spacing: 0.04em; fill: #999999; }
+    .label-bg { fill: #121212; }
+    .node { fill: #2a2a2d; stroke: #3a3a3a; stroke-width: 1; }
+    .focal { fill: rgba(74,138,245,0.125); stroke: #4a8af5; stroke-width: 1.2; }
+    .zone { fill: none; stroke: #3a3a3a; stroke-width: 1; }
+    .edge { stroke: #999999; stroke-width: 1.2; fill: none; }
+    .return { stroke-dasharray: 5,4; }
+    .lifeline { stroke: #3a3a3a; stroke-width: 1; stroke-dasharray: 3,3; }
+    .rule { stroke: #3a3a3a; stroke-width: 1; }
+    @media print {
+      .diagram-container { overflow-x: visible; }
+      svg { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="server-tcp-mode-title server-tcp-mode-desc">
+        <title id="server-tcp-mode-title">Server TCP Mode</title>
+        <desc id="server-tcp-mode-desc">Architecture: in TCP mode the Kftray App connects over TCP to the KFtray Server, which connects over TCP to the Target Server.</desc>
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#999999"/></marker>
+          <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4a8af5"/></marker>
+          <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4a8af5"/></marker>
+        </defs>
+        <rect class="bg" width="960" height="600"/>
+        <text class="eyebrow" x="40" y="40">ARCHITECTURE · KFTRAY SERVER</text>
+        <text class="diagram-title" x="40" y="72">Server TCP Mode</text>
+        <text class="subtitle" x="40" y="100">In TCP mode, the server creates a direct connection between the client and target server, forwarding all traffic between them.</text>
+        <g data-node="zone">
+          <rect class="zone" x="40" y="152" width="880" height="280" rx="8"/>
+          <text class="group-name" x="64" y="182">TCP Mode</text>
+        </g>
+        <g data-label="e1">
+          <line class="edge" x1="264" y1="292" x2="388" y2="292" marker-end="url(#arrow)"/>
+          <rect class="label-bg" x="313" y="266" width="31" height="16"/>
+          <text class="edge-label" x="328" y="278" text-anchor="middle">TCP</text>
+        </g>
+        <g data-label="e2">
+          <line class="edge" x1="568" y1="292" x2="692" y2="292" marker-end="url(#arrow)"/>
+          <rect class="label-bg" x="617" y="266" width="31" height="16"/>
+          <text class="edge-label" x="632" y="278" text-anchor="middle">TCP</text>
+        </g>
+        <g data-node="app">
+          <rect class="node" x="88" y="256" width="176" height="72" rx="6"/>
+          <text class="node-name" x="176" y="296" text-anchor="middle">Kftray App</text>
+        </g>
+        <g data-node="server">
+          <rect class="focal" x="392" y="256" width="176" height="72" rx="6"/>
+          <text class="node-name" x="480" y="296" text-anchor="middle">KFtray Server</text>
+        </g>
+        <g data-node="target">
+          <rect class="node" x="696" y="256" width="176" height="72" rx="6"/>
+          <text class="node-name" x="784" y="296" text-anchor="middle">Target Server</text>
+        </g>
+
+        <line class="rule" x1="40" y1="540" x2="920" y2="540"/>
+        <line class="edge" x1="40" y1="560" x2="72" y2="560" marker-end="url(#arrow)"/>
+        <text class="legend" x="80" y="564">Connection (protocol label)</text>
+        <rect class="focal" x="264" y="554" width="16" height="12" rx="3"/>
+        <text class="legend" x="288" y="564">Focal component</text>
+        <rect class="node" x="400" y="554" width="16" height="12" rx="3"/>
+        <text class="legend" x="424" y="564">Component</text>
+        <rect class="zone" x="520" y="554" width="16" height="12" rx="3"/>
+        <text class="legend" x="544" y="564">Mode</text>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>
