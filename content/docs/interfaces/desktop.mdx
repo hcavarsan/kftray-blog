@@ -254,14 +254,15 @@ On first start kftray asks whether it may send crash reports and performance dat
 
 A report includes the error type and code location, app version and build target, such as `x86_64-unknown-linux-gnu`.
 It also includes the operating system name and version, CPU architecture, device model, app uptime and name of the thread that failed.
+The list of loaded libraries carries file names only, never the folder the app was installed to.
 A random run ID links reports from the same session. It changes on each start and isn't stored, so it doesn't identify you or your computer.
 
 Panic messages are sent only when they are fixed strings in the code. A panic that carries a cluster address or a resource name is reduced to a file and line. A report also lists what happened before it (for example `portforward.start ok`, `window.shown`, `update.check`). Those entries are only fixed names and whether an operation succeeded, never which configuration it was.
 
-Failed port forwards, git imports and MCP server starts are also reported individually.
+Failed port forwards, git imports and MCP server starts are also reported individually, and so are failed attempts to bring a relay forward back after its pod died or to restart forwards after a network change.
 Each report includes the operation name and a fixed reason, such as `timeout`, `target_not_found`, `kubeconfig` or `port_in_use`. The error message itself is never sent.
 
-The window reports its own errors under the same switch and run ID. It sends the error type, code locations and function names.
+The window reports its own errors under the same switch and run ID, including an error while drawing the interface, which shows a reload screen instead of a blank window. It sends the error type, code locations and function names.
 It leaves out error messages, page addresses and browser identification.
 A failed request from the window to the app is reported as `InvokeError` with its fixed request name, such as `start_port_forward_tcp_cmd`.
 The request's arguments and error message are never sent.
@@ -291,6 +292,7 @@ Performance data is the second switch in the same first-start dialog. It starts 
 When it's on, kftray records how long it takes to:
 
 - start a port forward (including the ones started automatically on launch), stop one or stop all of them
+- recover a relay forward after its pod died, or restart forwards after a network change
 - start up (opening the database, running migrations, reading settings)
 - import configurations from a git repository
 - start the MCP server
