@@ -1086,9 +1086,7 @@ docker inspect --format='{{.State.Health.Status}}' kftray-docs
     src="https://umami.cavarsa.app/script.js"
     data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
     data-domains="kftray.app"
-    data-exclude-search="true"
     data-exclude-hash="true"
-    data-do-not-track="true"
     data-performance="true"
     strategy="afterInteractive"
   />
@@ -1099,8 +1097,7 @@ docker inspect --format='{{.State.Health.Status}}' kftray-docs
 - The browser loads the tracker directly from the self-hosted Umami instance at `umami.cavarsa.app`. Each visitor's request hits Cloudflare in front of Umami with their own IP, so `cf-connecting-ip` (and country/region/city) is recorded accurately.
 - Loads after hydration via Next.js `afterInteractive` strategy — no impact on LCP/INP.
 - Tracks only on `kftray.app` (`data-domains`); preview / staging / localhost domains are silently ignored even if the env var is set.
-- Strips query strings (`data-exclude-search`) and hash fragments (`data-exclude-hash`) from tracked URLs.
-- Respects browser DNT setting (`data-do-not-track`).
+- Keeps query strings so Umami records `utm_*`, `gclid` and `fbclid` campaign parameters; strips hash fragments (`data-exclude-hash`).
 - Collects Core Web Vitals (LCP, INP, CLS, FCP, TTFB) via `data-performance="true"` — visible under the Performance view in the Umami dashboard. Requires Umami v3.1.0+ on the server.
 - The `<Script>` tag does not render at all if `NEXT_PUBLIC_UMAMI_WEBSITE_ID` is unset — analytics fully disabled in dev by default.
 

@@ -18,9 +18,10 @@ export default function PrivacyPage() {
 
 			<h2>Website</h2>
 			<p>
-				The site counts page views and clicks (for example, download buttons) with{' '}
-				<a href="https://umami.is">Umami</a>, a self-hosted analytics tool at umami.cavarsa.app.
-				Umami doesn't use cookies, and the site doesn't send URL query strings or fragments to it.
+				The site counts page views, clicks (for example, download buttons) and page load timings
+				with <a href="https://umami.is">Umami</a>, a self-hosted analytics tool at
+				umami.cavarsa.app. Umami doesn't use cookies. The site sends the page URL, including
+				campaign parameters in the query string, but not URL fragments.
 			</p>
 			<p>
 				Blog comments use <a href="https://giscus.app">Giscus</a>, which stores comments in GitHub
