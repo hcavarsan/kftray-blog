@@ -98,8 +98,23 @@ screen -S kftray kftui
 | `--log-level` | Global log level: `error`, `warn`, `info`, `debug`, `trace` or `off` |
 | `--logs-to-file` | Write logs to `app.log` in the configuration directory instead of the Logs panel |
 | `--no-update-check` | Skip the update check at startup |
+| `-- <COMMAND> [ARGS]...` | Run a command with forwards, without the terminal interface. Needs `--auto-start`. Stop forwards when the command exits |
 
 Config sources are mutually exclusive. See [CLI mode and scripting](/docs/interfaces/cli) for the rules, storage behavior and examples.
+
+### Run a command with forwards
+
+Pass a command after `--` with `--auto-start`. kftui automatically selects non-interactive mode, starts the forwards and runs the command. When the command exits, kftui stops the forwards. If no forward starts, kftui fails without running the command.
+
+```bash
+kftui --configs-path config.json --auto-start -- npm test
+```
+
+`-- <COMMAND> [ARGS]...` passes the command and its arguments to the child process. Flags after `--` belong to the command, not kftui.
+
+kftui returns the command's exit code, even if a failing command also encounters cleanup errors. If the command succeeds but cleanup fails, kftui exits with an error.
+
+The command's stdout stays available for pipes and file redirection. kftui writes its own messages to stderr and prints only errors by default in command mode. `--log-level` can add more output.
 
 ## Environment variables
 
@@ -182,4 +197,4 @@ The log output includes:
 | Proxy server | Deployment events |
 | HTTP parsing | Requests and responses when you turn on [HTTP logging](/docs/configuration/http-logging) |
 
-For the desktop app, open the log viewer from the footer menu, the tray menu or `Settings > Log Files > View Logs`, or read the `kftray_*.log` files in the configuration directory.
+For the desktop app, open the log viewer from the footer menu, tray menu or `Settings > Log Files > View Logs`. You can also read the `kftray_*.log` files in the configuration directory.
