@@ -68,8 +68,8 @@ Forwards `localhost:8080` to port `80` of a pod that matches the labels `app=ngi
 
 ### TCP with HTTP logs
 
-Turns on HTTP logging and saves a 20 MiB size setting, 14-day retention and automatic-cleanup preference.
-The current logger doesn't apply those limits. See [HTTP logging](/docs/configuration/http-logging#config-fields) before relying on them.
+Turns on HTTP logging with a 20 MiB rotation threshold, 14-day retention and automatic cleanup.
+Cleanup removes expired rotated files when the logger starts and after rotation. See [HTTP logging](/docs/configuration/http-logging#config-fields) for rotation behavior.
 
 ```json
 [

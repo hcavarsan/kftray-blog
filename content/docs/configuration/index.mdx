@@ -45,9 +45,9 @@ Each configuration defines one port forward. To forward several services, create
 | `auto_loopback_address` | boolean | `false` | Gives the config its own address in `127.0.0.2` to `127.0.0.254`. It overrides `local_address` |
 | `domain_enabled` | boolean | `false` | Writes the alias to the hosts file as a local domain for the forward |
 | `http_logs_enabled` | boolean | `false` | Turns on [HTTP logging](/docs/configuration/http-logging) for this forward |
-| `http_logs_max_file_size` | number | 10 MiB | Saved size setting in bytes. See [logging limitations](/docs/configuration/http-logging#config-fields) |
-| `http_logs_retention_days` | number | 7 | Saved retention preference in days |
-| `http_logs_auto_cleanup` | boolean | `true` | Saved cleanup preference, not currently applied by the HTTP logger |
+| `http_logs_max_file_size` | number | 10 MiB | Rotation threshold in bytes. See [HTTP log rotation](/docs/configuration/http-logging#config-fields) |
+| `http_logs_retention_days` | number | 7 | Retention in days for rotated files when automatic cleanup is on |
+| `http_logs_auto_cleanup` | boolean | `true` | Removes expired rotated files when the logger starts and after rotation |
 | `exposure_type` | string | None | For `expose`: `"internal"` (cluster only) or `"public"` (internet through an ingress) |
 | `cert_manager_enabled` | boolean | None | For public `expose`: requests a TLS certificate through cert-manager |
 | `cert_issuer` | string | None | cert-manager issuer name, for example `"letsencrypt-prod"`. Required when `exposure_type` is `public` and `cert_manager_enabled` is `true` |
@@ -106,7 +106,7 @@ The same lookup applies on macOS, Linux and Windows. Files in that directory:
 | Path | Content |
 |------|---------|
 | `configs.db` | SQLite database with your configs, settings and view preferences |
-| `http_logs/` | [HTTP logs](/docs/configuration/http-logging), one file per config |
+| `http_logs/` | [HTTP logs](/docs/configuration/http-logging), with active and rotated files per forward |
 | `kftray_<date>_<time>.log` | Desktop app logs. A separate `logger-errors.log` collects logger errors |
 | `app.log` | kftui log file, written only with `--logs-to-file` |
 
@@ -115,7 +115,7 @@ kftray stores the GitHub token in the system keyring, never in a file. It uses t
 You don't need to edit the database. The [desktop interface](/docs/interfaces/desktop) and the [terminal interface](/docs/interfaces/terminal) manage configurations for you.
 
 <Callout type="info" title="kftui can skip the database">
-When you load configs with `--configs-path`, `--json`, `--stdin`, `--github-url` or `--auto-discover` and you don't pass `--save`, kftui keeps them in an in-memory database. They disappear when kftui exits, and that run never sends crash reports. See [kftui flags](/docs/interfaces/cli).
+Loading configs without `--save` keeps them in an in-memory database. This applies to `--configs-path`, `--json`, `--stdin`, `--github-url` and `--auto-discover`. They disappear when kftui exits, and that run never sends crash reports. See [kftui flags](/docs/interfaces/cli).
 </Callout>
 
 ## Import and export

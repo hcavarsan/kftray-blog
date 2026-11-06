@@ -28,6 +28,8 @@ Optional: select `HTTP Logs Settings` to change the log options for that config.
 </Step>
 </Steps>
 
+![TCP forward actions menu with HTTP logging controls](/img/docs/http-logging-menu.webp)
+
 The menu shows these items only for TCP forwards. Once logging is on, `Open HTTP Logs File` opens the log in your external editor or the system app for log files. kftray tries `EDITOR`, then `VISUAL`, then the system opener.
 
 </Tab>
@@ -35,26 +37,26 @@ The menu shows these items only for TCP forwards. Once logging is on, `Open HTTP
 
 Press `l` to toggle HTTP logging on the selected configuration, or set `"http_logs_enabled": true` in your JSON config.
 
-Press `L` to configure logging. The dialog stores a size setting of 1 to 1000 MiB and retention of 1 to 365 days.
-It also stores an automatic-cleanup preference. See the limitations below before relying on those settings.
+Press `L` to configure logging. The dialog accepts a size limit of 1 to 1000 MiB and retention of 1 to 365 days.
+It also lets you turn automatic cleanup on or off.
 
 </Tab>
 </Tabs>
 
-Logging starts for new connections. Connections that were open before you turned it on stay unlogged until they reconnect.
+Logging toggles apply to established TCP connections without reconnecting. Turning logging on starts capturing subsequent HTTP traffic. Connections already in WebSocket tunnel mode ignore logging toggles.
 
 ## Config fields
 
 | Field | Default | Description |
 |-------|---------|-------------|
 | `http_logs_enabled` | `false` | Turns logging on for the config |
-| `http_logs_max_file_size` | 10 MiB | Saved file-size setting, in bytes. Import accepts 1 byte to 100 MiB |
-| `http_logs_retention_days` | 7 | Saved retention setting. Import accepts 1 to 365 days |
-| `http_logs_auto_cleanup` | `true` | Saved automatic-cleanup preference |
+| `http_logs_max_file_size` | 10 MiB | Rotation threshold in bytes. Import accepts 1 byte to 100 MiB |
+| `http_logs_retention_days` | 7 | Retention for rotated files when automatic cleanup is on. Import accepts 1 to 365 days |
+| `http_logs_auto_cleanup` | `true` | Removes expired rotated files when the logger starts and after rotation |
 
-The current HTTP logger appends to files without applying these size and retention settings. Check disk usage and [delete old logs](#cleanup) manually.
+The logger rotates a nonempty file before an entry would push it past the size limit. It copies the file to a timestamped file and truncates the active file. A single oversized entry can exceed the limit because the logger keeps each entry intact.
 
-This example saves a 20 MiB size setting and 14-day retention preference:
+This example sets a 20 MiB rotation threshold and 14-day retention with automatic cleanup:
 
 ```json
 {
@@ -86,10 +88,13 @@ Each port forward writes its own file, named `<config id>_<local port>.http`:
 <Files>
 <Folder name="~/.kftray/http_logs" defaultOpen>
 <File name="3_8080.http" />
+<File name="3_8080_20261106_003000.http" />
 <File name="4_8001.http" />
 <File name="5_8002.http" />
 </Folder>
 </Files>
+
+Rotated files use `<config id>_<local port>_<YYYYMMDD>_<HHMMSS>.http`, with a UTC timestamp. A numeric suffix distinguishes rotations within the same second.
 
 ## Log format
 
@@ -147,17 +152,22 @@ List mode is the default:
 Detail mode shows the full request and response, including headers and body:
 
 - `↑` `↓` and `PageUp` `PageDown` scroll the details.
-- `r` replays the selected request. kftui sends it to `http://localhost:<local_port>` of the forward, unless the request path is already a full HTTP URL.
-- `Esc` goes back to list mode.
+- `r` replays the selected request with a 30-second timeout.
+- `c` or `C` copies the selected request as a `curl` command through OSC 52. Your terminal must support OSC 52 clipboard writes.
+- `Esc` cancels an in-progress replay and goes back to list mode.
+
+Replay uses `http://<local_address>:<local_port>` from the forward, with `127.0.0.1` as the default address. A request path that already contains a full HTTP URL keeps that URL. Copy as `curl` uses the same address rules.
 
 Press `o` to open the log file in your external editor. Request replay exists in kftui only.
 
 ## Cleanup
 
-Delete old logs manually:
+When automatic cleanup is on, the logger removes expired rotated files for the same config ID and local port. It checks file modification times when the logger starts and after each rotation. Cleanup leaves the active file and other forwards' logs in place.
+
+To remove logs manually, stop the forward first. For the default configuration directory:
 
 ```bash
 rm ~/.kftray/http_logs/*.http
 ```
 
-If you changed `KFTRAY_CONFIG` or `XDG_CONFIG_HOME`, use that directory's `http_logs` folder instead. HTTP logging can produce large files for busy services, so check disk use now and then.
+If you changed `KFTRAY_CONFIG` or `XDG_CONFIG_HOME`, use that directory's `http_logs` folder instead. The command deletes active and rotated logs for every forward in that folder.
