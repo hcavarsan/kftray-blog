@@ -24,7 +24,9 @@ Security fixes target the [latest stable release](https://github.com/hcavarsan/k
 
 ## Release scanning
 
-Releases are blocked if the scan finds critical or high severity vulnerabilities. The release workflow runs [Grype](https://github.com/anchore/grype) against the `kftray` SBOM, the `kftui` SBOM and the `kftray-server` image before it publishes.
+The release workflow blocks publication when Grype finds high or critical vulnerabilities. It scans the `kftray` and `kftui` SBOMs and the `kftray-server` image before publication.
+
+Each Grype step prints its findings as a table in the job log and saves a JSON report. Open the release workflow's `Generate, scan and sign SBOMs` job to read the scan output. Published releases include the JSON reports listed under [security artifacts](#security-artifacts).
 
 To run the same scan locally, use the mise task:
 
@@ -32,7 +34,9 @@ To run the same scan locally, use the mise task:
 mise run sbom:scan-all
 ```
 
-The task builds the SBOMs for `kftray`, `kftui` and `kftray-server`, scans each one and fails on high or critical findings. It writes `vuln-report-*.json` and `sbom-*.cdx.json` files in the repository root. `mise run precommit` runs it too. See [Development](/docs/resources/development#available-tasks) for the other tasks.
+The task builds SBOMs for all 3 artifacts. It scans the `kftray` and `kftui` SBOMs and the `kftray-server` image. High or critical findings fail the task. It writes `vuln-report-*.json` and `sbom-*.cdx.json` files in the repository root.
+
+`mise run precommit` runs this task too. See [Development](/docs/resources/development#available-tasks) for the other tasks.
 
 [Renovate](https://docs.renovatebot.com/) opens the dependency updates, including the pinned versions of Syft and Grype in `.mise.toml`.
 
