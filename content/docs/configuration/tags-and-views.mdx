@@ -34,7 +34,7 @@ kftray stores a key without a value as an empty string. Configs without tags don
 | Rule | Detail |
 |---|---|
 | Keys | Lowercase letters, digits, `.`, `_`, `-` and `/`, up to 63 characters |
-| Values | Up to 128 characters, no `,` or `=` |
+| Values | Up to 128 UTF-8 bytes, no `,` or `=`. Non-ASCII characters can use more than 1 byte |
 | Normalization | kftray removes spaces at the start and end of keys and values. It also converts keys to lowercase |
 | Duplicates | kftray rejects two keys that match after normalization, like `Env` and `env` |
 
