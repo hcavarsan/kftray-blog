@@ -109,7 +109,7 @@ Or use `wget`:
 wget -qO- https://raw.githubusercontent.com/hcavarsan/kftray/main/hacks/kftui_installer.sh | bash
 ```
 
-The script installs `kftui` to `/usr/local/bin/`, which needs `sudo` for the system-wide install.
+The script installs `kftui` to `~/.local/bin` without `sudo`. If that directory is missing from `PATH`, the installer updates your shell profiles. Restart your terminal to use the updated `PATH`.
 
 </Tab>
 <Tab value="Windows">
