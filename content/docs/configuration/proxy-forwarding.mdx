@@ -29,12 +29,12 @@ The `kftray-server` relay pod runs in your Kubernetes cluster. It receives traff
 You need the relay for:
 
 - Proxy forwards to hosts outside the target workload
-- UDP port forwarding, for every workload type
+- UDP forwarding for service, pod and proxy workloads
 - Reaching services outside the cluster from the cluster network
 - Reaching internal corporate services through cluster network policies
 - Connecting to services that allow your cluster's outbound IP addresses
 
-kftray deploys the relay when you start the forward and deletes it when you stop. The relay runs in the `namespace` of the config.
+kftray creates a separate, uniquely named Deployment for each UDP or proxy forward in the config's namespace. Stopping the forward removes its owned relay resources. Customized legacy Pod manifests use a standalone Pod instead. See [relay deployment and cleanup](/docs/resources/architecture#proxy-server-deployment) for resource requests, limits and ownership labels.
 
 - Proxy startup waits for the relay's TCP listener instead of using a fixed delay.
 - kftray keeps existing startup probes. An unready sidecar doesn't stop a started relay from forwarding.
@@ -42,7 +42,9 @@ kftray deploys the relay when you start the forward and deletes it when you stop
 - The [server resources](/docs/interfaces/desktop#server-resources) view in the desktop app lists the relay pods kftray created, so you can remove leftovers.
 
 <Callout type="warn" title="Cluster permissions required">
-Deploying the relay needs permission to create pods and services in the target namespace. If deployment fails, check your Kubernetes role-based access control (RBAC) permissions with `kubectl auth can-i create pods -n NAMESPACE`.
+The default relay needs permission to create Deployments in the target namespace. Startup also reads and watches Pods and opens `pods/portforward` connections. Cleanup needs permission to list and delete Deployments and Pods. The legacy standalone-Pod path needs permission to create Pods instead of Deployments.
+
+Check Deployment creation with `kubectl auth can-i create deployments.apps -n <namespace>`. Proxy and UDP relay creation does not create a Service.
 </Callout>
 
 <Callout type="info" title="Cancelled starts">
@@ -51,7 +53,7 @@ If you cancel a start and kftray can't finish the rollback, it reports `cleanup_
 
 ## UDP through the relay
 
-UDP forwards use the same relay. Set `protocol` to `udp` with the `proxy` workload to reach an external DNS server:
+UDP forwards also use `kftray-server`. Set `protocol` to `udp` with the `proxy` workload to reach an external DNS server:
 
 ```json
 {
