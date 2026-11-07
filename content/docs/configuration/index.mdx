@@ -37,7 +37,7 @@ Each configuration defines one port forward. To forward several services, create
 | `workload_type` | string | None | `"service"`, `"pod"`, `"proxy"` or `"expose"`. Required. See [workload types](/docs/configuration/workload-types) |
 | `service` | string | None | Service name. Required for `service` workloads |
 | `target` | string | None | Pod label selector, for example `app=nginx,tier=frontend`. Required for `pod` workloads |
-| `protocol` | string | None | `"tcp"` or `"udp"`, in lowercase. Import doesn't check it, but a forward with any other value fails to start |
+| `protocol` | string | None | `"tcp"` or `"udp"`, in lowercase. Import rejects missing or unsupported values |
 | `local_port` | number | A free port | Port on your local machine. If you leave it blank or `0` when you save, kftray picks a free port and stores it |
 | `remote_port` | number | None | Container port on the target. Service and pod forwards use the selected pod's container port (see [forwarding behavior](/docs/configuration/port-forwarding#forwarding-behavior)) |
 | `remote_address` | string | None | Destination host or IP for `proxy` workloads, reached from the cluster. Required for `proxy`. Put the port in `remote_port` |
@@ -74,7 +74,7 @@ Import checks these rules for each config:
 
 Import also checks that tags are valid, that `http_logs_max_file_size` is between 1 byte and 100 MiB, and that `http_logs_retention_days` is between 1 and 365.
 
-Import doesn't check `protocol`, `context`, `kubeconfig`, `remote_port`, addresses or the ingress fields. Set them anyway, because a bad value fails when you start the forward, not when you import.
+Import doesn't check `context`, `kubeconfig`, addresses or the ingress fields. For service, pod and proxy workloads, it doesn't check `remote_port`. A bad value in an unchecked field can fail when you start the forward.
 
 ## Minimal configuration
 
