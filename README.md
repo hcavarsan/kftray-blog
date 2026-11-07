@@ -53,6 +53,7 @@ The official documentation website, blog, and downloads page for **kftray** — 
   - [Port Already in Use](#port-already-in-use)
   - [Image Optimization Issues](#image-optimization-issues)
   - [MDX Compilation Errors](#mdx-compilation-errors)
+- [Screenshots](#screenshots)
 - [Contributing](#contributing)
 
 ---
@@ -1451,6 +1452,16 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
 ```
 
 ---
+
+## Screenshots
+
+The docs screenshots use kftray's real frontend with mocked Tauri APIs. Run this command from a `kftray-agents` checkout:
+
+```bash
+./demo-kftray-blog/bin/demo-blog shots <site-checkout>/scripts/docs-screenshots.yaml --out <site-checkout>/public/img/docs --kftray <kftray-checkout>
+```
+
+The screenshot data and actions live in `scripts/docs-screenshots.yaml` in this site checkout.
 
 ## Contributing
 

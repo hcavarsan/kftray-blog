@@ -1,0 +1,18 @@
+data:
+  version: '0.35.2'
+  group_by: null
+  configs:
+    - alias: api-gateway
+      context: prod-eu
+      namespace: platform
+      service: api-gateway
+      local_port: 8080
+      remote_port: 80
+      protocol: tcp
+      http_logs_enabled: true
+      running: true
+shots:
+  - name: http-logging-menu
+    window: { width: 600, height: 500 }
+    actions:
+      - click: { actions: api-gateway }

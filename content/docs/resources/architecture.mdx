@@ -139,25 +139,23 @@ Parses HTTP/1.1 requests and responses as they arrive.
 Assigns trace IDs to match requests with responses.
 </Step>
 <Step>
-Writes JSON logs to `~/.kftray/http_logs/`.
+Writes plain-text `.http` logs in the `http_logs` folder inside the [configuration directory](/docs/configuration#storage-location).
 </Step>
 </Steps>
 
-Each log entry uses this format:
+Entries use HTTP request or status lines, headers and bodies, with metadata comments and `###` separators compatible with the VS Code REST Client:
 
-```json
-{
-  "timestamp": "2026-02-09T10:30:45.123Z",
-  "trace_id": "abc123",
-  "direction": "request",
-  "method": "GET",
-  "path": "/api/users",
-  "headers": {"Host": "api.example.com"},
-  "body": null
-}
+```http
+# ----------------------------------------
+# Trace ID: abc123
+# Request at: 2026-02-09T10:30:45.123+00:00
+GET /api/users HTTP/1.1
+Host: api.example.com
+
+###
 ```
 
-Parsing adds 1-5 ms per request. Turn off HTTP logging when that delay would affect your work.
+The logger rotates files at the configured size threshold. Automatic cleanup removes expired rotated files when the logger starts and after rotation. The [HTTP logging guide](/docs/configuration/http-logging) covers retention, live toggles and request replay.
 
 ## Helper component
 
