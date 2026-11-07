@@ -92,36 +92,51 @@ Kubernetes port-forward only supports TCP. To forward UDP, kftray converts packe
 
 kftray opens a local UDP socket and connects a local TCP socket to the `kftray-server` pod. The TCP socket sends the UDP packets over TCP, and the server forwards them to the upstream server.
 
-kftray deploys `kftray-server` in the target namespace when you create a UDP forward. It removes the deployment when no UDP forwards remain active.
+Each UDP forward uses its own relay in the target namespace. Stopping that forward removes the relay resources it owns.
 
 See [proxy forwarding](/docs/configuration/proxy-forwarding) for setup details.
 
 ## Proxy server deployment
 
-When you create a UDP forward, kftray:
+UDP and proxy forwards use a separate relay for each configuration. With the default manifest, kftray:
 
 <Steps>
 <Step>
-Checks for a `kftray-server` deployment in the target namespace.
+Creates a uniquely named Deployment with 1 replica in the config's namespace.
 </Step>
 <Step>
-Creates the deployment if it's missing, with resource requests of `10m` CPU and `32Mi` memory.
+Waits for the relay container's TCP listener. An unready sidecar doesn't block a relay that has started.
 </Step>
 <Step>
-Waits for the pod to become ready, typically 2-5 seconds.
-</Step>
-<Step>
-Starts a TCP port forward to the proxy pod.
-</Step>
-<Step>
-Starts converting UDP packets to TCP.
+Starts forwarding through the relay pod over the Kubernetes port-forward API.
 </Step>
 </Steps>
 
-Multiple UDP forwards in a namespace share the proxy pod.
+The default relay container uses these resources:
 
-<Callout type="info" title="Proxy persistence">
-If kftray crashes or you force it to stop, the proxy deployment may stay in the cluster. To remove it, run `kubectl delete deployment kftray-server -n <namespace>`.
+| Resource | Request | Limit |
+|----------|---------|-------|
+| CPU | `100m` | `100m` |
+| Memory | `100Mi` | `200Mi` |
+
+A customized legacy `proxy_manifest.json` selects a standalone Pod instead. kftray also uses that path when `proxy_deployment.json` is missing. Both files live in the [configuration directory](/docs/configuration#storage-location).
+
+Cleanup matches the config ID, installation ID and resource-name prefix. It deletes the owned Deployment before removing any remaining owned Pods. kftray reports older relays without an installation label for manual cleanup.
+
+<Callout type="info" title="Leftover relay resources">
+A crash or incomplete cleanup can leave relay resources in the cluster. Use [Server Resources](/docs/interfaces/desktop#server-resources) to inspect and remove them. For manual cleanup, inspect the Deployment names and ownership labels first:
+
+```bash
+kubectl get deployments -n <namespace> -l config_id,installation_id --show-labels
+```
+
+Delete only a Deployment you confirmed belongs to the forward:
+
+```bash
+kubectl delete deployment <deployment-name> -n <namespace>
+```
+
+For a legacy standalone Pod, inspect and remove that Pod instead.
 </Callout>
 
 ## HTTP logging implementation

@@ -39,7 +39,7 @@ TCP works for HTTP, databases, gRPC and most other services. `service` and `pod`
 }
 ```
 
-Kubernetes port-forward only carries TCP, so kftray sends every UDP forward, and every `proxy` forward, through a `kftray-server` relay pod in your cluster. kftray deploys the relay when you start the forward and removes it when you stop. See [proxy forwarding](/docs/configuration/proxy-forwarding) for details.
+Kubernetes port-forward only carries TCP, so kftray sends UDP service and pod forwards, and all `proxy` forwards, through a `kftray-server` relay. By default, each forward gets its own Deployment in the cluster. Stopping the forward removes its owned relay resources. See [proxy forwarding](/docs/configuration/proxy-forwarding) for legacy Pod manifests and cluster permissions.
 
 ## Forwarding behavior
 
