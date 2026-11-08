@@ -27,7 +27,8 @@ mise installs the tools pinned in `.mise.toml`:
 - pnpm 12
 - syft and grype (for the `sbom:*` tasks)
 
-`mise run setup` installs the system dependencies and the pnpm packages, including the Tauri CLI.
+`mise run setup` installs pnpm packages, including the Tauri CLI. It also installs system dependencies on supported Linux distributions and macOS.
+On Windows, install Microsoft C++ Build Tools and WebView2 Runtime manually before running setup from Bash. See [platform dependencies](/docs/resources/building-from-source#platform-dependencies).
 
 ### Rust
 
@@ -54,7 +55,6 @@ cd kftray
 # Install tools defined in .mise.toml
 mise install
 
-# Set up system dependencies and install project dependencies
 mise run setup
 
 # Start development
@@ -69,8 +69,6 @@ mise run dev
 # Install mise-managed tools (Node, pnpm, syft, grype)
 mise install
 
-# Install system dependencies (webkit, build tools, etc.)
-# This detects your OS and installs the right packages
 mise run setup
 ```
 
@@ -271,7 +269,7 @@ source ~/.bashrc  # or ~/.zshrc
 
 ### System dependencies missing
 
-Run the setup task again. It detects your OS and installs the missing dependencies:
+On supported Linux distributions and macOS, rerun setup to install missing system dependencies. On Windows, install the [native prerequisites](/docs/resources/building-from-source#platform-dependencies) manually before rerunning setup:
 
 ```bash
 mise run setup
