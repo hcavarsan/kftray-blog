@@ -1,9 +1,9 @@
 ---
 title: HTTP Logging
-description: Record HTTP requests and responses from TCP port forwards in a format compatible with the VS Code REST Client.
+description: Record HTTP requests and responses from TCP port forwards and HTTP exposes in the VS Code REST Client format.
 ---
 
-HTTP logging records the requests and responses that pass through your TCP port forwards, so you can debug API calls. It is off by default and you turn it on for each config.
+HTTP logging records requests and responses from TCP port forwards and HTTP exposes. It is off by default. Turn it on for each config.
 
 The [HTTP logs video](https://www.youtube.com/watch?v=73PyGbMnNSY) shows the desktop logs opened in an editor.
 
@@ -43,7 +43,32 @@ It also lets you turn automatic cleanup on or off.
 </Tab>
 </Tabs>
 
-Logging toggles apply to established TCP connections without reconnecting. Turning logging on starts capturing subsequent HTTP traffic. Connections already in WebSocket tunnel mode ignore logging toggles.
+Logging toggles apply to established TCP forward connections without reconnecting. Turning logging on starts capturing subsequent HTTP traffic. Application connections already upgraded to WebSocket mode ignore logging toggles.
+
+## HTTP expose logging
+
+HTTP exposes use the same logging controls as port forwards. Both public and cluster-only HTTP exposes record requests and completed responses in paired log entries.
+
+For an expose config, set `http_logs_enabled` to `true`:
+
+```json
+{
+  "alias": "local-api",
+  "context": "dev-cluster",
+  "namespace": "development",
+  "workload_type": "expose",
+  "protocol": "tcp",
+  "local_address": "127.0.0.1",
+  "local_port": 3000,
+  "exposure_type": "cluster",
+  "exposure_protocol": "http",
+  "http_logs_enabled": true
+}
+```
+
+The expose tunnel checks logging settings every second, so toggles and rotation settings apply without restarting the tunnel. Its reverse WebSocket transport still supports HTTP logging. Upgraded application WebSocket streams do not produce HTTP payload logs.
+
+Raw TCP exposes (`exposure_protocol: "tcp"`) do not produce HTTP logs, even though their row menu shows the logging controls.
 
 ## Config fields
 
@@ -95,6 +120,8 @@ Each port forward writes its own file, named `<config id>_<local port>.http`:
 </Files>
 
 Rotated files use `<config id>_<local port>_<YYYYMMDD>_<HHMMSS>.http`, with a UTC timestamp. A numeric suffix distinguishes rotations within the same second.
+
+An HTTP expose uses its local service port in the filename. An expose on local port `3000` writes `<config id>_3000.http` in the same folder.
 
 ## Log format
 
