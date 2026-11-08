@@ -176,28 +176,30 @@ The logger rotates files at the configured size threshold. Automatic cleanup rem
 
 The `kftray-helper` binary handles operations that need elevated permissions:
 
-- Binding ports below `1024` on macOS and Linux.
-- Updating `/etc/hosts` for custom domain mappings.
+- Binding loopback ports below `1024` on macOS and Linux when a normal bind fails with a permission error.
+- Adding and removing loopback addresses.
+- Updating the hosts file for custom domain mappings.
 
-When you bind a port below `1024`, kftray:
+Install the helper through the desktop app's [helper controls](/docs/interfaces/desktop#kftray-helper). Installation needs administrator approval. The installed service stays available for later requests.
+
+For a low-port bind on macOS or Linux, kftray:
 
 <Steps>
 <Step>
-Asks for an administrator password on macOS or Linux, or UAC approval on Windows.
+Tries to bind the socket as your user.
 </Step>
 <Step>
-Starts `kftray-helper` with elevated permissions.
+Asks the helper to bind only if the attempt fails with a permission error on a loopback port below `1024`.
 </Step>
 <Step>
-Asks the helper to bind the port.
+Receives the bound socket's file descriptor from the helper.
 </Step>
 <Step>
-Uses the helper to forward traffic to kftray, which runs as your user.
-</Step>
-<Step>
-Drops the helper's elevated permissions after binding.
+Uses that socket to handle traffic in the main app, which keeps running as your user.
 </Step>
 </Steps>
+
+Windows does not use this low-port helper fallback.
 
 ## Security model
 
@@ -260,7 +262,7 @@ The server runs inside the desktop app. `kftray-tauri` starts and stops it based
 | Process | Permissions |
 |---------|-------------|
 | Main app | Runs as your user without elevated permissions |
-| Helper | Uses elevated permissions when needed and drops them after binding |
+| Helper | Runs separately for privileged socket, loopback and hosts-file setup |
 | Proxy server | Uses limited Kubernetes role-based access control (RBAC) permissions |
 
 On macOS, signing and verification protect the helper binary against tampering.
