@@ -55,7 +55,6 @@ cd kftray
 # Install tools defined in .mise.toml
 mise install
 
-# Set up system dependencies and install project dependencies
 mise run setup
 
 # Start development
@@ -270,7 +269,7 @@ source ~/.bashrc  # or ~/.zshrc
 
 ### System dependencies missing
 
-Run the setup task again. It detects your OS and installs the missing dependencies:
+On supported Linux distributions and macOS, rerun setup to install missing system dependencies. On Windows, install the [native prerequisites](/docs/resources/building-from-source#platform-dependencies) manually before rerunning setup:
 
 ```bash
 mise run setup
