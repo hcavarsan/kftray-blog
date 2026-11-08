@@ -32,7 +32,7 @@ mise run setup
 ```
 
 `mise install` installs Node.js 26, pnpm 12 and the Syft and Grype security tools. It does not install Rust.
-`mise run setup` installs platform dependencies and pnpm packages, including the Tauri CLI.
+`mise run setup` installs pnpm packages, including the Tauri CLI. On Linux and macOS, it also installs platform dependencies.
 
 Start the development app:
 
@@ -48,16 +48,16 @@ mise run build
 
 ### Platform dependencies
 
-The setup task detects Linux, macOS or Windows and installs the dependencies for that platform.
+The setup task installs platform dependencies on supported Linux distributions and macOS. On Windows, it prints the native prerequisites for you to install manually.
 
 | Platform | Dependencies |
 |---|---|
 | Linux | WebKitGTK 4.1, build tools, OpenSSL, Ayatana AppIndicator and librsvg development packages |
 | macOS | Xcode Command Line Tools and Homebrew |
-| Windows | Microsoft C++ Build Tools and WebView2 Runtime |
+| Windows | Install Microsoft C++ Build Tools and WebView2 Runtime manually |
 
 Linux setup supports Debian, Ubuntu, Fedora, Arch and openSUSE. Package names differ by distribution.
-See [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/) for manual platform setup.
+See [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/) for manual platform setup. On Windows, install the native prerequisites before running `mise run setup` from Bash.
 
 ### Without mise
 
