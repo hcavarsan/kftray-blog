@@ -16,3 +16,8 @@ shots:
     window: { width: 600, height: 500 }
     actions:
       - click: { actions: api-gateway }
+  - name: git-sync-dialog
+    window: { width: 700, height: 700 }
+    actions:
+      - click: { role: button, name: Configure git sync }
+    clip: { role: dialog, name: Configure Github Sync }

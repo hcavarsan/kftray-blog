@@ -79,7 +79,7 @@ Enter the URL of your repository, for example `https://github.com/your-org/kftra
 Enter the path to the JSON config file. If your configs are split across several files, use the `+` button to add more paths.
 </Step>
 <Step>
-For a private repository, enter a personal access token. See [Authentication](#authentication).
+Choose `Public Repository`, `Use System Git Credentials` or `GitHub Token`. For a private repository, use system credentials or a token. See [Authentication](#authentication).
 </Step>
 <Step>
 Set the polling interval, the time between automatic syncs.
@@ -89,12 +89,16 @@ Save. kftray syncs with the repository and imports new configs and changes.
 </Step>
 </Steps>
 
+![GitHub sync dialog with authentication methods, flush option and polling interval](/img/docs/git-sync-dialog.webp)
+
 | Option | Detail |
 |--------|--------|
 | Polling interval | A slider from 0 to 120 minutes in steps of 5. The default is 60 minutes. `0` turns automatic polling off |
-| Flush existing configs before sync | Off by default. When on, kftray deletes all your local configs before it imports |
+| Flush existing configs before sync | Off by default. Deletes local configs before importing. Stop forwards first and finish pending cluster cleanup |
 
 While Git credentials are configured, `Import Local File` in the footer menu is disabled.
+
+Flush refuses to delete configurations whose forwards are running, starting or still need cluster cleanup. Stop those forwards and retry after cleanup finishes.
 
 </Tab>
 <Tab value="Terminal">
@@ -119,16 +123,21 @@ Add `--save` to keep the imported configurations in the database. Without it, kf
 kftui --github-url https://github.com/your-org/kftray-configs --configs-path env/production.json --save
 ```
 
-For private repositories, set the `GITHUB_TOKEN` environment variable before you launch.
+For private repositories, kftui uses system Git credentials. You can also set `GITHUB_TOKEN` for an HTTPS repository before launching.
 
 </Tab>
 </Tabs>
 
 ## Authentication
 
-Public repositories need no token. For a private repository, GitHub sync needs a personal access token that can read it. A classic token with the `repo` scope works.
+Public repositories need no token. Private repositories support these authentication methods:
 
-Create a token at https://github.com/settings/tokens:
+| Method | Credentials |
+|--------|-------------|
+| `Use System Git Credentials` | SSH agent for SSH repository URLs, or your configured Git credential helper |
+| `GitHub Token` | Personal access token that can read the repository, used with an HTTPS URL |
+
+A classic token with the `repo` scope works. Create one in [GitHub token settings](https://github.com/settings/tokens):
 
 <Steps>
 <Step>
@@ -165,8 +174,7 @@ The desktop app syncs at the polling interval, 60 minutes by default. Each sync 
 
 <Steps>
 <Step>
-kftray matches repository configs to local configs by context, namespace, workload type, protocol and target. The target is a service, pod selector or proxy address.
-When a config has a non-zero local port, the local and remote ports must match too. For `expose` configs, kftray matches by alias and local port.
+kftray matches configs by workload type, protocol and the workload's target fields. Kubernetes workloads also require the same context, namespace and kubeconfig.
 </Step>
 <Step>
 A match is updated with the repository's values and keeps its ID. If the repository's alias is blank or its local port is missing or `0`, kftray keeps the old alias or local port.
@@ -176,11 +184,27 @@ A config with no match is added.
 </Step>
 </Steps>
 
+### How configs match
+
+kftray trims kubeconfig values before matching. Omitted, blank and `default` values match each other.
+
+| Workload | Target fields that must match |
+|----------|-------------------------------|
+| `service` | `service` |
+| `pod` | `target` label selector |
+| `proxy` | `remote_address` |
+| `expose` | Trimmed `alias` and `local_port`, unless the incoming local port is `0` |
+| `ssh-port-forward` | `ssh_provider`, `remote_address` and `remote_port`. Context, namespace and kubeconfig do not affect SSH matching |
+
+For service, pod, proxy and SSH configs, both local and remote ports must also match when both configs have nonzero local ports.
+
+With multiple candidates, kftray ranks matches by remote port, local port and local endpoint. The endpoint includes the local address and enabled domain alias. Ambiguous matches can create a separate config or skip the incoming config.
+
 kftray doesn't delete local configs that are missing from the repository, unless `Flush existing configs before sync` is on.
 
 ### Conflict resolution
 
-The repository wins. If you change a synced configuration locally, the next sync overwrites it with the repository version.
+Only matching configs receive repository changes. Changing identity fields locally can make the next sync add a separate config instead of updating it.
 
 To keep local changes:
 
