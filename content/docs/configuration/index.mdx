@@ -209,7 +209,7 @@ For ready-made files, see the [examples](/docs/configuration/examples).
 
 ### Validation and atomicity
 
-kftray parses and validates every config in the input before it writes anything. Entries with the same identity and remote port are merged first, and the remaining ones are then checked. A missing file, malformed JSON or an invalid config stops the import with nothing changed.
+kftray parses and validates every config before writing. It first deduplicates entries with the same identity, remote port and local endpoint, keeping the last entry. See [matching rules](/docs/configuration/github-sync#how-configs-match). A missing file, malformed JSON or an invalid config stops the import with nothing changed.
 
 The write step is not one database transaction. Configs are merged one at a time, so a database error part way through can leave some of them imported. Existing configs that match an incoming one are updated in place and keep their ID.
 
