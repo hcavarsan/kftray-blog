@@ -132,5 +132,6 @@ Internal, for the cluster network only:
 - `Stop All` also stops expose tunnels.
 - Expose uses the Kubernetes resources kftray creates in the config's namespace. The [server resources](/docs/interfaces/desktop#server-resources) view lists them for cleanup.
 - A public exposure uses the ingress class you set in `ingress_class`, and a certificate uses the cert-manager issuer you name in `cert_issuer`. Both need to exist in your cluster.
+- HTTP exposes can record requests and responses through [HTTP logging](/docs/configuration/http-logging#http-expose-logging). Raw TCP exposes do not produce HTTP logs.
 
 For more configs, see the [examples](/docs/configuration/examples).
