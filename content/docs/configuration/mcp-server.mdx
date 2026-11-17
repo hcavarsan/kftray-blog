@@ -88,7 +88,7 @@ The client calls `list_services` with the context and namespace. kftray queries 
 </Accordion>
 
 <Accordion title="What ports does redis expose?">
-The client calls `list_ports` with the context, namespace and service name. kftray returns each port with its name, number, target port and protocol. If it can't find the service, it checks container ports on pods, using the name as a label selector.
+The client calls `list_ports` with the context, namespace and service name. kftray returns the port it forwards to for each service port, with its name and protocol. For a TCP port that is the target port, and a named target port resolves to the container port of a ready pod. For a UDP port it is the service port, because the relay dials the service, except on a headless service, where it is the target port. The client passes `port` as `remote_port`. If it can't find the service, it checks container ports on pods, using the name as a label selector. When it finds no ports, it returns an error instead of an empty list.
 </Accordion>
 </Accordions>
 
@@ -151,7 +151,7 @@ The client calls `import_configs` with a JSON string. kftray imports the configs
 | `list_namespaces` | `context` | namespace names |
 | `list_services` | `context`, `namespace` | service names |
 | `list_pods` | `context`, `namespace` | pods with name, status and labels |
-| `list_ports` | `context`, `namespace`, `service` | ports with name, number, target port and protocol |
+| `list_ports` | `context`, `namespace`, `service` | ports with name, `port` (pass it as `remote_port`) and protocol |
 
 Every tool accepts an optional `kubeconfig` parameter. `list_pods` also accepts `label_selector`.
 
@@ -164,7 +164,7 @@ Every tool accepts an optional `kubeconfig` parameter. `list_pods` also accepts 
 | `stop_all_port_forwards` | | count of stopped forwards |
 | `list_active_port_forwards` | | list of active forwards with config ID, service, namespace, ports, protocol, alias |
 
-Without `config_id`, a new forward also needs `service` for a service workload or `target` (a label selector) for a pod workload. It also accepts:
+Without `config_id`, a new forward also needs `service` for a service workload, `target` (a label selector) for a pod workload or `remote_address` (the destination host) for a proxy workload. It also accepts:
 
 - `local_port` and `protocol` (`tcp` or `udp`).
 - `workload_type` (`service`, `pod` or `proxy`).
