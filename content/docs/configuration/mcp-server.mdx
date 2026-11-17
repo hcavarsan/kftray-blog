@@ -164,7 +164,7 @@ Every tool accepts an optional `kubeconfig` parameter. `list_pods` also accepts 
 | `stop_all_port_forwards` | | count of stopped forwards |
 | `list_active_port_forwards` | | list of active forwards with config ID, service, namespace, ports, protocol, alias |
 
-Without `config_id`, a new forward also needs `service` for a service workload or `target` (a label selector) for a pod workload. It also accepts:
+Without `config_id`, a new forward also needs `service` for a service workload, `target` (a label selector) for a pod workload or `remote_address` (the destination host) for a proxy workload. It also accepts:
 
 - `local_port` and `protocol` (`tcp` or `udp`).
 - `workload_type` (`service`, `pod` or `proxy`).
