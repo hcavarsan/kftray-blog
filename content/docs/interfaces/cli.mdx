@@ -191,9 +191,9 @@ In the terminal interface, kftui shows logs in the Logs panel and records warnin
 | `KUBECONFIG` | Custom kubeconfig path | `/path/to/config` |
 | `GITHUB_TOKEN` | GitHub token for private repository imports | `ghp_xxxxxxxxxxxx` |
 | `DO_NOT_TRACK` | Turns off crash reports and performance data | `1` |
-| `HTTPS_PROXY` | HTTPS proxy for the Kubernetes API | `http://proxy:8080` |
-| `HTTP_PROXY` | HTTP proxy for the Kubernetes API | `http://proxy:8080` |
-| `NO_PROXY` | Hosts that bypass the proxy | `localhost,127.0.0.1` |
+| `HTTPS_PROXY` | Proxy for the Kubernetes API when the kubeconfig cluster has no `proxy-url` | `http://proxy:8080` |
 | `TERM` | Terminal type for kftui | `xterm-256color` |
+
+For Kubernetes API requests, kftui uses the cluster's `proxy-url` from the kubeconfig, or `HTTPS_PROXY` when the cluster has none. It ignores `HTTP_PROXY` and `NO_PROXY`. Supported proxy schemes are `http`, `https`, `socks5` and `socks5h`. For a proxy that needs a login, put the user and password in the URL, for example `http://user:password@proxy:8080`, and percent-encode `@` and `:` in the password, the same as kubectl. kftui sends that login to `http`, `socks5` and `socks5h` proxies.
 
 See [CLI Reference](/docs/resources/cli-reference) for startup commands and data directory paths.
