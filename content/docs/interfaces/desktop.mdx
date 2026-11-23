@@ -130,7 +130,7 @@ To delete several at once:
 2. Click the bulk delete button in the footer.
 3. Confirm the deletion.
 
-kftray stops active forwards before deleting them.
+kftray deletes only stopped configs. If a selected config is running, still starting or forwarding in another kftray or kftui process, it shows an error and deletes nothing. Stop the forward first, then delete the config.
 
 </Tab>
 </Tabs>
