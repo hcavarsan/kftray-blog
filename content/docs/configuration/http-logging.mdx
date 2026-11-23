@@ -162,7 +162,7 @@ Content-Length: 156
 | Status line, headers and body | The response as it came back |
 
 kftray decodes response bodies sent with `Content-Encoding: gzip`, `br` or a stacked value such as `gzip, br`. It shows other encodings as received.
-The preformatted-response path cuts decoded bodies at 10 MiB and adds a truncation marker. Other response-formatting paths do not share that limit.
+kftray logs only the first 10 MiB of each request and each response, so a bigger body shows up cut in the log. The forward still passes the whole body through. A response body that decodes to more than 10 MiB is cut too and ends with a truncation marker.
 
 ## Viewing and replaying in kftui
 
