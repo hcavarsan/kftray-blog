@@ -55,7 +55,7 @@ kftui --auto-start --non-interactive --filter tag:team=payments
 | `--filter <COND>` | Only show and start matching configs. Repeatable, and all conditions must match. For example `tag:env=dev`, `namespace=api,web` or `tag:pinned` |
 | `--group-by <FIELD>` | Group the tables by `context`, `namespace`, `kubeconfig`, `workload_type`, `protocol`, `tag:<key>` or `none` for this session |
 | `--ssl` | Turn on SSL/TLS for port forwarding for this run (overrides settings) |
-| `--log-level <LEVEL>` | Global log level: `error`, `warn`, `info`, `debug`, `trace` or `off`. An unknown value falls back to `info` |
+| `--log-level <LEVEL>` | Global log level: `error`, `warn`, `info`, `debug`, `trace` or `off`. kftui exits with an error on any other value |
 | `--logs-to-file` | Write logs to `app.log` in the [configuration directory](/docs/configuration#storage-location) instead of the Logs panel |
 | `--no-update-check` | Skip the update check at startup |
 
