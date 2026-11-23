@@ -125,10 +125,10 @@ The command's stdout stays available for pipes and file redirection. kftui write
 | `KUBECONFIG` | Custom kubeconfig path or multiple files | `/path/to/config`, `/path/one:/path/two` |
 | `GITHUB_TOKEN` | GitHub personal access token for private repository imports in kftui | `ghp_xxxxxxxxxxxx` |
 | `DO_NOT_TRACK` | Turns off crash reports and performance data, whatever the settings say | `1` |
-| `HTTPS_PROXY` | HTTPS proxy for Kubernetes API requests | `http://proxy.example.com:8080` |
-| `HTTP_PROXY` | HTTP proxy for Kubernetes API requests | `http://proxy.example.com:8080` |
-| `NO_PROXY` | Hosts that bypass the proxy | `localhost,127.0.0.1,.local` |
+| `HTTPS_PROXY` | Proxy for Kubernetes API requests when the kubeconfig cluster has no `proxy-url` | `http://proxy.example.com:8080` |
 | `TERM` | Terminal type for kftui | `xterm-256color`, `screen-256color` |
+
+For Kubernetes API requests, kftui uses the cluster's `proxy-url` from the kubeconfig, or `HTTPS_PROXY` when the cluster has none. It ignores `HTTP_PROXY` and `NO_PROXY`. Supported proxy schemes are `http`, `https`, `socks5` and `socks5h`. For a proxy that needs a login, put the user and password in the URL, for example `http://user:password@proxy.example.com:8080`, and percent-encode `@` and `:` in the password, the same as kubectl. kftui sends that login to `http`, `socks5` and `socks5h` proxies.
 
 ## Data directories
 
